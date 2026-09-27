@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here
 
-class user(AbstractUser):
+class er(AbstractUser):
   PASSANGER = 'PASSANGER'
   CONDUCTOR = 'CONDUCTOR'
   ADMIN = 'ADMIN'
@@ -13,7 +13,7 @@ class user(AbstractUser):
     (CONDUCTOR, 'Conductor'),
     (ADMIN, 'Admin')
   ]
-  
+  phone_number = models.CharField(max_length=15, unique=True)
   role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=PASSANGER)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)

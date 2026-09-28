@@ -37,7 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'accounts',
+    'core',
+    'fleet',
+    'journeys',
+    'tracking',
+    'trips',
+    'r_outes',
+    'notifications',
 ]
+
+AUTH_USER_MODEL = 'accounts.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -48,13 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
-    'core',
-    'fleet',
-    'journeys',
-    'tracking',
-    'trips',
-    'r_outes',
-    'notifications',
+    
     
 ]
 

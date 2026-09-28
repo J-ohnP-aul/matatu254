@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here
 
-class er(AbstractUser):
+class User(AbstractUser):
   PASSANGER = 'PASSANGER'
   CONDUCTOR = 'CONDUCTOR'
   ADMIN = 'ADMIN'

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Trip_loc_log
+from .models import TripLocationLog
 
 # Register your models here.
 
-admin.site.register(Trip_loc_log)
+admin.site.register(TripLocationLog)

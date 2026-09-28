@@ -7,11 +7,12 @@ from r_outes.models import Stage
 # Create your models here.
 class JourneySession(models.Model):
   class Status(models.TextChoices):
-        INITIALIZED = "initiated", "Initiated"
-        INTRANSIST = "intransist", "Intransist"
-        APPROACHING = "approaching", "Approaching"
-        ARRIVED = "arrived", "Arrived"
-        ENDED = 'ended', "Ended"
+            INITIALIZED = "initiated", "Initiated"
+            DESTINATION_SELECTED = "destination_selected", "Destination selected"
+            IN_TRANSIT = "in_transit", "In transit"
+            APPROACHING = "approaching", "Approaching"
+            ARRIVED = "arrived", "Arrived"
+            ENDED = "ended", "Ended"
         
   status = models.CharField(
             max_length=20,
@@ -19,10 +20,10 @@ class JourneySession(models.Model):
             default=Status.INITIALIZED,
           )
   
-  user = models.ForeignKey(User, on_delete=models.CASCADE)
-  trip_id = models.ForeignKey(ActiveTrip, on_delete=models.CASCADE)
+  passenger = models.ForeignKey(User, on_delete=models.CASCADE)
+  trip = models.ForeignKey(ActiveTrip, on_delete=models.CASCADE)
   destination_stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
-  starttime = models.TimeField(auto_created=True)
-  endtime = models.TimeField(null=True)
+  start_time = models.DateTimeField(auto_now_add=True)
+  end_time = models.DateTimeField(null=True, blank=True)
   
   

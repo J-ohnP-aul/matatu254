@@ -1,7 +1,7 @@
 from django.db import models
 
 from journeys.models import JourneySession
-from accounts.models import User
+
 # Create your models here.
 
 class Notification(models.Model):
@@ -15,11 +15,8 @@ class Notification(models.Model):
 		max_length=9,
 		choices=RecipientType.choices,
 	)
-	recipient_id = models.ForeignKey(
-    User,
-    on_delete=models.CASCADE
-  )
-	journey_id = models.ForeignKey(
+	recipient_id = models.PositiveIntegerField()
+	journey = models.ForeignKey(
 		JourneySession,
 		on_delete=models.SET_NULL,
 		null=True,

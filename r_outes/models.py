@@ -4,11 +4,11 @@ from django.db import models
 # Create your models here.
 
 class Route(models.Model):
-  route_name = models.TextField(max_length=20, unique=True)
-  descr = models.TextField(max_length=150, blank=True)
-  
-  def __str__(self):
-    return f"{self.route_name}"
+    name = models.TextField(max_length=20, unique=True)
+    description = models.TextField(max_length=150, blank=True)
+
+    def __str__(self):
+        return f"{self.name}"
 
 class Stage(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE)       # creates route_id column

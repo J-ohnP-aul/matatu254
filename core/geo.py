@@ -45,7 +45,8 @@ from dataclasses import dataclass
 from typing import Optional
 
 
-OSRM_BASE_URL = "http://router.project-osrm.org/route/v1/driving"
+# OSRM_BASE_URL = "http://router.project-osrm.org/route/v1/driving"
+OSRM_BASE_URL = "http://127.0.0.1:5000/route/v1/driving"
 DEFAULT_TIMEOUT = 10  # seconds
 
 

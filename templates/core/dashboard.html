@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard {% endblock %}
+{% block topbar_title %}Dashboard{% endblock %}
+
+{% block content %}
+  <p>logout  <a href="{% url 'accounts:logout' %}">Logout</a></p>
+  <p>go to home page: <a href="{% url "core:home" %}">Home </a></p>
+  {% if user.role == 'PASSANGER' %}
+    <h1>welcome to passanger dashboard</h1>
+  {% endif %}
+  
+  {% if user.role == 'CONDUCTOR' %}
+    <h1>Welcome to conductor dashboard</h1>
+  {% endif %}
+
+  {% if user.role == 'ADMIN' %}
+    <h1>Welcome to admin dashboard</h1>
+  {% endif %}
+
+{% endblock %}

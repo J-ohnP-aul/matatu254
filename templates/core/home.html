@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Welcome | hom page {% endblock %}
+{% block content %}
+  {% if not user.is_authenticated  %}
+    <div>
+      <p>Welcome to the home page of the application. Please log in or register to access more features.</p>
+      <a href="{% url 'accounts:login' %}">Log in</a> | <a href="{% url 'accounts:register' %}">Register</a>
+    </div>
+  {%else%}
+    <div>
+      <p>Welcome back, {{ user.username }}!</p>
+      <a href="{% url "core:dashboard" %}">Go to Dashboard</a>
+    </div>
+  {% endif %}
+  <h1>Welcome to the home page</h1>
+  <p>This is the home page of the application.</p>
+{% endblock content %}

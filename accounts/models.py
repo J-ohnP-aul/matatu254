@@ -13,7 +13,7 @@ class User(AbstractUser):
     (CONDUCTOR, 'Conductor'),
     (ADMIN, 'Admin')
   ]
-  phone_number = models.CharField(max_length=15, unique=True)
+  phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)
   role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=PASSANGER)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)

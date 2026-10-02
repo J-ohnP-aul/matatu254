@@ -10,30 +10,6 @@
   <main class="page" id="main-content">
     {% block content %}{% endblock %}
   </main>
-  <script>
-    // location
-    navigator.geolocation.watchPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        const recorded_at = new Date(pos.timestamp).toISOString();
-        fetch(`/trips/${tripId}/ping/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ latitude, longitude, recorded_at }),
-        });
-      },
-      (err) => console.warn("location error", err),
-      {
-        enableHighAccuracy: true,
-        maximumAge: 5000,      // accept a fix up to 5s old
-        timeout: 15000,        // give up after 15s
-      }
-    );
-    fetch(`/trips/${tripId}/ping/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ latitude, longitude, recorded_at }),
-    });
-  </script>
+  {% block scripts %}{% endblock %}
 </body>
 </html>

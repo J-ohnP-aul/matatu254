@@ -1,11 +1,15 @@
 from django.db import transaction
 from django.utils import timezone
-from .models import ActiveTrip, TripLocationLog
+from django.utils.dateparse import parse_datetime
+from trips.models import ActiveTrip
+from tracking.models import TripLocationLog
 
 
 @transaction.atomic
 def record_ping(trip: ActiveTrip, latitude, longitude, recorded_at=None):
   """Persist a ping and refresh the trip's current position cache."""
+  if isinstance(recorded_at, str):
+    recorded_at = parse_datetime(recorded_at)
   recorded_at = recorded_at or timezone.now()
 
   TripLocationLog.objects.create(

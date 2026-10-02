@@ -1,33 +1,74 @@
 {% extends 'base.html' %}
-{% block title %}Welcome | hom page {% endblock %}
+{% block title %}Welcome | home page{% endblock %}
+
 {% block content %}
-  {% if not user.is_authenticated  %}
+  {% if not user.is_authenticated %}
     <div>
       <p>Welcome to the home page of the application. Please log in or register to access more features.</p>
       <a href="{% url 'accounts:login' %}">Log in</a> | <a href="{% url 'accounts:register' %}">Register</a>
     </div>
-  {%else%}
+  {% else %}
     <div>
       <p>Welcome back, {{ user.username }}!</p>
-      <a href="{% url "core:dashboard" %}">Go to Dashboard</a>
-        <h1>Tracking test</h1>
-        <h2>Browser says</h2>
-        <pre id="browser">waiting for permission...</pre>
+      <a href="{% url 'core:dashboard' %}">Go to Dashboard</a>
 
-        <h2>Backend has</h2>
-        {% if trip %}
-          <pre>
-            trip_id:   {{ trip.id }}
-            latitude:  {{ trip.current_latitude|default:"—" }}
-            longitude: {{ trip.current_longitude|default:"—" }}
-            last_ping: {{ trip.last_ping_at|default:"—" }}
-            is_stale:  {{ trip.is_stale }}
-          </pre>
-        {% else %}
-          <p>No active trip. Create one in the admin first.</p>
-        {% endif %}
+      <h1>Tracking test</h1>
+
+      <h2>Browser says</h2>
+      <pre id="browser">waiting for permission...</pre>
+
+      <h2>Backend has</h2>
+      {% if trip %}
+        <pre>
+          trip_id:   {{ trip.id }}
+          latitude:  {{ trip.current_latitude|default:"—" }}
+          longitude: {{ trip.current_longitude|default:"—" }}
+          last_ping: {{ trip.last_ping_at|default:"—" }}
+          is_stale:  {{ trip.is_stale }}
+        </pre>
+      {% else %}
+        <p>No active trip. Create one in the admin first.</p>
+      {% endif %}
     </div>
   {% endif %}
+
   <h1>Welcome to the home page</h1>
   <p>This is the home page of the application.</p>
 {% endblock content %}
+
+{% block scripts %}
+{% if user.is_authenticated and trip %}
+<script>
+  const out = document.getElementById("browser");
+  const tripId = {{ trip.id }};
+
+  if (!navigator.geolocation) {
+    out.textContent = "error: geolocation not supported";
+  } else {
+    navigator.geolocation.watchPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        const recorded_at = new Date(pos.timestamp).toISOString();
+
+        out.textContent =
+          `latitude:  ${latitude}\n` +
+          `longitude: ${longitude}\n` +
+          `recorded:  ${recorded_at}`;
+
+        try {
+          await fetch(`/trips/${tripId}/ping/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ latitude, longitude, recorded_at }),
+          });
+        } catch (e) {
+          console.warn("ping failed", e);
+        }
+      },
+      (err) => { out.textContent = "error: " + err.message; },
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+    );
+  }
+</script>
+{% endif %}
+{% endblock scripts %}

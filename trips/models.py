@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from fleet.models import Matatu
 from r_outes.models import Route
@@ -21,4 +22,19 @@ class ActiveTrip(models.Model):
     choices=Status.choices,
     default=Status.CREATED,
   )
-   
+  # --- current position cache ---
+  current_latitude = models.DecimalField(
+      max_digits=9, decimal_places=6, null=True, blank=True
+  )
+  current_longitude = models.DecimalField(
+      max_digits=9, decimal_places=6, null=True, blank=True
+  )
+  last_ping_at = models.DateTimeField(null=True, blank=True)
+
+  @property
+  def is_stale(self, threshold_seconds=60):
+    """True if we haven't heard from the device recently."""
+    if not self.last_ping_at:
+      return True
+    age = (timezone.now() - self.last_ping_at).total_seconds()
+    return age > threshold_seconds

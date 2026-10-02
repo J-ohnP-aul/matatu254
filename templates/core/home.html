@@ -10,6 +10,22 @@
     <div>
       <p>Welcome back, {{ user.username }}!</p>
       <a href="{% url "core:dashboard" %}">Go to Dashboard</a>
+        <h1>Tracking test</h1>
+        <h2>Browser says</h2>
+        <pre id="browser">waiting for permission...</pre>
+
+        <h2>Backend has</h2>
+        {% if trip %}
+          <pre>
+            trip_id:   {{ trip.id }}
+            latitude:  {{ trip.current_latitude|default:"—" }}
+            longitude: {{ trip.current_longitude|default:"—" }}
+            last_ping: {{ trip.last_ping_at|default:"—" }}
+            is_stale:  {{ trip.is_stale }}
+          </pre>
+        {% else %}
+          <p>No active trip. Create one in the admin first.</p>
+        {% endif %}
     </div>
   {% endif %}
   <h1>Welcome to the home page</h1>

@@ -65,8 +65,18 @@
           console.warn("ping failed", e);
         }
       },
-      (err) => { out.textContent = "error: " + err.message; },
-      { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
+      (err) => {
+        const msg = err.code === err.PERMISSION_DENIED
+          ? "permission denied — enable in browser settings"
+          : err.code === err.TIMEOUT
+            ? "timeout — try moving outdoors or increase timeout"
+            : err.code === err.POSITION_UNAVAILABLE
+              ? "position unavailable — GPS signal lost"
+              : `error ${err.code}: ${err.message}`;
+        out.textContent = msg;
+        console.warn("geolocation error", err);
+      },
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 30000 }
     );
   }
 </script>

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h2>Fleet Management</h2>
+{% endblock header %}
+
+{% block content %}
+  <p>Welcome to the Fleet Management System.</p>
+  <p>Here you can manage your fleet of vehicles, track their status, and generate QR codes for each vehicle.</p>
+
+  <h3>Generate QR Code for a Vehicle</h3>
+  <form method="post" action="{% url 'fleet:index' %}">
+    {% csrf_token %}
+    <label for="vehicle_id">Vehicle ID:</label>
+    <input type="text" id="vehicle_id" name="vehicle_id" required>
+    <button type="submit" class="btn btn-primary">Generate QR Code</button>
+  </form>
+
+  {% if qr %}
+    <h4>QR Code:</h4>
+    <img src="data:image/png;base64,{{ qr }}" alt="QR Code">
+  {% endif %}
+{% endblock content %}

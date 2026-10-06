@@ -24,4 +24,5 @@ urlpatterns = [
     path('trips/', include('trips.urls')),
     path('fleet/', include('fleet.urls')),
     path('journeys/', include('journeys.urls')),
+    path('conductor/', include('conductor.urls')),
 ]

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Not Authorized{% endblock %}
+{% block content %}
+  <div style="max-width: 600px; margin: 2rem auto; padding: 2rem; text-align: center;">
+    <h1>Not Authorized</h1>
+    <p>You are not assigned to this matatu/trip.</p>
+    <a href="{% url 'conductor:dashboard' %}">Back to Dashboard</a>
+  </div>
+{% endblock %}

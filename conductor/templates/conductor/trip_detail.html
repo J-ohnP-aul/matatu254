@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}{{ trip.matatu.registration_number }} — Trip Dashboard{% endblock %}
+{% block content %}
+  <div style="max-width: 1000px; margin: 0 auto; padding: 1rem;">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1 style="margin: 0;">{{ trip.matatu.registration_number }}</h1>
+        <p style="margin: 0; color: #666;">{{ trip.route.name }}</p>
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <a href="{% url 'conductor:dashboard' %}" style="padding: 0.5rem 1rem; background: #757575; color: white; text-decoration: none; border-radius: 4px;">← Back</a>
+        <a href="{% url 'conductor:notifications' %}" style="padding: 0.5rem 1rem; background: #2196f3; color: white; text-decoration: none; border-radius: 4px;">Notifications</a>
+      </div>
+    </header>
+
+    <!-- Trip Status Card -->
+    <div style="background: #f5f5f5; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+        <div>
+          <strong>Trip Status:</strong><br>
+          <span style="text-transform: capitalize; color: {% if trip.status == 'active' %}green{% else %}#666{% endif %};">
+            {{ trip.get_status_display }}
+          </span>
+        </div>
+        <div>
+          <strong>Current Stage:</strong><br>
+          {{ current_stage.name|default:"—" }}
+        </div>
+        <div>
+          <strong>Next Stage:</strong><br>
+          {{ next_stage.name|default:"Destination reached" }}
+        </div>
+        <div>
+          <strong>Total Passengers:</strong><br>
+          <span style="font-size: 1.5rem; font-weight: bold;">{{ total_passengers }}</span>
+        </div>
+        <div>
+          <strong>Vehicle:</strong><br>
+          {% if vehicle_pos %}
+            {{ vehicle_pos.0|floatformat:4 }}, {{ vehicle_pos.1|floatformat:4 }}
+          {% else %}
+            No GPS signal
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming Stops with Passenger Counts -->
+    <div style="margin-bottom: 1rem;">
+      <h2>Upcoming Stops</h2>
+      {% if upcoming_stops %}
+        <div style="display: grid; gap: 0.5rem;">
+          {% for stop in upcoming_stops %}
+            <div style="
+              padding: 1rem; 
+              border-radius: 8px; 
+              border-left: 5px solid 
+                {% if stop.is_current %}orange
+                {% elif stop.is_next %}#2196f3
+                {% else %}#4caf50{% endif %};
+              background: {% if stop.is_current %}#fff3e0{% elif stop.is_next %}#e3f2fd{% else %}#f5f5f5{% endif %};
+            ">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <strong>{{ stop.stage.sequence_order }}. {{ stop.stage.name }}</strong>
+                  {% if stop.is_current %}<span style="margin-left: 0.5rem; background: orange; color: white; padding: 0.2rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">CURRENT</span>{% endif %}
+                  {% if stop.is_next %}<span style="margin-left: 0.5rem; background: #2196f3; color: white; padding: 0.2rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">NEXT</span>{% endif %}
+                </div>
+                <div style="text-align: right;">
+                  <span style="font-size: 2rem; font-weight: bold; color: #333;">{{ stop.count }}</span><br>
+                  <small>passenger{{ stop.count|pluralize }}</small>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p style="color: #666;">No passengers on this trip.</p>
+      {% endif %}
+    </div>
+
+    <!-- Passenger List -->
+    <div id="passenger-list">
+      {% include "conductor/partials/passenger_list.html" with journeys=journeys %}
+    </div>
+  </div>
+
+  <!-- HTMX auto-refresh -->
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script>
+    // Refresh passenger list and stops every 10 seconds
+    setInterval(() => {
+      htmx.ajax('GET', "{% url 'conductor:trip-passengers' trip.id %}", {
+        target: '#passenger-list',
+        swap: 'innerHTML'
+      });
+      // Also refresh the whole page data periodically
+    }, 10000);
+  </script>
+{% endblock %}

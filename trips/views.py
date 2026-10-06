@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import Q
 
 
 import json
@@ -15,7 +16,15 @@ from .services import record_ping
 @csrf_exempt
 @require_POST
 def ping(request, trip_id):
-  trip = get_object_or_404(ActiveTrip, pk=trip_id, status=ActiveTrip.Status.ACTIVE, matatu__owner=request.user)
+  trip = get_object_or_404(
+    ActiveTrip, 
+    pk=trip_id, 
+    status=ActiveTrip.Status.ACTIVE
+  )
+  # Allow ping from either matatu owner or assigned conductor
+  if not (trip.matatu.owner == request.user or getattr(request.user, 'matatu', None) == trip.matatu):
+    return JsonResponse({"error": "Not authorized for this trip"}, status=403)
+  
   data = json.loads(request.body)
 
   record_ping(

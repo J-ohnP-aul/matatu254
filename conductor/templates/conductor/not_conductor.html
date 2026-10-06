@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Not Conductor{% endblock %}
+{% block content %}
+  <div style="max-width: 600px; margin: 2rem auto; padding: 2rem; text-align: center;">
+    <h1>Access Denied</h1>
+    <p>This area is for conductors only.</p>
+    <a href="{% url 'core:dashboard' %}">Go to Dashboard</a>
+  </div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Scan QR Code{% endblock %}
+{% block content %}
+  <h2>Scan Matatu QR Code</h2>
+  <p>Point camera at the QR code inside the vehicle</p>
+
+  <video id="scanner" width="100%" style="max-width: 400px;"></video>
+  <br><br>
+  <button id="start-scan" type="button">Start Scanning</button>
+  <p id="scan-status" style="color: red;"></p>
+
+  <form id="scan-form" method="post" action="{% url 'journeys:scan-result' %}" style="display:none;">
+    {% csrf_token %}
+    <input type="hidden" name="code_value" id="code-value">
+  </form>
+
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <script>
+    const video = document.getElementById('scanner');
+    const status = document.getElementById('scan-status');
+    const form = document.getElementById('scan-form');
+    const codeInput = document.getElementById('code-value');
+    let codeReader;
+
+    document.getElementById('start-scan').addEventListener('click', async () => {
+      try {
+        codeReader = new ZXing.BrowserMultiFormatReader();
+        status.textContent = "Scanning...";
+        status.style.color = "blue";
+
+        const devices = await codeReader.listVideoInputDevices();
+        if (!devices.length) {
+          status.textContent = "No camera found";
+          status.style.color = "red";
+          return;
+        }
+
+        const backCam = devices.find(d => d.label.toLowerCase().includes('back')) || devices[0];
+
+        codeReader.decodeFromVideoDevice(backCam.deviceId, video, (result, err) => {
+          if (result) {
+            status.textContent = "QR code found: " + result.getText();
+            status.style.color = "green";
+            codeReader.reset();
+            codeInput.value = result.getText();
+            form.submit();
+          }
+          if (err && err.name !== "NotFoundException") {
+            console.warn(err);
+          }
+        });
+      } catch (e) {
+        status.textContent = "Camera error: " + e.message;
+        status.style.color = "red";
+      }
+    });
+  </script>
+{% endblock %}

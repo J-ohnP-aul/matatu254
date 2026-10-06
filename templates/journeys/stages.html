@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Select Destination{% endblock %}
+{% block content %}
+  <h2>{{ trip.matatu.registration_number }} — {{ trip.route.name }}</h2>
+  <p>Tap your destination stage:</p>
+
+  <ul style="list-style: none; padding: 0;">
+    {% for stage in stages %}
+      <li style="padding: 1rem; border-bottom: 1px solid #ddd;">
+        <strong>{{ stage.sequence_order }}. {{ stage.name }}</strong>
+        <form method="post" action="{% url 'journeys:select-destination' trip.id %}" style="display:inline;">
+          {% csrf_token %}
+          <input type="hidden" name="destination_stage_id" value="{{ stage.id }}">
+          <button type="submit" style="margin-left: 1rem;">Select</button>
+        </form>
+      </li>
+    {% empty %}
+      <li>No stages on this route</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

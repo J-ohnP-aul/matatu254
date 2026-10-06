@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}{{ route.name }} — Stages{% endblock %}
+{% block content %}
+  <div style="max-width: 1000px; margin: 0 auto; padding: 1rem;">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1>{{ route.name }}</h1>
+        <p style="color: #666;">{{ route.description|default:'No description' }}</p>
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <a href="{% url 'management:route-list' %}" style="padding: 0.5rem 1rem; background: #757575; color: white; text-decoration: none; border-radius: 4px;">← Back</a>
+        <a href="{% url 'management:stage-create' route.pk %}" style="padding: 0.5rem 1rem; background: #4caf50; color: white; text-decoration: none; border-radius: 4px;">+ Add Stage</a>
+      </div>
+    </header>
+
+    {% if stages %}
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background: #f5f5f5;">
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Order</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Name</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Latitude</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Longitude</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in stages %}
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 0.75rem; font-weight: bold;">{{ s.sequence_order }}</td>
+                <td style="padding: 0.75rem;">{{ s.name }}</td>
+                <td style="padding: 0.75rem;">{{ s.latitude }}</td>
+                <td style="padding: 0.75rem;">{{ s.longitude }}</td>
+                <td style="padding: 0.75rem;">
+                  <a href="{% url 'management:stage-edit' s.pk %}">Edit</a>
+                  <span style="margin: 0 0.5rem;">|</span>
+                  <a href="{% url 'management:stage-delete' s.pk %}" style="color: #f44336;">Delete</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p style="color: #666;">No stages yet. Add the first stage.</p>
+    {% endif %}
+  </div>
+{% endblock %}

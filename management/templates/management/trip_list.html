@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Trip Management{% endblock %}
+{% block content %}
+  <div style="max-width: 1000px; margin: 0 auto; padding: 1rem;">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h1>Trip Management</h1>
+      <a href="{% url 'management:trip-create' %}" style="padding: 0.5rem 1rem; background: #4caf50; color: white; text-decoration: none; border-radius: 4px;">+ Create Trip</a>
+    </header>
+
+    {% if trips %}
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background: #f5f5f5;">
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Matatu</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Route</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Status</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Started</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Ended</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for t in trips %}
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 0.75rem;">{{ t.matatu.registration_number }}</td>
+                <td style="padding: 0.75rem;">{{ t.route.name }}</td>
+                <td style="padding: 0.75rem;">
+                  <span style="
+                    text-transform: capitalize;
+                    padding: 0.2rem 0.5rem;
+                    border-radius: 3px;
+                    font-size: 0.8rem;
+                    background: 
+                      {% if t.status == 'active' %}#e8f5e9
+                      {% elif t.status == 'completed' %}#e3f2fd
+                      {% elif t.status == 'cancelled' %}#fce4ec
+                      {% else %}#fff3e0{% endif %};
+                    color:
+                      {% if t.status == 'active' %}green
+                      {% elif t.status == 'completed' %}blue
+                      {% elif t.status == 'cancelled' %}red
+                      {% else %}orange{% endif %};
+                  ">
+                    {{ t.get_status_display }}
+                  </span>
+                </td>
+                <td style="padding: 0.75rem;">{{ t.start_time|date:"M d, H:i" }}</td>
+                <td style="padding: 0.75rem;">{{ t.end_time|date:"M d, H:i"|default:'—' }}</td>
+                <td style="padding: 0.75rem;">
+                  {% if t.status == 'created' %}
+                    <a href="{% url 'management:trip-start' t.pk %}" style="margin-right: 0.5rem; padding: 0.25rem 0.5rem; background: #4caf50; color: white; text-decoration: none; border-radius: 3px; font-size: 0.8rem;">Start</a>
+                    <a href="{% url 'management:trip-cancel' t.pk %}" style="padding: 0.25rem 0.5rem; background: #f44336; color: white; text-decoration: none; border-radius: 3px; font-size: 0.8rem;">Cancel</a>
+                  {% elif t.status == 'active' %}
+                    <a href="{% url 'management:trip-end' t.pk %}" style="margin-right: 0.5rem; padding: 0.25rem 0.5rem; background: #2196f3; color: white; text-decoration: none; border-radius: 3px; font-size: 0.8rem;">End</a>
+                    <a href="{% url 'management:trip-cancel' t.pk %}" style="padding: 0.25rem 0.5rem; background: #f44336; color: white; text-decoration: none; border-radius: 3px; font-size: 0.8rem;">Cancel</a>
+                  {% else %}
+                    <span style="color: #999;">—</span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p style="color: #666;">No trips yet.</p>
+    {% endif %}
+  </div>
+{% endblock %}

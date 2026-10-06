@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Trip{% endblock %}
+{% block content %}
+  <div style="max-width: 600px; margin: 0 auto; padding: 1rem;">
+    <h1>{{ action }} Trip</h1>
+    <form method="post">
+      {% csrf_token %}
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Matatu</label>
+        <select name="matatu" required style="width: 100%; padding: 0.5rem;">
+          <option value="">— Select Matatu —</option>
+          {% for m in matatus %}
+            <option value="{{ m.id }}">{{ m.registration_number }} ({{ m.operator }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Route</label>
+        <select name="route" required style="width: 100%; padding: 0.5rem;">
+          <option value="">— Select Route —</option>
+          {% for r in routes %}
+            <option value="{{ r.id }}">{{ r.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Initial Status</label>
+        <select name="status" style="width: 100%; padding: 0.5rem;">
+          {% for value, label in status_choices %}
+            <option value="{{ value }}" {% if value == 'created' %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" style="padding: 0.75rem 1.5rem; background: #4caf50; color: white; border: none; border-radius: 4px;">{{ action }}</button>
+      <a href="{% url 'management:trip-list' %}" style="margin-left: 1rem; padding: 0.75rem 1.5rem; background: #757575; color: white; text-decoration: none; border-radius: 4px;">Cancel</a>
+    </form>
+  </div>
+{% endblock %}

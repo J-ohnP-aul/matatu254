@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'r_outes',
     'notifications',
     'conductor',
+    'management',
 ]
 
 AUTH_USER_MODEL = 'accounts.User'

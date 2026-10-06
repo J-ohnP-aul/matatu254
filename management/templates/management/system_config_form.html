@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Edit Config: {{ config.key }}{% endblock %}
+{% block content %}
+  <div style="max-width: 600px; margin: 0 auto; padding: 1rem;">
+    <header style="margin-bottom: 1rem;">
+      <h1>Edit Configuration</h1>
+      <a href="{% url 'management:system-config' %}" style="color: #666;">← Back</a>
+    </header>
+
+    <form method="post">
+      {% csrf_token %}
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Key</label>
+        <input type="text" value="{{ config.key }}" readonly style="width: 100%; padding: 0.5rem; background: #f5f5f5;">
+      </div>
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Value</label>
+        <input type="text" name="value" value="{{ config.value }}" required style="width: 100%; padding: 0.5rem;">
+      </div>
+      <button type="submit" style="padding: 0.75rem 1.5rem; background: #4caf50; color: white; border: none; border-radius: 4px;">Save</button>
+      <a href="{% url 'management:system-config' %}" style="margin-left: 1rem; padding: 0.75rem 1.5rem; background: #757575; color: white; text-decoration: none; border-radius: 4px;">Cancel</a>
+    </form>
+  </div>
+{% endblock %}

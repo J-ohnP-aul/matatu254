@@ -25,3 +25,5 @@ def haversine_distance_m(lat1: float, lon1: float, lat2: float, lon2: float) -> 
 def haversine_distance_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """Return the straight-line distance between two GPS points in kilometers."""
     return haversine_distance_m(lat1, lon1, lat2, lon2) / 1000
+
+

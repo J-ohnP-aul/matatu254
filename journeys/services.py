@@ -62,7 +62,9 @@ def update_journey_status(journey: JourneySession) -> JourneySession:
             new_status = JourneySession.Status.IN_TRANSIT
     
     elif journey.status == JourneySession.Status.IN_TRANSIT:
-        if next_stage and next_stage.id == journey.destination_stage_id:
+        if current_stage and current_stage.id == journey.destination_stage_id:
+            new_status = JourneySession.Status.APPROACHING
+        elif next_stage and next_stage.id == journey.destination_stage_id:
             if is_near_stage(vehicle_pos[0], vehicle_pos[1], journey.destination_stage):
                 new_status = JourneySession.Status.APPROACHING
     
@@ -83,14 +85,23 @@ def update_journey_status(journey: JourneySession) -> JourneySession:
 
 
 def _send_approaching_notification(journey: JourneySession):
-    """Send approaching notification to passenger (and optionally conductor)."""
+    """Send approaching notification to passenger and assigned conductor."""
+    passenger_message = f"Approaching {journey.destination_stage.name} — prepare to alight"
     Notification.objects.create(
         recipient_type=Notification.RecipientType.PASSENGER,
         recipient_id=journey.passenger_id,
         journey=journey,
-        message=f"Approaching {journey.destination_stage.name} — prepare to alight",
+        message=passenger_message,
     )
-    # TODO: Add conductor notification when conductor dashboard exists
+
+    matatu = journey.trip.matatu
+    for conductor in matatu.conductor.all():
+        Notification.objects.create(
+            recipient_type=Notification.RecipientType.CONDUCTOR,
+            recipient_id=conductor.pk,
+            journey=journey,
+            message=f"{matatu.registration_number} is approaching {journey.destination_stage.name}",
+        )
 
 
 @transaction.atomic

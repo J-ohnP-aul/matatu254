@@ -11,6 +11,7 @@ class Notification(models.Model):
 
 	class Status(models.TextChoices):
 		SENT = "sent", "Sent"
+		READ = "read", "Read"
 	recipient_type = models.CharField(
 		max_length=9,
 		choices=RecipientType.choices,
@@ -33,4 +34,8 @@ class Notification(models.Model):
 
 	def __str__(self):
 		return f"{self.recipient_type}: {self.message[:50]}"
+
+	def mark_read(self):
+		self.status = self.Status.READ
+		self.save(update_fields=["status"])
 

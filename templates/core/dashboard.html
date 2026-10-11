@@ -33,6 +33,11 @@
             📋 View Journey History
           </a>
         </li>
+        <li style="padding: 1rem; margin: 0.5rem 0; background: #e0f7fa; border-radius: 4px;">
+          <a href="{% url 'notifications:list' %}" style="text-decoration: none; font-size: 1.2rem;">
+            🔔 Notifications
+          </a>
+        </li>
       </ul>
 
     {% elif user.role == 'CONDUCTOR' %}

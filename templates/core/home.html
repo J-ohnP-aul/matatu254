@@ -1,84 +1,120 @@
 {% extends 'base.html' %}
-{% block title %}Welcome | home page{% endblock %}
+{% block title %}Welcome | Matatu254{% endblock %}
 
 {% block content %}
-  {% if not user.is_authenticated %}
-    <div>
-      <p>Welcome to the home page of the application. Please log in or register to access more features.</p>
-      <a href="{% url 'accounts:login' %}">Log in</a> | <a href="{% url 'accounts:register' %}">Register</a>
+  <div style="text-align: center; padding: 3rem 1rem;">
+    <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">🚌 Matatu254</h1>
+    <p style="font-size: 1.2rem; color: #666; max-width: 600px; margin: 0 auto 2rem;">
+      Smart Matatu Passenger Journey & Stop Notification System
+    </p>
+
+    {% if user.is_authenticated %}
+      <div style="display: grid; gap: 1rem; max-width: 400px; margin: 0 auto; text-align: left;">
+        {% if user.role == 'PASSANGER' %}
+          <a href="{% url 'journeys:scan-qr' %}" style="display: block; padding: 1.5rem; background: #e3f2fd; border-radius: 8px; text-decoration: none; border: 1px solid #bbdefb;">
+            <strong style="font-size: 1.1rem;">📷 Scan QR Code</strong><br>
+            <small>Start a new journey by scanning the matatu QR code</small>
+          </a>
+          <a href="{% url 'journeys:history' %}" style="display: block; padding: 1.5rem; background: #f3e5f5; border-radius: 8px; text-decoration: none; border: 1px solid #e1bee7;">
+            <strong style="font-size: 1.1rem;">📋 Journey History</strong><br>
+            <small>View your completed journeys</small>
+          </a>
+        {% elif user.role == 'CONDUCTOR' %}
+          <a href="{% url 'conductor:dashboard' %}" style="display: block; padding: 1.5rem; background: #e8f5e9; border-radius: 8px; text-decoration: none; border: 1px solid #c8e6c9;">
+            <strong style="font-size: 1.1rem;">🚌 Trip Dashboard</strong><br>
+            <small>View active trip, passengers & upcoming stops</small>
+          </a>
+          <a href="{% url 'conductor:notifications' %}" style="display: block; padding: 1.5rem; background: #fff3e0; border-radius: 8px; text-decoration: none; border: 1px solid #ffe0b2;">
+            <strong style="font-size: 1.1rem;">🔔 Notifications</strong><br>
+            <small>View conductor notifications</small>
+          </a>
+          <a href="{% url 'core:home' %}?tracking=1" style="display: block; padding: 1.5rem; background: #f5f5f5; border-radius: 8px; text-decoration: none; border: 1px solid #e0e0e0;">
+            <strong style="font-size: 1.1rem;">📍 GPS Tracking Panel</strong><br>
+            <small>Test live GPS tracking from this browser</small>
+          </a>
+        {% elif user.role == 'ADMIN' %}
+          <a href="/admin/" style="display: block; padding: 1.5rem; background: #fce4ec; border-radius: 8px; text-decoration: none; border: 1px solid #f8bbd0;">
+            <strong style="font-size: 1.1rem;">⚙️ Django Admin</strong><br>
+            <small>Manage routes, matatus, trips, users</small>
+          </a>
+          <a href="{% url 'fleet:index' %}" style="display: block; padding: 1.5rem; background: #e8f5e9; border-radius: 8px; text-decoration: none; border: 1px solid #c8e6c9;">
+            <strong style="font-size: 1.1rem;">🚌 Fleet Management</strong><br>
+            <small>Generate QR codes for matatus</small>
+          </a>
+        {% endif %}
+      </div>
+    {% else %}
+      <div style="display: inline-flex; gap: 1rem; margin-top: 1.5rem;">
+        <a href="{% url 'accounts:login' %}" style="padding: 1rem 2rem; background: #263238; color: white; text-decoration: none; border-radius: 4px; font-size: 1.1rem;">Login</a>
+        <a href="{% url 'accounts:register' %}" style="padding: 1rem 2rem; background: #4caf50; color: white; text-decoration: none; border-radius: 4px; font-size: 1.1rem;">Register</a>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if user.is_authenticated and user.role == 'CONDUCTOR' and request.GET.tracking %}
+  <hr style="margin: 3rem 0;">
+  <div style="max-width: 700px; margin: 0 auto;">
+    <h2>📍 GPS Tracking Test Panel</h2>
+    <p style="color: #666;">Use this to test live GPS tracking from your browser. Works best on phone (HTTPS).</p>
+    
+    <div style="background: #f5f5f5; padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+      <h3>Browser Location</h3>
+      <pre id="browser-status" style="padding: 1rem; background: white; border-radius: 4px; border: 1px solid #ddd; min-height: 80px;">waiting for permission...</pre>
     </div>
-  {% else %}
-    <div>
-      <p>Welcome back, {{ user.username }}!</p>
-      <a href="{% url 'core:dashboard' %}">Go to Dashboard</a>
 
-      <h1>Tracking test</h1>
-
-      <h2>Browser says</h2>
-      <pre id="browser">waiting for permission...</pre>
-
-      <h2>Backend has</h2>
+    <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+      <h3>Backend Data (last ping)</h3>
       {% if trip %}
-        <pre>
-          trip_id:   {{ trip.id }}
-          latitude:  {{ trip.current_latitude|default:"—" }}
-          longitude: {{ trip.current_longitude|default:"—" }}
-          last_ping: {{ trip.last_ping_at|default:"—" }}
-          is_stale:  {{ trip.is_stale }}
+        <pre style="padding: 1rem; background: white; border-radius: 4px; border: 1px solid #ddd;">
+trip_id:   {{ trip.id }}
+latitude:  {{ trip.current_latitude|default:"—" }}
+longitude: {{ trip.current_longitude|default:"—" }}
+last_ping: {{ trip.last_ping_at|default:"—" }}
+is_stale:  {{ trip.is_stale }}
         </pre>
       {% else %}
-        <p>No active trip. Create one in the admin first.</p>
+        <p>No active trip. Create one in admin first.</p>
       {% endif %}
     </div>
+  </div>
+
+  <script>
+    const out = document.getElementById("browser-status");
+    const tripId = {% if trip %}{{ trip.id }}{% else %}null{% endif %};
+
+    if (tripId && navigator.geolocation) {
+      navigator.geolocation.watchPosition(
+        async (pos) => {
+          const { latitude, longitude } = pos.coords;
+          const recorded_at = new Date(pos.timestamp).toISOString();
+          out.textContent = `lat: ${latitude}\nlng: ${longitude}\nrecorded: ${recorded_at}`;
+
+          try {
+            await fetch(`/trips/${tripId}/ping/`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ latitude, longitude, recorded_at }),
+            });
+          } catch (e) { console.warn("ping failed", e); }
+        },
+        (err) => {
+          const msg = err.code === err.PERMISSION_DENIED
+            ? "permission denied — enable in browser settings"
+            : err.code === err.TIMEOUT
+              ? "timeout — no fix in 30s"
+              : err.code === err.POSITION_UNAVAILABLE
+                ? "position unavailable — GPS signal lost"
+                : `error ${err.code}: ${err.message}`;
+          out.textContent = msg;
+          console.warn("geolocation error", err);
+        },
+        { enableHighAccuracy: false, maximumAge: 30000, timeout: 30000 }
+      );
+    } else if (!navigator.geolocation) {
+      out.textContent = "error: geolocation not supported in this browser";
+    } else if (!tripId) {
+      out.textContent = "no active trip — create one in admin first";
+    }
+  </script>
   {% endif %}
-
-  <h1>Welcome to the home page</h1>
-  <p>This is the home page of the application.</p>
-{% endblock content %}
-
-{% block scripts %}
-{% if user.is_authenticated and trip %}
-<script>
-  const out = document.getElementById("browser");
-  const tripId = {{ trip.id }};
-
-  if (!navigator.geolocation) {
-    out.textContent = "error: geolocation not supported";
-  } else {
-    navigator.geolocation.watchPosition(
-      async (pos) => {
-        const { latitude, longitude } = pos.coords;
-        const recorded_at = new Date(pos.timestamp).toISOString();
-
-        out.textContent =
-          `latitude:  ${latitude}\n` +
-          `longitude: ${longitude}\n` +
-          `recorded:  ${recorded_at}`;
-
-        try {
-          await fetch(`/trips/${tripId}/ping/`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ latitude, longitude, recorded_at }),
-          });
-        } catch (e) {
-          console.warn("ping failed", e);
-        }
-      },
-      (err) => {
-        const msg = err.code === err.PERMISSION_DENIED
-          ? "permission denied — enable in browser settings"
-          : err.code === err.TIMEOUT
-            ? "timeout — try moving outdoors or increase timeout"
-            : err.code === err.POSITION_UNAVAILABLE
-              ? "position unavailable — GPS signal lost"
-              : `error ${err.code}: ${err.message}`;
-        out.textContent = msg;
-        console.warn("geolocation error", err);
-      },
-      { enableHighAccuracy: true, maximumAge: 10000, timeout: 30000 }
-    );
-  }
-</script>
-{% endif %}
-{% endblock scripts %}
+{% endblock %}

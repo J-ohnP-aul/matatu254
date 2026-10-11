@@ -26,7 +26,13 @@
               <tr style="border-bottom: 1px solid #eee;">
                 <td style="padding: 0.75rem; font-weight: bold;">{{ m.registration_number }}</td>
                 <td style="padding: 0.75rem;">{{ m.operator }}</td>
-                <td style="padding: 0.75rem;">{{ m.conductor.username if m.conductor else '—' }}</td>
+                <td style="padding: 0.75rem;">
+                  {% if m.conductor %}
+                    {{ m.conductor.username }}
+                  {% else %}
+                    —
+                  {% endif %}
+                </td>
                 <td style="padding: 0.75rem;">
                   {% if m.qr_code %}
                     <span style="

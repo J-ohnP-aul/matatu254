@@ -2,9 +2,34 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 
+from fleet.models import Matatu
 from trips.models import ActiveTrip
 from journeys.models import JourneySession
 from notifications.models import Notification
+
+
+def _get_assigned_matatu(user):
+    if not user or not getattr(user, 'is_authenticated', False):
+        return None
+
+    matatu = getattr(user, 'matatu', None)
+    if matatu:
+        return matatu
+
+    return Matatu.objects.filter(conductor=user).first() or user.matatus.first()
+
+
+def _is_authorized_conductor(user, matatu):
+    if not user or not matatu or getattr(user, 'role', None) != 'CONDUCTOR':
+        return False
+
+    if getattr(user, 'matatu_id', None) == matatu.pk:
+        return True
+
+    if getattr(matatu, 'owner_id', None) == user.pk:
+        return True
+
+    return matatu.conductor.filter(pk=user.pk).exists()
 
 
 @login_required
@@ -13,11 +38,8 @@ def dashboard(request):
     if request.user.role != 'CONDUCTOR':
         return render(request, "conductor/not_conductor.html")
     
-    # Get the matatu assigned to this conductor (via User.matatu_id or owner)
-    matatu = getattr(request.user, 'matatu', None)
-    if not matatu:
-        # Fallback: check if user owns a matatu
-        matatu = request.user.matatus.first()
+    # Get the matatu assigned to this conductor via either direct assignment or reverse relation
+    matatu = _get_assigned_matatu(request.user)
     
     active_trip = None
     if matatu:
@@ -41,9 +63,8 @@ def trip_detail(request, trip_id):
     
     trip = get_object_or_404(ActiveTrip, pk=trip_id)
     
-    # Verify conductor owns this trip's matatu
-    matatu = getattr(request.user, 'matatu', None)
-    if not matatu or trip.matatu != matatu:
+    # Verify conductor is assigned to this trip's matatu through either ownership path
+    if not _is_authorized_conductor(request.user, trip.matatu):
         return render(request, "conductor/not_authorized.html")
     
     # Get all journey sessions for this trip
@@ -107,6 +128,9 @@ def trip_detail(request, trip_id):
 def trip_passengers(request, trip_id):
     """HTMX partial - passenger list for a trip"""
     trip = get_object_or_404(ActiveTrip, pk=trip_id)
+    if not _is_authorized_conductor(request.user, trip.matatu):
+        return render(request, "conductor/not_authorized.html")
+
     journeys = JourneySession.objects.filter(trip=trip).select_related(
         'passenger', 'destination_stage'
     ).order_by('destination_stage__sequence_order')

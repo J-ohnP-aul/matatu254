@@ -1,3 +1,41 @@
-/data.txt
+# OSRM data (large files)
 /data_bases/
 /osrm_docker-cheetsheet.txt
+
+# Django
+*.pyc
+__pycache__/
+db.sqlite3
+db.sqlite3.backup
+media/
+
+# Static files (collected)
+staticfiles/
+
+# Environment
+.env
+.env.local
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Build
+build/
+dist/
+*.egg-info/

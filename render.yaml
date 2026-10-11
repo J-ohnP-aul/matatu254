@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: matatu254
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: OSRM_BASE_URL
+        value: ""  # Set to external OSRM endpoint if available, else leave empty to disable routing
+    healthCheckPath: /
+    autoDeploy: true
+
+databases:
+  - name: matatu254-db
+    plan: free
+    databaseName: matatu254
+    user: matatu254_user

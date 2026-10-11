@@ -45,6 +45,27 @@
       </div>
     </div>
 
+    <!-- GPS Tracking Controls -->
+    <div style="background: #fff3e0; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #ffb74d;">
+      <h3 style="margin-top: 0;">📍 GPS Tracking Control</h3>
+      <p style="margin: 0.5rem 0; color: #e65100;">
+        Start tracking to stream live GPS position from the driver's phone to this dashboard.
+      </p>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+        <button id="start-tracking-btn" 
+                style="padding: 0.75rem 1.5rem; background: #ff9800; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;"
+                onclick="startTracking({{ trip.id }})">
+          ▶ Start GPS Tracking
+        </button>
+        <button id="stop-tracking-btn" 
+                style="padding: 0.75rem 1.5rem; background: #f44336; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; display: none;"
+                onclick="stopTracking()">
+          ■ Stop GPS Tracking
+        </button>
+        <span id="tracking-status" style="color: #666; font-size: 0.9rem;">Not tracking</span>
+      </div>
+    </div>
+
     <!-- Upcoming Stops with Passenger Counts -->
     <div style="margin-bottom: 1rem;">
       <h2>Upcoming Stops</h2>
@@ -96,5 +117,83 @@
       });
       // Also refresh the whole page data periodically
     }, 10000);
+
+    // GPS Tracking Controls
+    let watchId = null;
+    let currentTripId = null;
+
+    async function startTracking(tripId) {
+      currentTripId = tripId;
+      const statusEl = document.getElementById('tracking-status');
+      const startBtn = document.getElementById('start-tracking-btn');
+      const stopBtn = document.getElementById('stop-tracking-btn');
+
+      if (!navigator.geolocation) {
+        statusEl.textContent = 'Error: Geolocation not supported';
+        statusEl.style.color = 'red';
+        return;
+      }
+
+      if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+        statusEl.textContent = 'Error: Requires HTTPS or localhost';
+        statusEl.style.color = 'red';
+        return;
+      }
+
+      startBtn.style.display = 'none';
+      stopBtn.style.display = 'inline-block';
+      statusEl.textContent = 'Requesting location permission...';
+      statusEl.style.color = 'orange';
+
+      watchId = navigator.geolocation.watchPosition(
+        async (pos) => {
+          const { latitude, longitude } = pos.coords;
+          const recorded_at = new Date(pos.timestamp).toISOString();
+
+          statusEl.textContent = `Tracking: ${latitude.toFixed(6)}, ${longitude.toFixed(6)} (updated ${new Date().toLocaleTimeString()})`;
+          statusEl.style.color = 'green';
+
+          try {
+            await fetch(`/trips/${currentTripId}/ping/`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ latitude, longitude, recorded_at }),
+            });
+          } catch (e) {
+            console.warn('Ping failed', e);
+          }
+        },
+        (err) => {
+          const msg = err.code === err.PERMISSION_DENIED
+            ? 'Permission denied — enable in browser settings'
+            : err.code === err.TIMEOUT
+              ? 'Timeout — no GPS fix in 30s'
+              : err.code === err.POSITION_UNAVAILABLE
+                ? 'Position unavailable — GPS signal lost'
+                : `Error ${err.code}: ${err.message}`;
+          statusEl.textContent = msg;
+          statusEl.style.color = 'red';
+          console.warn('Geolocation error', err);
+          resetButtons();
+        },
+        { enableHighAccuracy: true, maximumAge: 10000, timeout: 30000 }
+      );
+    }
+
+    function stopTracking() {
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+        currentTripId = null;
+      }
+      resetButtons();
+      document.getElementById('tracking-status').textContent = 'Tracking stopped';
+      document.getElementById('tracking-status').style.color = '#666';
+    }
+
+    function resetButtons() {
+      document.getElementById('start-tracking-btn').style.display = 'inline-block';
+      document.getElementById('stop-tracking-btn').style.display = 'none';
+    }
   </script>
 {% endblock %}

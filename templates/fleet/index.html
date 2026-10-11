@@ -1,23 +1,64 @@
 {% extends 'base.html' %}
 
-{% block header %}
-  <h2>Fleet Management</h2>
-{% endblock header %}
+{% block title %}Fleet Management{% endblock %}
 
 {% block content %}
-  <p>Welcome to the Fleet Management System.</p>
-  <p>Here you can manage your fleet of vehicles, track their status, and generate QR codes for each vehicle.</p>
+  <div style="max-width: 1000px; margin: 0 auto; padding: 1rem;">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h2 style="margin: 0;">Fleet Management</h2>
+        <p style="margin: 0.25rem 0 0; color: #666;">Real matatus and QR codes used by the passenger scan flow.</p>
+      </div>
+      <a href="{% url 'management:matatu-create' %}" style="padding: 0.6rem 1rem; background: #4caf50; color: white; text-decoration: none; border-radius: 4px;">+ Add Matatu</a>
+    </header>
 
-  <h3>Generate QR Code for a Vehicle</h3>
-  <form method="post" action="{% url 'fleet:index' %}">
-    {% csrf_token %}
-    <label for="vehicle_id">Vehicle ID:</label>
-    <input type="text" id="vehicle_id" name="vehicle_id" required>
-    <button type="submit" class="btn btn-primary">Generate QR Code</button>
-  </form>
-
-  {% if qr %}
-    <h4>QR Code:</h4>
-    <img src="data:image/png;base64,{{ qr }}" alt="QR Code">
-  {% endif %}
+    {% if matatus %}
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background: #f5f5f5;">
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Registration</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Operator</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">QR Value</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Status</th>
+              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for matatu in matatus %}
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 0.75rem; font-weight: bold;">{{ matatu.registration_number }}</td>
+                <td style="padding: 0.75rem;">{{ matatu.operator }}</td>
+                <td style="padding: 0.75rem;">
+                  {% if matatu.qr_code %}
+                    {{ matatu.qr_code.code_value }}
+                  {% else %}
+                    <span style="color: #999;">No QR</span>
+                  {% endif %}
+                </td>
+                <td style="padding: 0.75rem;">
+                  {% if matatu.qr_code %}
+                    <span style="padding: 0.2rem 0.5rem; border-radius: 3px; font-size: 0.8rem; background: {% if matatu.qr_code.status == 'active' %}#e8f5e9{% else %}#fce4ec{% endif %}; color: {% if matatu.qr_code.status == 'active' %}green{% else %}red{% endif %};">
+                      {{ matatu.qr_code.get_status_display }}
+                    </span>
+                  {% else %}
+                    <span style="color: #999;">—</span>
+                  {% endif %}
+                </td>
+                <td style="padding: 0.75rem;">
+                  {% if matatu.qr_code %}
+                    <a href="{% url 'management:matatu-qr' matatu.pk %}">Manage QR</a>
+                  {% else %}
+                    <a href="{% url 'management:matatu-create' %}">Create QR</a>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p style="color: #666;">No matatus registered yet.</p>
+    {% endif %}
+  </div>
 {% endblock content %}

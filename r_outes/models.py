@@ -15,6 +15,9 @@ class Route(models.Model):
     def stage_count(self):
         return self.stages.count()
 
+    @property
+    def stage_list(self):
+        return list(self.stages.order_by("sequence_order"))
 
 class Stage(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE, related_name="stages")

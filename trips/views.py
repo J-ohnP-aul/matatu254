@@ -21,8 +21,14 @@ def ping(request, trip_id):
     pk=trip_id, 
     status=ActiveTrip.Status.ACTIVE
   )
-  # Allow ping from either matatu owner or assigned conductor
-  if not (trip.matatu.owner == request.user or getattr(request.user, 'matatu', None) == trip.matatu):
+  # Allow ping from either matatu owner or assigned conductor via either direct or reverse assignment
+  user_matatu = getattr(request.user, 'matatu', None)
+  is_assigned = (
+      user_matatu == trip.matatu
+      or trip.matatu.owner == request.user
+      or trip.matatu.conductor.filter(pk=request.user.pk).exists()
+  )
+  if not is_assigned:
     return JsonResponse({"error": "Not authorized for this trip"}, status=403)
   
   data = json.loads(request.body)

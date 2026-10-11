@@ -1,8 +1,6 @@
-from io import BytesIO
-import base64
-
-import qrcode
 from django.views.generic import TemplateView
+
+from fleet.models import Matatu
 
 
 class index(TemplateView):
@@ -10,12 +8,5 @@ class index(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        text = "https://fast.com"
-        qr = qrcode.make(text)
-
-        buffer = BytesIO()
-        qr.save(buffer, format='PNG')
-        context['qr'] = base64.b64encode(buffer.getvalue()).decode('utf-8')
-
+        context['matatus'] = Matatu.objects.select_related('qr_code').order_by('registration_number')
         return context

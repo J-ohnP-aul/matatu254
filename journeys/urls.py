@@ -8,6 +8,7 @@ urlpatterns = [
     path("trip/<int:trip_id>/stages/", views.trip_stages, name="trip-stages"),
     path("trip/<int:trip_id>/select/", views.select_destination, name="select-destination"),
     path("session/<int:journey_id>/", views.journey_detail, name="journey-detail"),
+    path("session/<int:journey_id>/tracking-data/", views.journey_tracking_data, name="tracking-data"),
     path("session/<int:journey_id>/end/", views.end_journey, name="end-journey"),
     path("history/", views.history, name="history"),
 ]

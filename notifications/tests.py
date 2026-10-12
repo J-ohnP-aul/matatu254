@@ -10,6 +10,7 @@ from journeys.services import update_journey_status
 from notifications.models import Notification
 from r_outes.models import Route, Stage
 from trips.models import ActiveTrip
+from trips.services import record_ping
 
 User = get_user_model()
 
@@ -38,7 +39,7 @@ class NotificationBusinessLogicTests(TestCase):
             route=self.route,
             name='Westlands',
             sequence_order=1,
-            latitude=Decimal('-1.283300'),
+            latitude=Decimal('-1.285300'),
             longitude=Decimal('36.816700'),
         )
         self.destination = Stage.objects.create(
@@ -94,3 +95,61 @@ class NotificationBusinessLogicTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Approaching Kibera')
+
+    def test_fresh_gps_pings_notify_passenger_of_intermediate_stage_once(self):
+        record_ping(
+            self.trip,
+            latitude=self.stage_one.latitude,
+            longitude=self.stage_one.longitude,
+        )
+        record_ping(
+            self.trip,
+            latitude=self.stage_one.latitude,
+            longitude=self.stage_one.longitude,
+        )
+
+        self.assertEqual(
+            Notification.objects.filter(
+                recipient_type=Notification.RecipientType.PASSENGER,
+                recipient_id=self.passenger.pk,
+                journey=self.journey,
+                message="Reached Westlands",
+            ).count(),
+            1,
+        )
+
+    def test_destination_arrival_creates_passenger_notification(self):
+        update_journey_status(self.journey)
+        self.journey.refresh_from_db()
+        update_journey_status(self.journey)
+        self.journey.refresh_from_db()
+
+        self.assertEqual(self.journey.status, JourneySession.Status.ARRIVED)
+        self.assertTrue(Notification.objects.filter(
+            recipient_type=Notification.RecipientType.PASSENGER,
+            recipient_id=self.passenger.pk,
+            journey=self.journey,
+            message="You have arrived at your destination: Kibera",
+        ).exists())
+
+    def test_tracking_data_includes_latest_journey_notification(self):
+        self.trip.current_latitude = None
+        self.trip.current_longitude = None
+        self.trip.save(update_fields=["current_latitude", "current_longitude"])
+        notification = Notification.objects.create(
+            recipient_type=Notification.RecipientType.PASSENGER,
+            recipient_id=self.passenger.pk,
+            journey=self.journey,
+            message="Reached Westlands",
+        )
+        self.client.force_login(self.passenger)
+
+        response = self.client.get(
+            reverse("journeys:tracking-data", args=[self.journey.pk])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["latest_notification"], {
+            "id": notification.pk,
+            "message": "Reached Westlands",
+        })

@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
+from journeys.services import get_active_journey
 from .models import Notification
 
 
@@ -11,7 +12,10 @@ def notifications(request):
         recipient_type=Notification.RecipientType.PASSENGER,
         recipient_id=request.user.id,
     ).order_by('-timestamp')
-    return render(request, 'notifications/list.html', {'notifications': items})
+    return render(request, 'notifications/list.html', {
+        'notifications': items,
+        'active_journey': get_active_journey(request.user),
+    })
 
 
 @login_required

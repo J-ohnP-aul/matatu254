@@ -26,9 +26,23 @@ def record_ping(trip: ActiveTrip, latitude, longitude, recorded_at=None):
     trip.current_longitude = longitude
     trip.last_ping_at = recorded_at
     trip.save(update_fields=["current_latitude", "current_longitude", "last_ping_at"])
-    
-    
-    
+
+    # Stage events are driven by fresh GPS pings, not by whether a passenger
+    # happens to have the journey page open at that moment.
+    from journeys.models import JourneySession
+    from journeys.services import update_journey_status
+
+    active_statuses = [
+      JourneySession.Status.DESTINATION_SELECTED,
+      JourneySession.Status.IN_TRANSIT,
+      JourneySession.Status.APPROACHING,
+    ]
+    journeys = JourneySession.objects.filter(
+      trip=trip,
+      status__in=active_statuses,
+    ).select_related("passenger", "trip", "trip__matatu", "trip__route", "destination_stage")
+    for journey in journeys:
+      update_journey_status(journey)
 #     trip = ActiveTrip.objects.get(pk=trip_id)
 
 # if trip.is_stale:

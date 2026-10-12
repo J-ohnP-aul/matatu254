@@ -1,8 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from fleet.models import Matatu
+from journeys.models import JourneySession
 from r_outes.models import Route, Stage
 from trips.models import ActiveTrip
 
@@ -42,3 +45,75 @@ class ConductorAuthorizationTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Not Authorized")
+        self.assertContains(response, "Live trip")
+        self.assertContains(response, "Alighting per stage")
+
+    @patch("conductor.views.remaining_road_distance")
+    def test_tracking_endpoint_recalculates_distance_from_latest_position(self, remaining_distance_mock):
+        matatu = Matatu.objects.create(
+            registration_number="KDA 1442",
+            operator="City Shuttle",
+        )
+        conductor = User.objects.create_user(
+            username="tracking-conductor",
+            password="secret123",
+            role=User.CONDUCTOR,
+            matatu=matatu,
+        )
+        route = Route.objects.create(name="Kisii - Migori")
+        Stage.objects.create(
+            route=route,
+            name="Kisii New Bus Station",
+            sequence_order=1,
+            latitude=-0.68,
+            longitude=34.77,
+        )
+        Stage.objects.create(
+            route=route,
+            name="Migori",
+            sequence_order=2,
+            latitude=-1.06,
+            longitude=34.47,
+        )
+        trip = ActiveTrip.objects.create(
+            matatu=matatu,
+            route=route,
+            status=ActiveTrip.Status.ACTIVE,
+            current_latitude=-0.68,
+            current_longitude=34.77,
+        )
+        passenger = User.objects.create_user(
+            username="trip-passenger",
+            password="secret123",
+            role=User.PASSANGER,
+        )
+        destination = route.stages.get(sequence_order=2)
+        JourneySession.objects.create(
+            passenger=passenger,
+            trip=trip,
+            destination_stage=destination,
+            status=JourneySession.Status.IN_TRANSIT,
+        )
+        remaining_distance_mock.side_effect = lambda position, *_: SimpleNamespace(
+            distance_m=20000 if position[1] == 34.77 else 15000,
+            distance_km=20 if position[1] == 34.77 else 15,
+            duration_s=1800,
+            duration_minutes=30,
+        )
+        self.client.force_login(conductor)
+        url = reverse("conductor:trip-tracking-data", args=[trip.pk])
+
+        first_response = self.client.get(url)
+        self.assertEqual(first_response.status_code, 200)
+        self.assertEqual(first_response.json()["distance_m"], 20000)
+        self.assertEqual(first_response.json()["next_stage"], "Migori")
+        self.assertEqual(first_response.json()["total_passengers"], 1)
+        self.assertEqual(first_response.json()["alighting_counts"]["2"], 1)
+
+        trip.current_longitude = 34.78
+        trip.save(update_fields=["current_longitude"])
+        second_response = self.client.get(url)
+
+        self.assertEqual(second_response.status_code, 200)
+        self.assertEqual(second_response.json()["distance_m"], 15000)
+        self.assertEqual(remaining_distance_mock.call_count, 4)

@@ -20,7 +20,7 @@ from core.osrm import OSRMError, RouteInfo, get_route_info
 # How close (meters) the vehicle must be to a stage to count as "reached".
 # MVP constant for now; move to system_config once the admin threshold
 # screens (FR-A-07) exist.
-STAGE_ARRIVAL_RADIUS_M = 100
+STAGE_ARRIVAL_RADIUS_M = 50
 
 
 def is_near_stage(vehicle_lat: float, vehicle_lon: float, stage) -> bool:

@@ -1,124 +1,210 @@
 {% extends 'base.html' %}
-{% block title %}{{ trip.matatu.registration_number }} — Trip Dashboard{% endblock %}
+{% block title %}{{ trip.matatu.registration_number }} — Conductor Dashboard{% endblock %}
+{% block extra_head %}
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+  <style>
+    .conductor-page { max-width: 760px; margin: 0 auto; color: #17251c; }
+    .dashboard-kicker, .metric-label { color: #607565; font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+    .dashboard-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+    .dashboard-header h1 { margin: 2px 0; font-size: 1.8rem; line-height: 1.1; }
+    .dashboard-header p { margin: 4px 0 0; color: #607565; }
+    .dashboard-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .live-card { padding: 20px; border: 1px solid #d6e2d8; border-radius: 16px; background: white; box-shadow: 0 2px 8px #193c2410; }
+    .live-card-title { margin: 0 0 16px; font-size: 1.05rem; }
+    .trip-progress { width: 100%; height: 8px; margin: 0 0 18px; border: 0; border-radius: 99px; background: #d6e7dc; }
+    .trip-progress::-webkit-progress-bar { border-radius: 99px; background: #d6e7dc; }
+    .trip-progress::-webkit-progress-value { border-radius: 99px; background: #087a45; transition: width .35s ease; }
+    .trip-progress::-moz-progress-bar { border-radius: 99px; background: #087a45; }
+    .trip-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 16px; }
+    .metric-value { display: block; margin-top: 2px; font-size: .9rem; font-weight: 700; overflow-wrap: anywhere; }
+    .conductor-alert { display: flex; align-items: center; gap: 12px; min-height: 56px; margin: 0 0 20px; padding: 14px 16px; border: 0; border-radius: 14px; background: #f7b51b; color: #302408; font-weight: 700; }
+    .conductor-alert svg { width: 22px; height: 22px; flex: none; }
+    .conductor-alert.is-calm { background: #eaf3eb; color: #1c3021; }
+    .section-title { margin: 28px 0 12px; font-size: 1.1rem; }
+    .stops-card { padding: 18px; border: 1px solid #d6e2d8; border-radius: 16px; background: white; }
+    .stop-list { display: grid; gap: 5px; padding: 0; margin: 0; list-style: none; }
+    .stop-row { display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 7px 12px; border: 1px solid transparent; border-radius: 12px; color: #17251c; }
+    .stop-icon { display: grid; width: 20px; height: 20px; place-items: center; flex: none; color: #607565; }
+    .stop-icon svg { width: 19px; height: 19px; }
+    .stop-name { flex: 1; font-size: .88rem; }
+    .stop-row.is-complete .stop-icon { color: #087a45; }
+    .stop-row.is-complete .stop-name { color: #718076; text-decoration: line-through; }
+    .stop-row.is-next { border-color: #ffd791; background: #fff5e4; }
+    .stop-badges { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+    .next-stop-badge { padding: 3px 9px; border-radius: 99px; background: #f7b51b; color: #302408; font-size: .7rem; font-weight: 700; }
+    .alighting-count { padding: 3px 9px; border-radius: 99px; background: #087a45; color: white; font-size: .7rem; font-weight: 700; white-space: nowrap; }
+    .gps-card { margin-top: 20px; padding: 16px; border: 1px solid #ead8b4; border-radius: 14px; background: #fff9eb; }
+    .gps-card h2 { margin: 0 0 5px; font-size: 1rem; }
+    .gps-card p { margin: 0 0 12px; color: #795b20; font-size: .85rem; }
+    .gps-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .gps-status { color: #607565; font-size: .82rem; }
+    .passenger-card { margin-top: 22px; padding: 16px; border: 1px solid #d6e2d8; border-radius: 16px; background: white; }
+    @media (max-width: 520px) { .dashboard-header { align-items: flex-start; flex-direction: column; } .dashboard-header h1 { font-size: 1.55rem; } .live-card { padding: 17px; } .trip-metrics { gap: 15px 10px; } .stop-row { gap: 8px; padding-inline: 8px; } }
+  </style>
+{% endblock %}
 {% block content %}
-  <div style="max-width: 1000px; margin: 0 auto; padding: 1rem;">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+  <main class="conductor-page" id="trip-dashboard" data-tracking-url="{% url 'conductor:trip-tracking-data' trip.id %}">
+    <header class="dashboard-header">
       <div>
-        <h1 style="margin: 0;">{{ trip.matatu.registration_number }}</h1>
-        <p style="margin: 0; color: #666;">{{ trip.route.name }}</p>
+        <div class="dashboard-kicker">Conductor dashboard</div>
+        <h1>{{ trip.matatu.registration_number }}</h1>
+        <p>{{ trip.route.name }}</p>
       </div>
-      <div style="display: flex; gap: 0.5rem;">
-        <a href="{% url 'conductor:dashboard' %}" style="padding: 0.5rem 1rem; background: #757575; color: white; text-decoration: none; border-radius: 4px;">← Back</a>
-        <a href="{% url 'conductor:notifications' %}" style="padding: 0.5rem 1rem; background: #2196f3; color: white; text-decoration: none; border-radius: 4px;">Notifications</a>
+      <div class="dashboard-actions">
+        <a class="btn btn-sm btn-outline" href="{% url 'conductor:dashboard' %}">← Trips</a>
+        <a class="btn btn-sm btn-outline" href="{% url 'conductor:notifications' %}">Notifications</a>
       </div>
     </header>
 
-    <!-- Trip Status Card -->
-    <div style="background: #f5f5f5; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
-        <div>
-          <strong>Trip Status:</strong><br>
-          <span style="text-transform: capitalize; color: {% if trip.status == 'active' %}green{% else %}#666{% endif %};">
-            {{ trip.get_status_display }}
-          </span>
-        </div>
-        <div>
-          <strong>Current Stage:</strong><br>
-          {{ current_stage.name|default:"—" }}
-        </div>
-        <div>
-          <strong>Next Stage:</strong><br>
-          {{ next_stage.name|default:"Destination reached" }}
-        </div>
-        <div>
-          <strong>Total Passengers:</strong><br>
-          <span style="font-size: 1.5rem; font-weight: bold;">{{ total_passengers }}</span>
-        </div>
-        <div>
-          <strong>Vehicle:</strong><br>
-          {% if vehicle_pos %}
-            {{ vehicle_pos.0|floatformat:4 }}, {{ vehicle_pos.1|floatformat:4 }}
-          {% else %}
-            No GPS signal
-          {% endif %}
-        </div>
+    <div id="next-stop-alert" role="status" class="conductor-alert{% if not next_stage_remaining or next_stage_remaining.distance_m > 1200 %} is-calm{% endif %}"{% if not next_stage %} hidden{% endif %}>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+      <span id="next-stop-alert-text">{% if next_stage_remaining and next_stage_remaining.distance_m <= 1200 %}Approaching {{ next_stage.name }} — {{ alighting_count }} alighting · {% if next_stage_remaining.distance_m >= 1000 %}{{ next_stage_remaining.distance_km|floatformat:1 }} km{% else %}{{ next_stage_remaining.distance_m|floatformat:0 }} m{% endif %}{% else %}Next stop: {{ next_stage.name|default:'Waiting for GPS' }} · {{ alighting_count }} alighting{% if next_stage_remaining %} · {% if next_stage_remaining.distance_m >= 1000 %}{{ next_stage_remaining.distance_km|floatformat:1 }} km{% else %}{{ next_stage_remaining.distance_m|floatformat:0 }} m{% endif %}{% endif %}{% endif %}</span>
+    </div>
+
+    <section class="live-card" aria-labelledby="live-trip-heading">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+        <h2 class="live-card-title" id="live-trip-heading">Live trip</h2>
+        <span class="badge badge-soft {% if trip.status == 'active' %}badge-success{% else %}badge-neutral{% endif %}" id="trip-status">{{ trip.get_status_display }}</span>
       </div>
-    </div>
-
-    <!-- GPS Tracking Controls -->
-    <div style="background: #fff3e0; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px solid #ffb74d;">
-      <h3 style="margin-top: 0;">📍 GPS Tracking Control</h3>
-      <p style="margin: 0.5rem 0; color: #e65100;">
-        Start tracking to stream live GPS position from the driver's phone to this dashboard.
-      </p>
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-        <button id="start-tracking-btn" 
-                style="padding: 0.75rem 1.5rem; background: #ff9800; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;"
-                onclick="startTracking({{ trip.id }})">
-          ▶ Start GPS Tracking
-        </button>
-        <button id="stop-tracking-btn" 
-                style="padding: 0.75rem 1.5rem; background: #f44336; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; display: none;"
-                onclick="stopTracking()">
-          ■ Stop GPS Tracking
-        </button>
-        <span id="tracking-status" style="color: #666; font-size: 0.9rem;">Not tracking</span>
+      <progress id="trip-progress" class="progress progress-success trip-progress" value="{{ progress_percent }}" max="100" aria-label="Trip progress"></progress>
+      <div class="trip-metrics">
+        <div><span class="metric-label">Current stage</span><span class="metric-value" id="current-stage">{{ current_stage.name|default:"Waiting for GPS" }}</span></div>
+        <div><span class="metric-label">Next stage</span><span class="metric-value" id="next-stage">{{ next_stage.name|default:"Destination reached" }}</span></div>
+        <div><span class="metric-label">To next stage</span><span class="metric-value" id="next-stage-distance">{% if next_stage_remaining %}{% if next_stage_remaining.distance_m >= 1000 %}{{ next_stage_remaining.distance_km|floatformat:1 }} km{% else %}{{ next_stage_remaining.distance_m|floatformat:0 }} m{% endif %}{% elif at_destination %}0 m{% else %}Waiting for GPS{% endif %}</span></div>
+        <div><span class="metric-label">ETA next</span><span class="metric-value" id="next-stage-eta">{% if next_stage_remaining %}{{ next_stage_remaining.duration_minutes|floatformat:0 }} min{% elif at_destination %}Arrived{% else %}—{% endif %}</span></div>
+        <div><span class="metric-label">Onboard</span><span class="metric-value"><span id="onboard-count">{{ total_passengers }}</span> passengers</span></div>
+        <div><span class="metric-label">Speed</span><span class="metric-value" id="vehicle-speed">{% if speed_kmh != None %}{{ speed_kmh|floatformat:0 }} km/h{% else %}—{% endif %}</span></div>
+        <div><span class="metric-label">Latitude</span><span class="metric-value" id="vehicle-latitude">{% if vehicle_pos %}{{ vehicle_pos.0|floatformat:5 }}{% else %}—{% endif %}</span></div>
+        <div><span class="metric-label">Longitude</span><span class="metric-value" id="vehicle-longitude">{% if vehicle_pos %}{{ vehicle_pos.1|floatformat:5 }}{% else %}—{% endif %}</span></div>
       </div>
-    </div>
+      <div class="journey-status" id="trip-remaining-summary" style="margin-top:18px; padding:12px; border-radius:12px; background:#eaf3eb; color:#1c3021;">{% if remaining %}{{ remaining.distance_km|floatformat:1 }} km and about {{ remaining.duration_minutes|floatformat:0 }} min to {{ trip_destination.name }}{% elif at_destination %}Trip destination reached{% else %}Waiting for a GPS position{% endif %}</div>
+    </section>
 
-    <!-- Upcoming Stops with Passenger Counts -->
-    <div style="margin-bottom: 1rem;">
-      <h2>Upcoming Stops</h2>
-      {% if upcoming_stops %}
-        <div style="display: grid; gap: 0.5rem;">
-          {% for stop in upcoming_stops %}
-            <div style="
-              padding: 1rem; 
-              border-radius: 8px; 
-              border-left: 5px solid 
-                {% if stop.is_current %}orange
-                {% elif stop.is_next %}#2196f3
-                {% else %}#4caf50{% endif %};
-              background: {% if stop.is_current %}#fff3e0{% elif stop.is_next %}#e3f2fd{% else %}#f5f5f5{% endif %};
-            ">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <strong>{{ stop.stage.sequence_order }}. {{ stop.stage.name }}</strong>
-                  {% if stop.is_current %}<span style="margin-left: 0.5rem; background: orange; color: white; padding: 0.2rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">CURRENT</span>{% endif %}
-                  {% if stop.is_next %}<span style="margin-left: 0.5rem; background: #2196f3; color: white; padding: 0.2rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">NEXT</span>{% endif %}
-                </div>
-                <div style="text-align: right;">
-                  <span style="font-size: 2rem; font-weight: bold; color: #333;">{{ stop.count }}</span><br>
-                  <small>passenger{{ stop.count|pluralize }}</small>
-                </div>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-      {% else %}
-        <p style="color: #666;">No passengers on this trip.</p>
-      {% endif %}
-    </div>
+    <section aria-labelledby="alighting-heading">
+      <h2 class="section-title" id="alighting-heading">Alighting per stage</h2>
+      <div class="stops-card">
+        {% if upcoming_stops %}
+          <ol class="stop-list" id="alighting-stops">
+            {% for stop in upcoming_stops %}
+              <li class="stop-row{% if stop.is_current %} is-complete{% elif stop.is_next %} is-next{% endif %}" data-stage-order="{{ stop.stage.sequence_order }}">
+                <span class="stop-icon" aria-hidden="true">
+                  {% if stop.is_current %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg>{% else %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>{% endif %}
+                </span>
+                <span class="stop-name">{{ stop.stage.name }}</span>
+                <span class="stop-badges">
+                  <span class="next-stop-badge"{% if not stop.is_next %} hidden{% endif %}>Next stop</span>
+                  <span class="alighting-count" data-alighting-count>{{ stop.alighting_count }} alighting</span>
+                </span>
+              </li>
+            {% endfor %}
+          </ol>
+        {% else %}
+          <p style="margin:0; color:#607565;">No passengers are currently onboard.</p>
+        {% endif %}
+      </div>
+    </section>
 
-    <!-- Passenger List -->
-    <div id="passenger-list">
+    <section class="gps-card" aria-labelledby="gps-heading">
+      <h2 id="gps-heading">📍 GPS tracking</h2>
+      <p>Share the vehicle's live location with passengers on this trip.</p>
+      <div class="gps-actions">
+        <button id="start-tracking-btn" class="btn btn-sm btn-warning" type="button" onclick="startTracking({{ trip.id }})">Start tracking</button>
+        <button id="stop-tracking-btn" class="btn btn-sm btn-error" type="button" onclick="stopTracking()" style="display:none;">Stop tracking</button>
+        <span id="tracking-status" class="gps-status">Not tracking</span>
+      </div>
+    </section>
+
+    <section class="passenger-card" id="passenger-list">
       {% include "conductor/partials/passenger_list.html" with journeys=journeys %}
-    </div>
-  </div>
+    </section>
+  </main>
 
-  <!-- HTMX auto-refresh -->
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
   <script>
-    // Refresh passenger list and stops every 10 seconds
-    setInterval(() => {
+    const tripDashboard = document.getElementById('trip-dashboard');
+    const tripTrackingUrl = tripDashboard.dataset.trackingUrl;
+    const alightingThresholdMeters = 1200;
+
+    function formatDistance(meters) {
+      return meters >= 1000 ? `${(meters / 1000).toFixed(1)} km` : `${Math.round(meters)} m`;
+    }
+
+    function formatDuration(minutesValue) {
+      const minutes = Math.max(0, Math.round(minutesValue));
+      return minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60} min` : `${minutes} min`;
+    }
+
+    async function refreshTripTracking() {
+      try {
+        const response = await fetch(tripTrackingUrl, {
+          headers: { 'Accept': 'application/json' },
+          cache: 'no-store'
+        });
+        if (!response.ok) throw new Error(`Trip tracking request failed: ${response.status}`);
+        const data = await response.json();
+
+        document.getElementById('current-stage').textContent = data.current_stage || 'Waiting for GPS';
+        document.getElementById('next-stage').textContent = data.next_stage || 'Destination reached';
+        document.getElementById('vehicle-latitude').textContent = data.vehicle_latitude === null ? '—' : data.vehicle_latitude.toFixed(5);
+        document.getElementById('vehicle-longitude').textContent = data.vehicle_longitude === null ? '—' : data.vehicle_longitude.toFixed(5);
+        document.getElementById('vehicle-speed').textContent = data.speed_kmh === null ? '—' : `${Math.round(data.speed_kmh)} km/h`;
+        document.getElementById('onboard-count').textContent = data.total_passengers;
+        document.getElementById('trip-progress').value = data.progress_percent;
+
+        const nextDistance = data.next_stage_distance_m;
+        const nextEta = data.next_stage_duration_minutes;
+        document.getElementById('next-stage-distance').textContent = nextDistance === null
+          ? (data.at_destination ? '0 m' : 'Waiting for GPS')
+          : formatDistance(nextDistance);
+        document.getElementById('next-stage-eta').textContent = nextEta === null
+          ? (data.at_destination ? 'Arrived' : '—')
+          : formatDuration(nextEta);
+        document.getElementById('trip-remaining-summary').textContent = data.distance_m === null
+          ? (data.at_destination ? 'Trip destination reached' : 'Waiting for a GPS position')
+          : `${formatDistance(data.distance_m)} and about ${formatDuration(data.duration_minutes)} to ${data.destination}`;
+
+        document.querySelectorAll('.stop-row[data-stage-order]').forEach((stop) => {
+          const order = Number(stop.dataset.stageOrder);
+          const isCurrent = data.current_stage_order !== null && order === data.current_stage_order;
+          const isComplete = data.current_stage_order !== null && order < data.current_stage_order;
+          const isNext = data.next_stage_order !== null && order === data.next_stage_order;
+          stop.classList.toggle('is-complete', isComplete || isCurrent);
+          stop.classList.toggle('is-next', isNext);
+          stop.querySelector('.next-stop-badge').hidden = !isNext;
+          const icon = stop.querySelector('.stop-icon');
+          icon.innerHTML = isComplete || isCurrent
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>';
+          const count = data.alighting_counts[String(order)] || 0;
+          stop.querySelector('[data-alighting-count]').textContent = `${count} alighting`;
+        });
+
+        const alert = document.getElementById('next-stop-alert');
+        const alertText = document.getElementById('next-stop-alert-text');
+        if (data.next_stage) {
+          alert.hidden = false;
+          const alighting = data.alighting_counts[String(data.next_stage_order)] || 0;
+          const hasDistance = nextDistance !== null;
+          const isApproaching = hasDistance && nextDistance <= alightingThresholdMeters;
+          alert.classList.toggle('is-calm', !isApproaching);
+          alertText.textContent = `${isApproaching ? 'Approaching' : 'Next stop:'} ${data.next_stage} — ${alighting} alighting${hasDistance ? ` · ${formatDistance(nextDistance)}` : ''}`;
+        } else {
+          alert.hidden = true;
+        }
+      } catch (error) {
+        console.warn('Unable to refresh trip tracking', error);
+      }
+    }
+
+    refreshTripTracking();
+    window.setInterval(refreshTripTracking, 5000);
+    window.setInterval(() => {
       htmx.ajax('GET', "{% url 'conductor:trip-passengers' trip.id %}", {
         target: '#passenger-list',
         swap: 'innerHTML'
       });
-      // Also refresh the whole page data periodically
     }, 10000);
 
-    // GPS Tracking Controls
     let watchId = null;
     let currentTripId = null;
 
@@ -129,51 +215,50 @@
       const stopBtn = document.getElementById('stop-tracking-btn');
 
       if (!navigator.geolocation) {
-        statusEl.textContent = 'Error: Geolocation not supported';
+        statusEl.textContent = 'Geolocation is not supported';
         statusEl.style.color = 'red';
         return;
       }
-
       if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-        statusEl.textContent = 'Error: Requires HTTPS or localhost';
+        statusEl.textContent = 'GPS tracking requires HTTPS or localhost';
         statusEl.style.color = 'red';
         return;
       }
 
       startBtn.style.display = 'none';
-      stopBtn.style.display = 'inline-block';
-      statusEl.textContent = 'Requesting location permission...';
-      statusEl.style.color = 'orange';
+      stopBtn.style.display = 'inline-flex';
+      statusEl.textContent = 'Requesting location permission…';
 
       watchId = navigator.geolocation.watchPosition(
         async (pos) => {
           const { latitude, longitude } = pos.coords;
           const recorded_at = new Date(pos.timestamp).toISOString();
-
-          statusEl.textContent = `Tracking: ${latitude.toFixed(6)}, ${longitude.toFixed(6)} (updated ${new Date().toLocaleTimeString()})`;
-          statusEl.style.color = 'green';
-
+          statusEl.textContent = `GPS active · updated ${new Date().toLocaleTimeString()}`;
+          statusEl.style.color = '#087a45';
           try {
-            await fetch(`/trips/${currentTripId}/ping/`, {
+            const response = await fetch(`/trips/${currentTripId}/ping/`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ latitude, longitude, recorded_at }),
             });
-          } catch (e) {
-            console.warn('Ping failed', e);
+            if (!response.ok) throw new Error(`GPS ping failed: ${response.status}`);
+            refreshTripTracking();
+          } catch (error) {
+            console.warn('Ping failed', error);
+            statusEl.textContent = 'Could not send location update';
+            statusEl.style.color = 'red';
           }
         },
         (err) => {
           const msg = err.code === err.PERMISSION_DENIED
-            ? 'Permission denied — enable in browser settings'
+            ? 'Permission denied — enable location access'
             : err.code === err.TIMEOUT
-              ? 'Timeout — no GPS fix in 30s'
+              ? 'GPS timed out — waiting for a fix'
               : err.code === err.POSITION_UNAVAILABLE
-                ? 'Position unavailable — GPS signal lost'
-                : `Error ${err.code}: ${err.message}`;
+                ? 'GPS signal unavailable'
+                : `GPS error: ${err.message}`;
           statusEl.textContent = msg;
           statusEl.style.color = 'red';
-          console.warn('Geolocation error', err);
           resetButtons();
         },
         { enableHighAccuracy: true, maximumAge: 10000, timeout: 30000 }
@@ -181,18 +266,16 @@
     }
 
     function stopTracking() {
-      if (watchId) {
-        navigator.geolocation.clearWatch(watchId);
-        watchId = null;
-        currentTripId = null;
-      }
+      if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+      watchId = null;
+      currentTripId = null;
       resetButtons();
       document.getElementById('tracking-status').textContent = 'Tracking stopped';
-      document.getElementById('tracking-status').style.color = '#666';
+      document.getElementById('tracking-status').style.color = '#607565';
     }
 
     function resetButtons() {
-      document.getElementById('start-tracking-btn').style.display = 'inline-block';
+      document.getElementById('start-tracking-btn').style.display = 'inline-flex';
       document.getElementById('stop-tracking-btn').style.display = 'none';
     }
   </script>

@@ -6,7 +6,7 @@
   <div style="max-width: 800px; margin: 0 auto; padding: 1rem;">
     <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap;">
       <h1 style="margin: 0;">Notifications</h1>
-      <a href="{% url 'core:dashboard' %}" style="padding: 0.5rem 1rem; background: #757575; color: white; text-decoration: none; border-radius: 4px;">← Dashboard</a>
+      <a href="{% url 'core:dashboard' %}" style="padding: 0.5rem 1rem; background: #757575; color: white; text-decoration: none; border-radius: 4px;">{% if active_journey %}← Back to my journey{% else %}← Dashboard{% endif %}</a>
     </header>
 
     {% if notifications %}

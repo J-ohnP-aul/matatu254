@@ -49,7 +49,7 @@
                   {% if matatu.qr_code %}
                     <a href="{% url 'management:matatu-qr' matatu.pk %}">Manage QR</a>
                   {% else %}
-                    <a href="{% url 'management:matatu-create' %}">Create QR</a>
+                    <a href="{% url 'management:matatu-qr' matatu.pk %}">Create QR</a>
                   {% endif %}
                 </td>
               </tr>

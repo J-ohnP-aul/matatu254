@@ -145,7 +145,7 @@ def matatu_qr(request, pk):
 @user_passes_test(is_admin)
 def route_list(request):
     routes = Route.objects.annotate(
-        stage_count=Count('stages'),
+        stages_count=Count('stages'),
         trip_count=Count('activetrip')
     ).order_by('name')
     return render(request, "management/route_list.html", {'routes': routes})

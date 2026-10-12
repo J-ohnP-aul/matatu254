@@ -18,15 +18,58 @@
         <input type="number" name="sequence_order" value="{{ stage.sequence_order|default:next_order }}" required min="1" style="width: 100%; padding: 0.5rem;">
       </div>
       <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Latitude</label>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.5rem;">
+          <label style="display: block; font-weight: bold; margin: 0;">Latitude</label>
+          <button type="button" id="use-current-location" style="padding: 0.5rem 0.75rem; background: #2196f3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Use current location</button>
+        </div>
         <input type="text" name="latitude" value="{{ stage.latitude|default:'' }}" required placeholder="-1.2921" style="width: 100%; padding: 0.5rem;">
       </div>
       <div style="margin-bottom: 1rem;">
         <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Longitude</label>
         <input type="text" name="longitude" value="{{ stage.longitude|default:'' }}" required placeholder="36.8219" style="width: 100%; padding: 0.5rem;">
       </div>
+      <div id="location-status" style="margin-bottom: 1rem; min-height: 1.2rem; color: #666; font-size: 0.9rem;"></div>
       <button type="submit" style="padding: 0.75rem 1.5rem; background: #4caf50; color: white; border: none; border-radius: 4px;">{{ action }}</button>
       <a href="{% url 'management:route-stages' route.pk %}" style="margin-left: 1rem; padding: 0.75rem 1.5rem; background: #757575; color: white; text-decoration: none; border-radius: 4px;">Cancel</a>
     </form>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const button = document.getElementById('use-current-location');
+      const status = document.getElementById('location-status');
+      const latitudeInput = document.querySelector('input[name="latitude"]');
+      const longitudeInput = document.querySelector('input[name="longitude"]');
+
+      if (!button || !latitudeInput || !longitudeInput) return;
+
+      button.addEventListener('click', function () {
+        if (!navigator.geolocation) {
+          status.textContent = 'Geolocation is not supported by this browser.';
+          status.style.color = '#d32f2f';
+          return;
+        }
+
+        status.textContent = 'Fetching current location...';
+        status.style.color = '#666';
+
+        navigator.geolocation.getCurrentPosition(function (position) {
+          const lat = position.coords.latitude.toFixed(6);
+          const lng = position.coords.longitude.toFixed(6);
+
+          latitudeInput.value = lat;
+          longitudeInput.value = lng;
+          status.textContent = `Location set: ${lat}, ${lng}`;
+          status.style.color = '#2e7d32';
+        }, function () {
+          status.textContent = 'Unable to access your current location.';
+          status.style.color = '#d32f2f';
+        }, {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0,
+        });
+      });
+    });
+  </script>
 {% endblock %}

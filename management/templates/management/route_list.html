@@ -24,7 +24,7 @@
               <tr style="border-bottom: 1px solid #eee;">
                 <td style="padding: 0.75rem; font-weight: bold;">{{ r.name }}</td>
                 <td style="padding: 0.75rem;">{{ r.description|default:'—' }}</td>
-                <td style="padding: 0.75rem;">{{ r.stage_count }}</td>
+                <td style="padding: 0.75rem;">{{ r.stages_count }}</td>
                 <td style="padding: 0.75rem;">{{ r.trip_count }}</td>
                 <td style="padding: 0.75rem;">
                   <a href="{% url 'management:route-stages' r.pk %}">Stages</a>

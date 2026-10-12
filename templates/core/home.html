@@ -32,10 +32,6 @@
             <strong style="font-size: 1.1rem;">🔔 Notifications</strong><br>
             <small>View conductor notifications</small>
           </a>
-          <a href="{% url 'core:home' %}?tracking=1" style="display: block; padding: 1.5rem; background: #f5f5f5; border-radius: 8px; text-decoration: none; border: 1px solid #e0e0e0;">
-            <strong style="font-size: 1.1rem;">📍 GPS Tracking Panel</strong><br>
-            <small>Test live GPS tracking from this browser</small>
-          </a>
         {% elif user.role == 'ADMIN' %}
           <a href="/admin/" style="display: block; padding: 1.5rem; background: #fce4ec; border-radius: 8px; text-decoration: none; border: 1px solid #f8bbd0;">
             <strong style="font-size: 1.1rem;">⚙️ Django Admin</strong><br>
@@ -55,70 +51,4 @@
     {% endif %}
   </div>
 
-  {% if user.is_authenticated and user.role == 'CONDUCTOR' and request.GET.tracking %}
-  <hr style="margin: 3rem 0;">
-  <div style="max-width: 700px; margin: 0 auto;">
-    <h2>📍 GPS Tracking Test Panel</h2>
-    <p style="color: #666;">Use this to test live GPS tracking from your browser. Works best on phone (HTTPS).</p>
-    
-    <div style="background: #f5f5f5; padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
-      <h3>Browser Location</h3>
-      <pre id="browser-status" style="padding: 1rem; background: white; border-radius: 4px; border: 1px solid #ddd; min-height: 80px;">waiting for permission...</pre>
-    </div>
-
-    <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
-      <h3>Backend Data (last ping)</h3>
-      {% if trip %}
-        <pre style="padding: 1rem; background: white; border-radius: 4px; border: 1px solid #ddd;">
-trip_id:   {{ trip.id }}
-latitude:  {{ trip.current_latitude|default:"—" }}
-longitude: {{ trip.current_longitude|default:"—" }}
-last_ping: {{ trip.last_ping_at|default:"—" }}
-is_stale:  {{ trip.is_stale }}
-        </pre>
-      {% else %}
-        <p>No active trip. Create one in admin first.</p>
-      {% endif %}
-    </div>
-  </div>
-
-  <script>
-    const out = document.getElementById("browser-status");
-    const tripId = {% if trip %}{{ trip.id }}{% else %}null{% endif %};
-
-    if (tripId && navigator.geolocation) {
-      navigator.geolocation.watchPosition(
-        async (pos) => {
-          const { latitude, longitude } = pos.coords;
-          const recorded_at = new Date(pos.timestamp).toISOString();
-          out.textContent = `lat: ${latitude}\nlng: ${longitude}\nrecorded: ${recorded_at}`;
-
-          try {
-            await fetch(`/trips/${tripId}/ping/`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ latitude, longitude, recorded_at }),
-            });
-          } catch (e) { console.warn("ping failed", e); }
-        },
-        (err) => {
-          const msg = err.code === err.PERMISSION_DENIED
-            ? "permission denied — enable in browser settings"
-            : err.code === err.TIMEOUT
-              ? "timeout — no fix in 30s"
-              : err.code === err.POSITION_UNAVAILABLE
-                ? "position unavailable — GPS signal lost"
-                : `error ${err.code}: ${err.message}`;
-          out.textContent = msg;
-          console.warn("geolocation error", err);
-        },
-        { enableHighAccuracy: false, maximumAge: 30000, timeout: 30000 }
-      );
-    } else if (!navigator.geolocation) {
-      out.textContent = "error: geolocation not supported in this browser";
-    } else if (!tripId) {
-      out.textContent = "no active trip — create one in admin first";
-    }
-  </script>
-  {% endif %}
 {% endblock %}

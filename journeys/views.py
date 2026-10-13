@@ -107,6 +107,8 @@ def journey_detail(request, journey_id):
         "route_stages": passenger_stages,
         "progress_percent": progress_percent,
         "latest_notification": latest_notification,
+        "gps_stale": trip.is_stale,
+        "gps_age_seconds": trip.gps_age_seconds,
     })
 
 
@@ -135,6 +137,9 @@ def journey_tracking_data(request, journey_id):
         "distance_km": remaining.distance_km if remaining else None,
         "duration_s": remaining.duration_s if remaining else None,
         "duration_minutes": remaining.duration_minutes if remaining else None,
+        "gps_stale": journey.trip.is_stale,
+        "gps_age_seconds": journey.trip.gps_age_seconds,
+        "last_ping_at": journey.trip.last_ping_at.isoformat() if journey.trip.last_ping_at else None,
         "latest_notification": {
             "id": latest_notification.pk,
             "message": latest_notification.message,

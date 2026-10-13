@@ -20,6 +20,7 @@
     .journey-alert { min-height: 0; padding: 12px; border: 0; border-radius: 12px; background: #eaf3eb; color: #1c3021; font-size: .88rem; line-height: 1.5; }
     .journey-alert svg { width: 18px; height: 18px; flex: none; color: #087a45; }
     .journey-status { margin-top: 10px; color: #6b7b70; font-size: .8rem; text-align: center; }
+    .journey-status.is-stale { color: #9a5b00; font-weight: 700; }
     .route-title { margin: 30px 0 12px; font-size: 1.1rem; }
     .route-list { display: grid; gap: 5px; padding: 0; margin: 0; list-style: none; }
     .route-stop { display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 7px 12px; border: 1px solid transparent; border-radius: 12px; color: #53665a; }
@@ -118,6 +119,7 @@
         <button type="submit" class="btn btn-success">End journey</button>
       </form>
     </div>
+    <p id="gps-freshness" class="journey-status{% if gps_stale %} is-stale{% endif %}" aria-live="polite" data-gps-stale="{{ gps_stale|yesno:'true,false' }}" data-gps-age-seconds="{{ gps_age_seconds|default_if_none:'' }}">{% if gps_age_seconds == None %}Waiting for the vehicle’s first GPS update{% elif gps_stale %}Vehicle location is delayed{% else %}Vehicle location is live{% endif %}</p>
     <p id="tracking-refresh-note" class="journey-status"{% if journey.status == 'arrived' or journey.status == 'ended' %} hidden{% endif %}>Live location updates every 5 seconds</p>
     <p style="text-align:center; margin-top:20px;"><a href="{% url 'journeys:history' %}">View journey history</a></p>
   </main>
@@ -131,6 +133,31 @@
       return minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60} min` : `${minutes} min`;
     }
 
+    function formatGpsAge(seconds) {
+      if (seconds < 60) return `${seconds}s ago`;
+      const minutes = Math.floor(seconds / 60);
+      return minutes < 60 ? `${minutes}m ago` : `${Math.floor(minutes / 60)}h ${minutes % 60}m ago`;
+    }
+
+    function updateGpsFreshness(isStale, ageSeconds) {
+      const freshness = document.getElementById('gps-freshness');
+      freshness.classList.toggle('is-stale', isStale);
+      if (ageSeconds === null) {
+        freshness.textContent = 'Waiting for the vehicle’s first GPS update';
+      } else if (isStale) {
+        freshness.textContent = `Vehicle location delayed · last update ${formatGpsAge(ageSeconds)}`;
+      } else {
+        freshness.textContent = `Vehicle location live · updated ${formatGpsAge(ageSeconds)}`;
+      }
+    }
+
+    updateGpsFreshness(
+      trackingCard.querySelector('#gps-freshness').dataset.gpsStale === 'true',
+      trackingCard.querySelector('#gps-freshness').dataset.gpsAgeSeconds === ''
+        ? null
+        : Number(trackingCard.querySelector('#gps-freshness').dataset.gpsAgeSeconds)
+    );
+
     async function refreshJourneyTracking() {
       try {
         const response = await fetch(trackingUrl, {
@@ -140,6 +167,7 @@
         if (!response.ok) throw new Error(`Tracking request failed: ${response.status}`);
 
         const data = await response.json();
+        updateGpsFreshness(data.gps_stale, data.gps_age_seconds);
         const status = document.getElementById('journey-status');
         status.textContent = data.status;
         status.className = `badge badge-soft ${data.status === 'Arrived' ? 'badge-success' : data.status === 'Ended' ? 'badge-neutral' : data.status === 'Approaching' ? 'badge-warning' : 'badge-info'}`;
@@ -183,6 +211,9 @@
         }
       } catch (error) {
         console.warn('Unable to refresh journey tracking', error);
+        const freshness = document.getElementById('gps-freshness');
+        freshness.textContent = 'Tracking connection unavailable · showing last received location';
+        freshness.classList.add('is-stale');
       }
     }
 

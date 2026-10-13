@@ -1,6 +1,8 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+from django.utils import timezone
+from datetime import timedelta
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -56,6 +58,8 @@ class JourneyTrackingDataTests(TestCase):
 		self.assertEqual(first_response.json()["distance_m"], 2000)
 		self.assertEqual(first_response.json()["next_stage_order"], 1)
 		self.assertEqual(first_response.json()["progress_percent"], 0)
+		self.assertTrue(first_response.json()["gps_stale"])
+		self.assertIsNone(first_response.json()["gps_age_seconds"])
 
 		page_response = self.client.get(
 			reverse("journeys:journey-detail", args=[self.journey.id])
@@ -66,12 +70,25 @@ class JourneyTrackingDataTests(TestCase):
 		self.assertContains(page_response, "Destination")
 
 		self.trip.current_longitude = 0.005
-		self.trip.save(update_fields=["current_longitude"])
+		self.trip.last_ping_at = timezone.now()
+		self.trip.save(update_fields=["current_longitude", "last_ping_at"])
 		second_response = self.client.get(self.url)
 
 		self.assertEqual(second_response.status_code, 200)
 		self.assertEqual(second_response.json()["distance_m"], 1500)
+		self.assertFalse(second_response.json()["gps_stale"])
+		self.assertLessEqual(second_response.json()["gps_age_seconds"], 60)
 		self.assertEqual(calculate_remaining_mock.call_count, 3)
+
+	def test_tracking_data_marks_old_gps_ping_stale(self):
+		self.trip.last_ping_at = timezone.now() - timedelta(seconds=120)
+		self.trip.save(update_fields=["last_ping_at"])
+
+		response = self.client.get(self.url)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue(response.json()["gps_stale"])
+		self.assertGreaterEqual(response.json()["gps_age_seconds"], 120)
 
 	def test_qr_and_destination_selection_resume_existing_active_journey(self):
 		response = self.client.get(reverse("journeys:scan-qr"))

@@ -38,6 +38,8 @@
     .gps-card p { margin: 0 0 12px; color: #795b20; font-size: .85rem; }
     .gps-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .gps-status { color: #607565; font-size: .82rem; }
+    .gps-freshness { margin: 12px 0 0; color: #087a45; font-size: .82rem; }
+    .gps-freshness.is-stale { color: #9a5b00; font-weight: 700; }
     .passenger-card { margin-top: 22px; padding: 16px; border: 1px solid #d6e2d8; border-radius: 16px; background: white; }
     @media (max-width: 520px) { .dashboard-header { align-items: flex-start; flex-direction: column; } .dashboard-header h1 { font-size: 1.55rem; } .live-card { padding: 17px; } .trip-metrics { gap: 15px 10px; } .stop-row { gap: 8px; padding-inline: 8px; } }
   </style>
@@ -78,6 +80,7 @@
         <div><span class="metric-label">Longitude</span><span class="metric-value" id="vehicle-longitude">{% if vehicle_pos %}{{ vehicle_pos.1|floatformat:5 }}{% else %}—{% endif %}</span></div>
       </div>
       <div class="journey-status" id="trip-remaining-summary" style="margin-top:18px; padding:12px; border-radius:12px; background:#eaf3eb; color:#1c3021;">{% if remaining %}{{ remaining.distance_km|floatformat:1 }} km and about {{ remaining.duration_minutes|floatformat:0 }} min to {{ trip_destination.name }}{% elif at_destination %}Trip destination reached{% else %}Waiting for a GPS position{% endif %}</div>
+      <p id="gps-freshness" class="gps-freshness{% if gps_stale %} is-stale{% endif %}" aria-live="polite" data-gps-stale="{{ gps_stale|yesno:'true,false' }}" data-gps-age-seconds="{{ gps_age_seconds|default_if_none:'' }}">{% if gps_age_seconds == None %}Waiting for the first vehicle GPS update{% elif gps_stale %}Vehicle location is delayed{% else %}Vehicle location is live{% endif %}</p>
     </section>
 
     <section aria-labelledby="alighting-heading">
@@ -134,6 +137,32 @@
       return minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60} min` : `${minutes} min`;
     }
 
+    function formatGpsAge(seconds) {
+      if (seconds < 60) return `${seconds}s ago`;
+      const minutes = Math.floor(seconds / 60);
+      return minutes < 60 ? `${minutes}m ago` : `${Math.floor(minutes / 60)}h ${minutes % 60}m ago`;
+    }
+
+    function updateGpsFreshness(isStale, ageSeconds) {
+      const freshness = document.getElementById('gps-freshness');
+      freshness.classList.toggle('is-stale', isStale);
+      if (ageSeconds === null) {
+        freshness.textContent = 'Waiting for the first vehicle GPS update';
+      } else if (isStale) {
+        freshness.textContent = `Vehicle location delayed · last update ${formatGpsAge(ageSeconds)}`;
+      } else {
+        freshness.textContent = `Vehicle location live · updated ${formatGpsAge(ageSeconds)}`;
+      }
+    }
+
+    const initialGpsFreshness = document.getElementById('gps-freshness');
+    updateGpsFreshness(
+      initialGpsFreshness.dataset.gpsStale === 'true',
+      initialGpsFreshness.dataset.gpsAgeSeconds === ''
+        ? null
+        : Number(initialGpsFreshness.dataset.gpsAgeSeconds)
+    );
+
     async function refreshTripTracking() {
       try {
         const response = await fetch(tripTrackingUrl, {
@@ -142,6 +171,7 @@
         });
         if (!response.ok) throw new Error(`Trip tracking request failed: ${response.status}`);
         const data = await response.json();
+        updateGpsFreshness(data.gps_stale, data.gps_age_seconds);
 
         document.getElementById('current-stage').textContent = data.current_stage || 'Waiting for GPS';
         document.getElementById('next-stage').textContent = data.next_stage || 'Destination reached';
@@ -193,6 +223,9 @@
         }
       } catch (error) {
         console.warn('Unable to refresh trip tracking', error);
+        const freshness = document.getElementById('gps-freshness');
+        freshness.textContent = 'Tracking connection unavailable · showing last received location';
+        freshness.classList.add('is-stale');
       }
     }
 

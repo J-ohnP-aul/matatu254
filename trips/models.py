@@ -6,6 +6,8 @@ from r_outes.models import Route
 
 # Create your models here.
 
+GPS_STALE_AFTER_SECONDS = 60
+
 class ActiveTrip(models.Model):
   class Status(models.TextChoices):
     CREATED = "created", "Created"
@@ -32,9 +34,14 @@ class ActiveTrip(models.Model):
   last_ping_at = models.DateTimeField(null=True, blank=True)
 
   @property
-  def is_stale(self, threshold_seconds=60):
-    """True if we haven't heard from the device recently."""
+  def gps_age_seconds(self):
+    """Age of the latest location update, or None before the first ping."""
     if not self.last_ping_at:
-      return True
-    age = (timezone.now() - self.last_ping_at).total_seconds()
-    return age > threshold_seconds
+      return None
+    return max(0, int((timezone.now() - self.last_ping_at).total_seconds()))
+
+  @property
+  def is_stale(self):
+    """Whether the latest location is missing or older than one minute."""
+    age = self.gps_age_seconds
+    return age is None or age > GPS_STALE_AFTER_SECONDS

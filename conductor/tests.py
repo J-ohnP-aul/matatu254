@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
+from datetime import timedelta
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -109,11 +111,49 @@ class ConductorAuthorizationTests(TestCase):
         self.assertEqual(first_response.json()["next_stage"], "Migori")
         self.assertEqual(first_response.json()["total_passengers"], 1)
         self.assertEqual(first_response.json()["alighting_counts"]["2"], 1)
+        self.assertTrue(first_response.json()["gps_stale"])
+        self.assertIsNone(first_response.json()["gps_age_seconds"])
 
         trip.current_longitude = 34.78
-        trip.save(update_fields=["current_longitude"])
+        trip.last_ping_at = timezone.now()
+        trip.save(update_fields=["current_longitude", "last_ping_at"])
         second_response = self.client.get(url)
 
         self.assertEqual(second_response.status_code, 200)
         self.assertEqual(second_response.json()["distance_m"], 15000)
+        self.assertFalse(second_response.json()["gps_stale"])
+        self.assertLessEqual(second_response.json()["gps_age_seconds"], 60)
         self.assertEqual(remaining_distance_mock.call_count, 4)
+
+    def test_tracking_endpoint_marks_old_gps_ping_stale(self):
+        matatu = Matatu.objects.create(
+            registration_number="KDB 1453",
+            operator="City Shuttle",
+        )
+        conductor = User.objects.create_user(
+            username="stale-tracking-conductor",
+            password="secret123",
+            role=User.CONDUCTOR,
+            matatu=matatu,
+        )
+        route = Route.objects.create(name="Stale GPS Route")
+        Stage.objects.create(
+            route=route,
+            name="Start",
+            sequence_order=1,
+            latitude=-0.68,
+            longitude=34.77,
+        )
+        trip = ActiveTrip.objects.create(
+            matatu=matatu,
+            route=route,
+            status=ActiveTrip.Status.ACTIVE,
+            last_ping_at=timezone.now() - timedelta(seconds=120),
+        )
+        self.client.force_login(conductor)
+
+        response = self.client.get(reverse("conductor:trip-tracking-data", args=[trip.pk]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()["gps_stale"])
+        self.assertGreaterEqual(response.json()["gps_age_seconds"], 120)

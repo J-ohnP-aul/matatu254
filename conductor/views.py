@@ -122,6 +122,8 @@ def trip_detail(request, trip_id):
         "next_stage_remaining": tracking["next_stage_remaining"],
         "speed_kmh": tracking["speed_kmh"],
         "progress_percent": tracking["progress_percent"],
+        "gps_stale": trip.is_stale,
+        "gps_age_seconds": trip.gps_age_seconds,
         "alighting_count": counts_by_stage.get(next_stage.id, 0) if next_stage else 0,
         "at_destination": tracking["at_destination"],
     }
@@ -178,6 +180,9 @@ def trip_tracking_data(request, trip_id):
         "distance_km": remaining.distance_km if remaining else None,
         "duration_s": remaining.duration_s if remaining else None,
         "duration_minutes": remaining.duration_minutes if remaining else None,
+        "gps_stale": trip.is_stale,
+        "gps_age_seconds": trip.gps_age_seconds,
+        "last_ping_at": trip.last_ping_at.isoformat() if trip.last_ping_at else None,
     })
 
 

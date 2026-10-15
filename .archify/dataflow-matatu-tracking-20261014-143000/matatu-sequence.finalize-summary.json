@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "sequence",
+  "quality": "showcase",
+  "specification": {
+    "path": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/candidate.json",
+    "sha256": "847613cb99ef5e294936e0b59002587d010f2d69423483367d4cbc0a0f1b2a17",
+    "bytes": 6600
+  },
+  "artifact": {
+    "path": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-sequence.html"
+  },
+  "gates": {
+    "validate": "fail",
+    "deliver": "not-run",
+    "check": "not-run",
+    "browser-check": "not-run"
+  },
+  "failedStage": "validate",
+  "diagnostics": [
+    {
+      "code": "composition/label-canvas-containment",
+      "severity": "error",
+      "message": "[composition/label-canvas-containment] showcase sequence label \"Push/poll: stage, approaching, arrived\" on messages[10] id \"m11\" \"notification\" -> \"passenger-app\" extends past the right edge by 74.4px (label rect [892, 740, 263, 18]; viewBox 1080x1300) — shorten the label, reorder participants, or enlarge meta.viewBox.",
+      "subject": {
+        "diagramType": "sequence",
+        "collection": "messages",
+        "index": 10,
+        "id": "m11",
+        "from": "notification",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "label": "Push/poll: stage, approaching, arrived",
+        "labelRect": {
+          "x": 891.6,
+          "y": 740,
+          "width": 262.79999999999995,
+          "height": 18
+        },
+        "viewBox": [
+          1080,
+          1300
+        ],
+        "overflowPx": {
+          "right": 74.4
+        },
+        "tolerancePx": 0.5
+      },
+      "supportedFixes": [
+        "shorten the label, reorder participants, or enlarge meta.viewBox"
+      ]
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"POST /trips/ping\" (~109px) is wider than the 86px participant box — shorten it.",
+      "subject": {
+        "diagramType": "sequence"
+      }
+    },
+    {
+      "code": "composition/label-canvas-containment",
+      "severity": "error",
+      "message": "[composition/label-canvas-containment] showcase sequence label \"Push: approaching, arrived\" on messages[11] id \"m12\" \"notification\" -> \"conductor\" extends past the right edge by 196.8px (label rect [1093, 800, 184, 18]; viewBox 1080x1300) — shorten the label, reorder participants, or enlarge meta.viewBox.",
+      "subject": {
+        "diagramType": "sequence",
+        "collection": "messages",
+        "index": 11,
+        "id": "m12",
+        "from": "notification",
+        "to": "conductor"
+      },
+      "evidence": {
+        "label": "Push: approaching, arrived",
+        "labelRect": {
+          "x": 1093.2,
+          "y": 800,
+          "width": 183.6,
+          "height": 18
+        },
+        "viewBox": [
+          1080,
+          1300
+        ],
+        "overflowPx": {
+          "right": 196.8
+        },
+        "tolerancePx": 0.5
+      },
+      "supportedFixes": [
+        "shorten the label, reorder participants, or enlarge meta.viewBox"
+      ]
+    },
+    {
+      "code": "composition/label-canvas-containment",
+      "severity": "error",
+      "message": "[composition/label-canvas-containment] showcase sequence label \"GET ETA for destination\" on messages[12] id \"m13\" \"passenger-app\" -> \"eta-service\" extends past the right edge by 132.9px (label rect [1049, 860, 164, 18]; viewBox 1080x1300) — shorten the label, reorder participants, or enlarge meta.viewBox.",
+      "subject": {
+        "diagramType": "sequence",
+        "collection": "messages",
+        "index": 12,
+        "id": "m13",
+        "from": "passenger-app",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "label": "GET ETA for destination",
+        "labelRect": {
+          "x": 1049.1,
+          "y": 860,
+          "width": 163.79999999999998,
+          "height": 18
+        },
+        "viewBox": [
+          1080,
+          1300
+        ],
+        "overflowPx": {
+          "right": 132.9
+        },
+        "tolerancePx": 0.5
+      },
+      "supportedFixes": [
+        "shorten the label, reorder participants, or enlarge meta.viewBox"
+      ]
+    },
+    {
+      "code": "composition/label-canvas-containment",
+      "severity": "error",
+      "message": "[composition/label-canvas-containment] showcase sequence label \"RouteInfo per segment (Haversine fallback)\" on messages[14] id \"m15\" \"eta-service\" -> \"osrm\" extends past the right edge by 303.6px (label rect [1094, 980, 289, 18]; viewBox 1080x1300) — shorten the label, reorder participants, or enlarge meta.viewBox.",
+      "subject": {
+        "diagramType": "sequence",
+        "collection": "messages",
+        "index": 14,
+        "id": "m15",
+        "from": "eta-service",
+        "to": "osrm"
+      },
+      "evidence": {
+        "label": "RouteInfo per segment (Haversine fallback)",
+        "labelRect": {
+          "x": 1094.4,
+          "y": 980,
+          "width": 289.2,
+          "height": 18
+        },
+        "viewBox": [
+          1080,
+          1300
+        ],
+        "overflowPx": {
+          "right": 303.6
+        },
+        "tolerancePx": 0.5
+      },
+      "supportedFixes": [
+        "shorten the label, reorder participants, or enlarge meta.viewBox"
+      ]
+    },
+    {
+      "code": "composition/label-canvas-containment",
+      "severity": "error",
+      "message": "[composition/label-canvas-containment] showcase sequence label \"distance_m, duration_s\" on messages[15] id \"m16\" \"osrm\" -> \"eta-service\" extends past the right edge by 237.6px (label rect [1160, 1040, 157, 18]; viewBox 1080x1300) — shorten the label, reorder participants, or enlarge meta.viewBox.",
+      "subject": {
+        "diagramType": "sequence",
+        "collection": "messages",
+        "index": 15,
+        "id": "m16",
+        "from": "osrm",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "label": "distance_m, duration_s",
+        "labelRect": {
+          "x": 1160.4,
+          "y": 1040,
+          "width": 157.2,
+          "height": 18
+        },
+        "viewBox": [
+          1080,
+          1300
+        ],
+        "overflowPx": {
+          "right": 237.6
+        },
+        "tolerancePx": 0.5
+      },
+      "supportedFixes": [
+        "shorten the label, reorder participants, or enlarge meta.viewBox"
+      ]
+    },
+    {
+      "code": "composition/label-canvas-containment",
+      "severity": "error",
+      "message": "[composition/label-canvas-containment] showcase sequence label \"RouteInfo {distance_m, duration_s}\" on messages[16] id \"m17\" \"eta-service\" -> \"passenger-app\" extends past the right edge by 169.2px (label rect [1013, 1080, 236, 18]; viewBox 1080x1300) — shorten the label, reorder participants, or enlarge meta.viewBox.",
+      "subject": {
+        "diagramType": "sequence",
+        "collection": "messages",
+        "index": 16,
+        "id": "m17",
+        "from": "eta-service",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "label": "RouteInfo {distance_m, duration_s}",
+        "labelRect": {
+          "x": 1012.8,
+          "y": 1080,
+          "width": 236.39999999999998,
+          "height": 18
+        },
+        "viewBox": [
+          1080,
+          1300
+        ],
+        "overflowPx": {
+          "right": 169.2
+        },
+        "tolerancePx": 0.5
+      },
+      "supportedFixes": [
+        "shorten the label, reorder participants, or enlarge meta.viewBox"
+      ]
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"TripLocationLog\" (~102px) is wider than the 86px participant box — shorten it.",
+      "subject": {
+        "diagramType": "sequence"
+      }
+    }
+  ],
+  "diagnosticSummary": {
+    "total": 12,
+    "shown": 8,
+    "truncated": true
+  },
+  "evidence": {
+    "receipt": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-sequence.finalize.json",
+    "summaryReceipt": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-sequence.finalize-summary.json"
+  },
+  "update": {
+    "status": "update_available",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.1.0",
+    "releaseNotes": "https://github.com/tt-a1i/archify/releases/tag/v3.1.0",
+    "severity": "normal",
+    "checkedAt": "2026-10-14T04:05:29.798Z",
+    "source": "cache",
+    "noticeRequired": true,
+    "noticeText": "Archify update: 3.0.1 → 3.1.0. A previous check at 2026-10-14T04:05:29.798Z found a newer release. Release notes: https://github.com/tt-a1i/archify/releases/tag/v3.1.0. The installed Skill has not changed; ask to snooze or ignore this reminder.",
+    "eventKey": "archify@sha256:ffedc53390c9da6e859f41e432c5d2d0615a23cf00a503181f07efbba88a7ce8"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 837,
+  "nextAction": {
+    "action": "edit-in-place",
+    "candidate": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/candidate.json",
+    "constraint": "Preserve unaffected semantics and geometry; do not replace the whole candidate.",
+    "then": "finalize-once"
+  }
+}

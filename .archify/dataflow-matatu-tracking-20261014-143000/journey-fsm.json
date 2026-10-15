@@ -1,0 +1,135 @@
+{
+  "schema_version": 2,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "JourneySession State Machine",
+    "subtitle": "Passenger ride FSM — driven by GPS pings",
+    "output": "journey-fsm.html",
+    "quality_profile": "showcase",
+    "viewBox": [1200, 350]
+  },
+  "lanes": [
+    { "id": "main", "label": "JourneySession" }
+  ],
+  "states": [
+    {
+      "id": "initialized",
+      "type": "start",
+      "label": "INITIALIZED",
+      "lane": "main",
+      "col": 0,
+      "width": 140,
+      "height": 60
+    },
+    {
+      "id": "dest-selected",
+      "type": "active",
+      "label": "DEST_SELECTED",
+      "sublabel": "Passenger picked destination",
+      "lane": "main",
+      "col": 1,
+      "width": 160,
+      "height": 60
+    },
+    {
+      "id": "in-transit",
+      "type": "active",
+      "label": "IN_TRANSIT",
+      "sublabel": "Vehicle moving",
+      "lane": "main",
+      "col": 2,
+      "width": 140,
+      "height": 60
+    },
+    {
+      "id": "approaching",
+      "type": "waiting",
+      "label": "APPROACHING",
+      "sublabel": "Near destination",
+      "lane": "main",
+      "col": 3,
+      "width": 150,
+      "height": 60
+    },
+    {
+      "id": "arrived",
+      "type": "success",
+      "label": "ARRIVED",
+      "lane": "main",
+      "col": 4,
+      "width": 120,
+      "height": 60
+    }
+  ],
+  "transitions": [
+    {
+      "id": "t1",
+      "from": "initialized",
+      "to": "dest-selected",
+      "label": "Passenger selects destination",
+      "variant": "default"
+    },
+    {
+      "id": "t2",
+      "from": "dest-selected",
+      "to": "in-transit",
+      "label": "Vehicle reaches first stage",
+      "variant": "default"
+    },
+    {
+      "id": "t3",
+      "from": "in-transit",
+      "to": "approaching",
+      "label": "Next stage = destination & vehicle near",
+      "variant": "default"
+    },
+    {
+      "id": "t4",
+      "from": "approaching",
+      "to": "arrived",
+      "label": "Vehicle at destination stage",
+      "variant": "default"
+    },
+    {
+      "id": "t5",
+      "from": "in-transit",
+      "to": "in-transit",
+      "label": "Pass intermediate stage → notify",
+      "variant": "emphasis",
+      "route": "bottom-channel",
+      "channelY": 250
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "State Progression",
+      "items": [
+        "INITIALIZED → DEST_SELECTED: passenger picks stage",
+        "DEST_SELECTED → IN_TRANSIT: vehicle reaches first stage",
+        "IN_TRANSIT → APPROACHING: next stage is destination & vehicle near",
+        "APPROACHING → ARRIVED: vehicle at destination stage",
+        "ARRIVED → ENDED: passenger confirms or auto-timeout"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Trigger Mechanism",
+      "items": [
+        "Every GPS ping triggers update_journey_status()",
+        "is_near_stage() uses Haversine ≤ 20m per stage",
+        "Notifications created at each transition",
+        "Conductor alerted on APPROACHING & ARRIVED"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Intermediate Stages",
+      "items": [
+        "Vehicle passing non-destination stages stays IN_TRANSIT",
+        "Each stage reached → 'Reached {stage.name}' notification",
+        "Passenger sees real-time progress"
+      ]
+    }
+  ]
+}

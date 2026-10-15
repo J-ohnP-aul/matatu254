@@ -4,10 +4,18 @@
   <h2>Scan Matatu QR Code</h2>
   <p>Point camera at the QR code inside the vehicle</p>
 
-  <video id="scanner" width="100%" style="max-width: 400px;"></video>
+  <video id="scanner" width="100%" style="max-width: 400px; display:none;"></video>
   <br><br>
   <button id="start-scan" type="button">Start Scanning</button>
   <p id="scan-status" style="color: red;"></p>
+
+  <div id="manual-entry" style="display:none; margin-top: 16px; padding: 16px; border: 1px solid #ddd; border-radius: 8px;">
+    <h3>Manual Entry</h3>
+    <p>Camera not available. Enter the QR code value manually:</p>
+    <input type="text" id="manual-code" placeholder="QR code value" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+    <br><br>
+    <button type="button" id="submit-manual" style="padding: 10px 20px; font-size: 1rem;">Submit</button>
+  </div>
 
   <form id="scan-form" method="post" action="{% url 'journeys:scan-result' %}" style="display:none;">
     {% csrf_token %}
@@ -20,18 +28,57 @@
     const status = document.getElementById('scan-status');
     const form = document.getElementById('scan-form');
     const codeInput = document.getElementById('code-value');
+    const manualEntry = document.getElementById('manual-entry');
+    const manualCode = document.getElementById('manual-code');
+    const submitManual = document.getElementById('submit-manual');
+    const startBtn = document.getElementById('start-scan');
     let codeReader;
 
+    function isSecureContext() {
+      return window.isSecureContext || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    }
+
+    function showManualEntry(message) {
+      manualEntry.style.display = 'block';
+      startBtn.style.display = 'none';
+      video.style.display = 'none';
+      status.textContent = message;
+      status.style.color = 'orange';
+      manualCode.focus();
+    }
+
+    submitManual.addEventListener('click', () => {
+      const value = manualCode.value.trim();
+      if (value) {
+        codeInput.value = value;
+        form.submit();
+      }
+    });
+
+    manualCode.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') submitManual.click();
+    });
+
     document.getElementById('start-scan').addEventListener('click', async () => {
+      if (!isSecureContext()) {
+        showManualEntry('Camera requires HTTPS. Please use manual entry or access via HTTPS/localhost.');
+        return;
+      }
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+        showManualEntry('Camera not supported in this browser. Please use manual entry.');
+        return;
+      }
+
       try {
         codeReader = new ZXing.BrowserMultiFormatReader();
         status.textContent = "Scanning...";
         status.style.color = "blue";
+        video.style.display = 'block';
 
         const devices = await codeReader.listVideoInputDevices();
         if (!devices.length) {
-          status.textContent = "No camera found";
-          status.style.color = "red";
+          showManualEntry('No camera found. Please use manual entry.');
           return;
         }
 
@@ -50,8 +97,14 @@
           }
         });
       } catch (e) {
-        status.textContent = "Camera error: " + e.message;
-        status.style.color = "red";
+        console.error('Camera error:', e);
+        if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+          showManualEntry('Camera permission denied. Please allow camera access or use manual entry.');
+        } else if (e.message.includes('enumerateDevices') || e.message.includes('method not supported')) {
+          showManualEntry('Camera not available in this environment. Please use manual entry.');
+        } else {
+          showManualEntry('Camera error: ' + e.message + '. Please use manual entry.');
+        }
       }
     });
   </script>

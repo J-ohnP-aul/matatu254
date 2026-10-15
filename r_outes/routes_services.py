@@ -16,6 +16,8 @@ journey screen (see NFR-R-02).
 """
 from core.geo import haversine_distance_m
 from core.osrm import OSRMError, RouteInfo, get_route_info
+from django.conf import settings
+import requests
 
 # How close (meters) the vehicle must be to a stage to count as "reached".
 # MVP constant for now; move to system_config once the admin threshold
@@ -98,3 +100,30 @@ def remaining_road_distance(current_vehicle_coords, next_stage, destination_stag
         stage = following
 
     return RouteInfo(distance_m=total_distance_m, duration_s=total_duration_s)
+
+
+def get_route_polyline(origin, destination):
+    """
+    Get encoded polyline for a route from OSRM.
+    
+    Args:
+        origin: (longitude, latitude) tuple
+        destination: (longitude, latitude) tuple
+    
+    Returns:
+        Encoded polyline string or None on failure
+    """
+    base_url = getattr(settings, "OSRM_BASE_URL", "http://127.0.0.1:5000/route/v1/driving")
+    coords = f"{origin[0]},{origin[1]};{destination[0]},{destination[1]}"
+    url = f"{base_url}/{coords}"
+    params = {"overview": "full", "geometries": "polyline", "steps": "false"}
+    
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        if data.get("code") == "Ok" and data.get("routes"):
+            return data["routes"][0]["geometry"]
+    except Exception:
+        pass
+    return None

@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "command": "deliver",
+  "status": "pending",
+  "receiptId": "a428a7c9-a652-4fce-9a61-af9922f3fbcd",
+  "input": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/architecture.json",
+  "output": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-architecture.html"
+}

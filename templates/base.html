@@ -5,15 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Matatu254{% endblock %}</title>
   {% block extra_head %}{% endblock %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.js"></script>
   <style>
     * { box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; line-height: 1.5; color: #333; }
-    .site-header { background: #263238; color: white; padding: 1rem; }
+    .site-header { background: #263238; color: white; padding: 1rem; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
     .site-header .container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
     .site-header h1 { margin: 0; font-size: 1.25rem; }
     .site-header nav a { color: #b0bec5; text-decoration: none; margin-left: 1rem; font-size: 0.9rem; }
     .site-header nav a:hover { color: white; }
-    .main { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; }
+    .main { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; padding-top: 60px; }
     .flash-messages { list-style: none; padding: 0; margin: 0 0 1rem; }
     .flash-messages li { padding: 0.75rem 1rem; border-radius: 4px; margin-bottom: 0.5rem; }
     .flash-messages .success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }

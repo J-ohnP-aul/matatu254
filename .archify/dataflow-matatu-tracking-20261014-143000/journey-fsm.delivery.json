@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "1f1d7607-9b65-413a-a508-e4c6d2843897",
+  "status": "current",
+  "command": "deliver",
+  "type": "lifecycle",
+  "input": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/journey-fsm.json",
+  "output": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/journey-fsm.html",
+  "specification": {
+    "sha256": "7bf4b1196e6993ce8370f28d49cf22c0e3a48ee64d57e25248382032e7ce28b8",
+    "bytes": 3290
+  },
+  "artifact": {
+    "sha256": "7da547dceeba5c3a51cf3bda769789df1a20b53275ee8f978c0e7034e513855e",
+    "bytes": 752641
+  }
+}

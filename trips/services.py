@@ -3,11 +3,21 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from trips.models import ActiveTrip
 from tracking.models import TripLocationLog
+import math
 
 
 @transaction.atomic
 def record_ping(trip: ActiveTrip, latitude, longitude, recorded_at=None):
   """Persist a ping and refresh the trip's current position cache."""
+  try:
+    latitude = float(latitude)
+    longitude = float(longitude)
+  except (TypeError, ValueError):
+    raise ValueError("Latitude and longitude must be valid numbers")
+  if (not math.isfinite(latitude) or not math.isfinite(longitude)
+      or not -90 <= latitude <= 90 or not -180 <= longitude <= 180):
+    raise ValueError("Latitude or longitude is outside the valid coordinate range")
+
   if isinstance(recorded_at, str):
     recorded_at = parse_datetime(recorded_at)
   recorded_at = recorded_at or timezone.now()

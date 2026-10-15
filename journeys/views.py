@@ -214,6 +214,41 @@ def end_journey(request, journey_id):
 
 
 @login_required
+def journey_route_data(request, journey_id):
+    """Return route polyline and stage data for the map."""
+    journey = get_object_or_404(JourneySession, pk=journey_id, passenger=request.user)
+    trip = journey.trip
+    
+    # Get stages up to destination
+    stages = list(trip.route.stages.filter(
+        sequence_order__lte=journey.destination_stage.sequence_order
+    ).order_by("sequence_order").values(
+        'id', 'name', 'latitude', 'longitude', 'sequence_order'
+    ))
+    
+    # Get route polyline from OSRM
+    from r_outes.routes_services import get_route_polyline
+    try:
+        origin = (float(trip.route.stages.first().longitude), float(trip.route.stages.first().latitude))
+        destination = (float(journey.destination_stage.longitude), float(journey.destination_stage.latitude))
+        polyline = get_route_polyline(origin, destination)
+    except Exception:
+        polyline = None
+    
+    return JsonResponse({
+        "polyline": polyline,
+        "stages": list(stages),
+        "destinationStage": {
+            "id": journey.destination_stage.id,
+            "name": journey.destination_stage.name,
+            "latitude": float(journey.destination_stage.latitude),
+            "longitude": float(journey.destination_stage.longitude),
+            "sequenceOrder": journey.destination_stage.sequence_order,
+        } if journey.destination_stage else None
+    })
+
+
+@login_required
 def history(request):
     journeys = JourneySession.objects.filter(
         passenger=request.user,

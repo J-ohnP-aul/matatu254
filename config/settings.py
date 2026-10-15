@@ -159,7 +159,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
@@ -179,7 +180,9 @@ else:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # OSRM Configuration
-OSRM_BASE_URL = os.environ.get('OSRM_BASE_URL', '')
+# Use public OSRM demo server (CORS-enabled, no API key)
+# Override with OSRM_BASE_URL env var for custom/self-hosted instances
+OSRM_BASE_URL = os.environ.get('OSRM_BASE_URL', 'https://router.project-osrm.org/route/v1/driving')
 
 # Security settings for production
 if not DEBUG:

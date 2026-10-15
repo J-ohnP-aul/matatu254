@@ -17,11 +17,46 @@ staticfiles/
 .env.local
 *.env
 
-# IDE
+# IDE / editor
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# Local AI / agent / chat artifacts
+.claude/
+claude/
+.claude* 
+claude*
+.ai/
+ai/
+*.claude
+*.ai
+.chat/
+chat/
+.agent/
+agent/
+*.agent
+
+# Local map / analysis artifacts
+map/
+maps/
+*.map
+*.geojson
+*.pbf
+*.osm
+*.mbtiles
+*.tile
+*.cache
+geo-analysis/
+route-analysis/
+
+# Project notes / local docs not meant for Git
+notes/
+local-notes/
+*.local.md
+*.scratch.md
+scratch/
 
 # OS
 .DS_Store
@@ -39,3 +74,25 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+
+# Local runtime / generated assets
+coverage/
+.tmp/
+temp/
+tmp/
+*.tmp
+*.bak
+*.orig
+
+# Local data dumps
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+
+# Ignore any app-local generated map data or analysis capture folders
+analysis/
+analytics/
+analysis-output/
+map-output/
+tracking-output/

@@ -1,0 +1,1599 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "architecture",
+  "quality": "showcase",
+  "startedAt": "2026-10-14T05:00:46.804Z",
+  "specification": {
+    "path": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/architecture.json",
+    "sha256": "dedda88579e9f95da96aa429d83fe8eca868895daee5df1d4e28290edfc6fb0b",
+    "bytes": 7452
+  },
+  "artifact": {
+    "path": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-architecture.html"
+  },
+  "stages": {
+    "validate": {
+      "status": "fail",
+      "exitCode": 1,
+      "durationMs": null,
+      "command": [
+        "/home/noble/.nvm/versions/node/v24.20.0/bin/node",
+        "/home/noble/.agents/skills/archify/bin/archify.mjs",
+        "deliver",
+        "architecture",
+        "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/architecture.json",
+        "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-architecture.html",
+        "--quality",
+        "showcase",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": false,
+        "command": "deliver",
+        "receiptId": "a428a7c9-a652-4fce-9a61-af9922f3fbcd",
+        "stage": "render",
+        "type": "architecture",
+        "input": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/architecture.json",
+        "output": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-architecture.html",
+        "error": "Architecture layout validation failed:\n- [clean-flow/endpoint-side-direction] architecture connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" first segment 0 [910, 392] -> [910, 324] does not honor inferred fromSide \"right\" — it must run horizontal rightward; keep automatic routing so the renderer can use a side-aware bridge, or set truthful fromSide/toSide with perpendicular via segments.\n- [clean-flow/endpoint-side-direction] architecture connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" final segment 0 [910, 392] -> [910, 324] does not honor inferred toSide \"left\" — it must run horizontal rightward from the left; keep automatic routing so the renderer can use a side-aware bridge, or set truthful fromSide/toSide with perpendicular via segments.\n- [clean-flow/edge-through-node] architecture connections[13] id \"c14\" \"eta-service\" -> \"active-trip\" crosses component \"is-near-stage\" (unrelated to this relationship) on segment 2 [750, 275] -> [750, 180] (2px clearance) — adjust fromSide/toSide, set route/via, or move the component.\n- [clean-flow/edge-through-node] architecture connections[13] id \"c14\" \"eta-service\" -> \"active-trip\" crosses component \"notification\" (unrelated to this relationship) on segment 0 [810, 370] -> [810, 275] (2px clearance) — adjust fromSide/toSide, set route/via, or move the component.\n- Label \"INSERT TripLocationLog\" overlaps component \"record-ping\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [485, 80, 116, 14]\n  component \"record-ping\" rect: [470, 50, 160, 50]\n  Suggested fix: set labelAt [543, 114] or set labelDy 24 (below); or set labelAt [543, 42] or set labelDy -48 (above)\n- Label \"GET ETA for destination\" overlaps component \"notification\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [840, 335, 120, 14]\n  component \"notification\" rect: [710, 290, 160, 50]\n  Suggested fix: set labelAt [900, 354] or set labelDy 9 (below); or set labelAt [900, 282] or set labelDy -63 (above)\n- Label \"GET ETA for destination\" overlaps component \"passenger-app\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [840, 335, 120, 14]\n  component \"passenger-app\" rect: [910, 290, 160, 50]\n  Suggested fix: set labelAt [900, 354] or set labelDy 9 (below); or set labelAt [900, 282] or set labelDy -63 (above)\n- Label \"READ vehicle position\" overlaps component \"is-near-stage\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [725, 255, 111, 14]\n  component \"is-near-stage\" rect: [710, 210, 160, 50]\n  Suggested fix: set labelAt [780, 274] or set labelDy 9 (below); or set labelAt [780, 202] or set labelDy -63 (above)\n- Label \"distance_m, duration_s\" overlaps component \"notification\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [855, 326, 116, 14]\n  component \"notification\" rect: [710, 290, 160, 50]\n  Suggested fix: set labelAt [913, 354] or set labelDy 18 (below); or set labelAt [913, 282] or set labelDy -54 (above)\n- Label \"distance_m, duration_s\" overlaps component \"passenger-app\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [855, 326, 116, 14]\n  component \"passenger-app\" rect: [910, 290, 160, 50]\n  Suggested fix: set labelAt [913, 354] or set labelDy 18 (below); or set labelAt [913, 282] or set labelDy -54 (above)\n- Label \"RouteInfo {distance, duration}\" overlaps component \"eta-service\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [833, 372, 154, 14]\n  component \"eta-service\" rect: [710, 370, 200, 50]\n  Suggested fix: set labelAt [910, 434] or set labelDy 52 (below); or set labelAt [910, 362] or set labelDy -20 (above)\n- Label \"RouteInfo {distance, duration}\" overlaps component \"osrm\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [833, 372, 154, 14]\n  component \"osrm\" rect: [950, 370, 160, 50]\n  Suggested fix: set labelAt [910, 434] or set labelDy 52 (below); or set labelAt [910, 362] or set labelDy -20 (above)\n- [composition/label-route-clearance] showcase architecture label \"Trigger journey processing\" on connections[4] id \"c5\" \"record-ping\" -> \"update-journey\" label \"Trigger journey processing\" is 0px from connections[2] id \"c3\" \"record-ping\" -> \"trip-location-log\" label \"INSERT TripLocationLog\" segment 0 [543, 100] -> [543, 130] (label rect [528, 104, 135, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.\n- [composition/label-route-clearance] showcase architecture label \"Trigger journey processing\" on connections[4] id \"c5\" \"record-ping\" -> \"update-journey\" label \"Trigger journey processing\" is 0px from connections[5] id \"c6\" \"update-journey\" -> \"active-trip\" label \"READ vehicle position\" segment 4 [646, 36] -> [646, 162] (label rect [528, 104, 135, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.\n- [composition/label-route-clearance] showcase architecture label \"Check stages (Haversine)\" on connections[6] id \"c7\" \"update-journey\" -> \"is-near-stage\" label \"Check stages (Haversine)\" is 0px from connections[9] id \"c10\" \"update-journey\" -> \"notification\" label \"INSERT Notification(s)\" segment 0 [584, 260] -> [584, 308] (label rect [565, 264, 125, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.\n- [composition/label-route-clearance] showcase architecture label \"GET ETA for destination\" on connections[12] id \"c13\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" is 0px from connections[7] id \"c8\" \"is-near-stage\" -> \"update-journey\" label \"true/false per stage\" segment 2 [873, 284] -> [873, 343] (label rect [840, 335, 120, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.\n- [composition/label-route-clearance] showcase architecture label \"GET ETA for destination\" on connections[12] id \"c13\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" is 0px from connections[15] id \"c16\" \"osrm\" -> \"eta-service\" label \"distance_m, duration_s\" segment 1 [1030, 346] -> [796, 346] (label rect [840, 335, 120, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.\n- [composition/label-route-clearance] showcase architecture label \"GET ETA for destination\" on connections[12] id \"c13\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" is 0px from connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance, duration}\" segment 0 [910, 392] -> [910, 324] (label rect [840, 335, 120, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.\n- [composition/label-route-clearance] showcase architecture label \"READ vehicle position\" on connections[13] id \"c14\" \"eta-service\" -> \"active-trip\" label \"READ vehicle position\" is 0px from connections[7] id \"c8\" \"is-near-stage\" -> \"update-journey\" label \"true/false per stage\" segment 0 [790, 260] -> [790, 284] (label rect [725, 255, 111, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.\n- [composition/label-route-clearance] showcase architecture label \"distance_m, duration_s\" on connections[15] id \"c16\" \"osrm\" -> \"eta-service\" label \"distance_m, duration_s\" is 0px from connections[7] id \"c8\" \"is-near-stage\" -> \"update-journey\" label \"true/false per stage\" segment 2 [873, 284] -> [873, 343] (label rect [855, 326, 116, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.\n- [composition/label-route-clearance] showcase architecture label \"distance_m, duration_s\" on connections[15] id \"c16\" \"osrm\" -> \"eta-service\" label \"distance_m, duration_s\" is 0px from connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance, duration}\" segment 0 [910, 392] -> [910, 324] (label rect [855, 326, 116, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.\n- [composition/label-route-clearance] showcase architecture label \"RouteInfo {distance, duration}\" on connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance, duration}\" is 2px from connections[14] id \"c15\" \"eta-service\" -> \"osrm\" label \"RouteInfo per segment\" segment 2 [926, 444] -> [926, 388] (label rect [833, 372, 154, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+        "diagnostics": [
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] architecture connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" first segment 0 [910, 392] -> [910, 324] does not honor inferred fromSide \"right\" — it must run horizontal rightward; keep automatic routing so the renderer can use a side-aware bridge, or set truthful fromSide/toSide with perpendicular via segments.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 16,
+              "id": "c17",
+              "from": "eta-service",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "endpoint": "source",
+              "authoredField": "fromSide",
+              "sideOrigin": "inferred",
+              "side": "right",
+              "segmentIndex": 0,
+              "from": [
+                910,
+                392
+              ],
+              "to": [
+                910,
+                324
+              ],
+              "expectedAxis": "horizontal",
+              "expectedDirection": "rightward"
+            },
+            "supportedFixes": [
+              "keep automatic routing so the renderer can use a side-aware bridge, or set truthful fromSide/toSide with perpendicular via segments"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] architecture connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" final segment 0 [910, 392] -> [910, 324] does not honor inferred toSide \"left\" — it must run horizontal rightward from the left; keep automatic routing so the renderer can use a side-aware bridge, or set truthful fromSide/toSide with perpendicular via segments.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 16,
+              "id": "c17",
+              "from": "eta-service",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "endpoint": "target",
+              "authoredField": "toSide",
+              "sideOrigin": "inferred",
+              "side": "left",
+              "segmentIndex": 0,
+              "from": [
+                910,
+                392
+              ],
+              "to": [
+                910,
+                324
+              ],
+              "expectedAxis": "horizontal",
+              "expectedDirection": "rightward from the left"
+            },
+            "supportedFixes": [
+              "keep automatic routing so the renderer can use a side-aware bridge, or set truthful fromSide/toSide with perpendicular via segments"
+            ]
+          },
+          {
+            "code": "clean-flow/edge-through-node",
+            "severity": "error",
+            "message": "[clean-flow/edge-through-node] architecture connections[13] id \"c14\" \"eta-service\" -> \"active-trip\" crosses component \"is-near-stage\" (unrelated to this relationship) on segment 2 [750, 275] -> [750, 180] (2px clearance) — adjust fromSide/toSide, set route/via, or move the component.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 13,
+              "id": "c14",
+              "from": "eta-service",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "obstacleKind": "component",
+              "obstacleId": "is-near-stage",
+              "segmentIndex": 2,
+              "from": [
+                750,
+                275
+              ],
+              "to": [
+                750,
+                180
+              ],
+              "clearancePx": 2
+            },
+            "supportedFixes": [
+              "adjust fromSide/toSide, set route/via, or move the component"
+            ]
+          },
+          {
+            "code": "clean-flow/edge-through-node",
+            "severity": "error",
+            "message": "[clean-flow/edge-through-node] architecture connections[13] id \"c14\" \"eta-service\" -> \"active-trip\" crosses component \"notification\" (unrelated to this relationship) on segment 0 [810, 370] -> [810, 275] (2px clearance) — adjust fromSide/toSide, set route/via, or move the component.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 13,
+              "id": "c14",
+              "from": "eta-service",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "obstacleKind": "component",
+              "obstacleId": "notification",
+              "segmentIndex": 0,
+              "from": [
+                810,
+                370
+              ],
+              "to": [
+                810,
+                275
+              ],
+              "clearancePx": 2
+            },
+            "supportedFixes": [
+              "adjust fromSide/toSide, set route/via, or move the component"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase architecture label \"Trigger journey processing\" on connections[4] id \"c5\" \"record-ping\" -> \"update-journey\" label \"Trigger journey processing\" is 0px from connections[2] id \"c3\" \"record-ping\" -> \"trip-location-log\" label \"INSERT TripLocationLog\" segment 0 [543, 100] -> [543, 130] (label rect [528, 104, 135, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 4,
+              "id": "c5",
+              "from": "record-ping",
+              "to": "update-journey"
+            },
+            "evidence": {
+              "label": "Trigger journey processing",
+              "otherRelationship": {
+                "diagramType": "architecture",
+                "collection": "connections",
+                "index": 2,
+                "id": "c3",
+                "from": "record-ping",
+                "to": "trip-location-log"
+              },
+              "segmentIndex": 0,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "c5",
+                  "from": "record-ping",
+                  "to": "update-journey",
+                  "label": "Trigger journey processing",
+                  "variant": "dashed"
+                },
+                "relationIndex": 4,
+                "label": "Trigger journey processing",
+                "x": 527.6,
+                "y": 104,
+                "width": 134.8,
+                "height": 14,
+                "lx": 595,
+                "ly": 114
+              },
+              "from": [
+                543,
+                100
+              ],
+              "to": [
+                543,
+                130
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase architecture label \"Trigger journey processing\" on connections[4] id \"c5\" \"record-ping\" -> \"update-journey\" label \"Trigger journey processing\" is 0px from connections[5] id \"c6\" \"update-journey\" -> \"active-trip\" label \"READ vehicle position\" segment 4 [646, 36] -> [646, 162] (label rect [528, 104, 135, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 4,
+              "id": "c5",
+              "from": "record-ping",
+              "to": "update-journey"
+            },
+            "evidence": {
+              "label": "Trigger journey processing",
+              "otherRelationship": {
+                "diagramType": "architecture",
+                "collection": "connections",
+                "index": 5,
+                "id": "c6",
+                "from": "update-journey",
+                "to": "active-trip"
+              },
+              "segmentIndex": 4,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "c5",
+                  "from": "record-ping",
+                  "to": "update-journey",
+                  "label": "Trigger journey processing",
+                  "variant": "dashed"
+                },
+                "relationIndex": 4,
+                "label": "Trigger journey processing",
+                "x": 527.6,
+                "y": 104,
+                "width": 134.8,
+                "height": 14,
+                "lx": 595,
+                "ly": 114
+              },
+              "from": [
+                646,
+                36
+              ],
+              "to": [
+                646,
+                162
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase architecture label \"Check stages (Haversine)\" on connections[6] id \"c7\" \"update-journey\" -> \"is-near-stage\" label \"Check stages (Haversine)\" is 0px from connections[9] id \"c10\" \"update-journey\" -> \"notification\" label \"INSERT Notification(s)\" segment 0 [584, 260] -> [584, 308] (label rect [565, 264, 125, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 6,
+              "id": "c7",
+              "from": "update-journey",
+              "to": "is-near-stage"
+            },
+            "evidence": {
+              "label": "Check stages (Haversine)",
+              "otherRelationship": {
+                "diagramType": "architecture",
+                "collection": "connections",
+                "index": 9,
+                "id": "c10",
+                "from": "update-journey",
+                "to": "notification"
+              },
+              "segmentIndex": 0,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "c7",
+                  "from": "update-journey",
+                  "to": "is-near-stage",
+                  "label": "Check stages (Haversine)",
+                  "variant": "default"
+                },
+                "relationIndex": 6,
+                "label": "Check stages (Haversine)",
+                "x": 565.4,
+                "y": 264,
+                "width": 125.19999999999999,
+                "height": 14,
+                "lx": 628,
+                "ly": 274
+              },
+              "from": [
+                584,
+                260
+              ],
+              "to": [
+                584,
+                308
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase architecture label \"GET ETA for destination\" on connections[12] id \"c13\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" is 0px from connections[7] id \"c8\" \"is-near-stage\" -> \"update-journey\" label \"true/false per stage\" segment 2 [873, 284] -> [873, 343] (label rect [840, 335, 120, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 12,
+              "id": "c13",
+              "from": "passenger-app",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "label": "GET ETA for destination",
+              "otherRelationship": {
+                "diagramType": "architecture",
+                "collection": "connections",
+                "index": 7,
+                "id": "c8",
+                "from": "is-near-stage",
+                "to": "update-journey"
+              },
+              "segmentIndex": 2,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "c13",
+                  "from": "passenger-app",
+                  "to": "eta-service",
+                  "label": "GET ETA for destination",
+                  "variant": "default"
+                },
+                "relationIndex": 12,
+                "label": "GET ETA for destination",
+                "x": 839.8,
+                "y": 335,
+                "width": 120.39999999999999,
+                "height": 14,
+                "lx": 900,
+                "ly": 345
+              },
+              "from": [
+                873,
+                284
+              ],
+              "to": [
+                873,
+                343
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase architecture label \"GET ETA for destination\" on connections[12] id \"c13\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" is 0px from connections[15] id \"c16\" \"osrm\" -> \"eta-service\" label \"distance_m, duration_s\" segment 1 [1030, 346] -> [796, 346] (label rect [840, 335, 120, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 12,
+              "id": "c13",
+              "from": "passenger-app",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "label": "GET ETA for destination",
+              "otherRelationship": {
+                "diagramType": "architecture",
+                "collection": "connections",
+                "index": 15,
+                "id": "c16",
+                "from": "osrm",
+                "to": "eta-service"
+              },
+              "segmentIndex": 1,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "c13",
+                  "from": "passenger-app",
+                  "to": "eta-service",
+                  "label": "GET ETA for destination",
+                  "variant": "default"
+                },
+                "relationIndex": 12,
+                "label": "GET ETA for destination",
+                "x": 839.8,
+                "y": 335,
+                "width": 120.39999999999999,
+                "height": 14,
+                "lx": 900,
+                "ly": 345
+              },
+              "from": [
+                1030,
+                346
+              ],
+              "to": [
+                796,
+                346
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase architecture label \"GET ETA for destination\" on connections[12] id \"c13\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" is 0px from connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance, duration}\" segment 0 [910, 392] -> [910, 324] (label rect [840, 335, 120, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 12,
+              "id": "c13",
+              "from": "passenger-app",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "label": "GET ETA for destination",
+              "otherRelationship": {
+                "diagramType": "architecture",
+                "collection": "connections",
+                "index": 16,
+                "id": "c17",
+                "from": "eta-service",
+                "to": "passenger-app"
+              },
+              "segmentIndex": 0,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "c13",
+                  "from": "passenger-app",
+                  "to": "eta-service",
+                  "label": "GET ETA for destination",
+                  "variant": "default"
+                },
+                "relationIndex": 12,
+                "label": "GET ETA for destination",
+                "x": 839.8,
+                "y": 335,
+                "width": 120.39999999999999,
+                "height": 14,
+                "lx": 900,
+                "ly": 345
+              },
+              "from": [
+                910,
+                392
+              ],
+              "to": [
+                910,
+                324
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase architecture label \"READ vehicle position\" on connections[13] id \"c14\" \"eta-service\" -> \"active-trip\" label \"READ vehicle position\" is 0px from connections[7] id \"c8\" \"is-near-stage\" -> \"update-journey\" label \"true/false per stage\" segment 0 [790, 260] -> [790, 284] (label rect [725, 255, 111, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 13,
+              "id": "c14",
+              "from": "eta-service",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "label": "READ vehicle position",
+              "otherRelationship": {
+                "diagramType": "architecture",
+                "collection": "connections",
+                "index": 7,
+                "id": "c8",
+                "from": "is-near-stage",
+                "to": "update-journey"
+              },
+              "segmentIndex": 0,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "c14",
+                  "from": "eta-service",
+                  "to": "active-trip",
+                  "label": "READ vehicle position",
+                  "variant": "default"
+                },
+                "relationIndex": 13,
+                "label": "READ vehicle position",
+                "x": 724.6,
+                "y": 255,
+                "width": 110.8,
+                "height": 14,
+                "lx": 780,
+                "ly": 265
+              },
+              "from": [
+                790,
+                260
+              ],
+              "to": [
+                790,
+                284
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase architecture label \"distance_m, duration_s\" on connections[15] id \"c16\" \"osrm\" -> \"eta-service\" label \"distance_m, duration_s\" is 0px from connections[7] id \"c8\" \"is-near-stage\" -> \"update-journey\" label \"true/false per stage\" segment 2 [873, 284] -> [873, 343] (label rect [855, 326, 116, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 15,
+              "id": "c16",
+              "from": "osrm",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "label": "distance_m, duration_s",
+              "otherRelationship": {
+                "diagramType": "architecture",
+                "collection": "connections",
+                "index": 7,
+                "id": "c8",
+                "from": "is-near-stage",
+                "to": "update-journey"
+              },
+              "segmentIndex": 2,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "c16",
+                  "from": "osrm",
+                  "to": "eta-service",
+                  "label": "distance_m, duration_s",
+                  "variant": "dashed"
+                },
+                "relationIndex": 15,
+                "label": "distance_m, duration_s",
+                "x": 855.2,
+                "y": 326,
+                "width": 115.6,
+                "height": 14,
+                "lx": 913,
+                "ly": 336
+              },
+              "from": [
+                873,
+                284
+              ],
+              "to": [
+                873,
+                343
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase architecture label \"distance_m, duration_s\" on connections[15] id \"c16\" \"osrm\" -> \"eta-service\" label \"distance_m, duration_s\" is 0px from connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance, duration}\" segment 0 [910, 392] -> [910, 324] (label rect [855, 326, 116, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 15,
+              "id": "c16",
+              "from": "osrm",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "label": "distance_m, duration_s",
+              "otherRelationship": {
+                "diagramType": "architecture",
+                "collection": "connections",
+                "index": 16,
+                "id": "c17",
+                "from": "eta-service",
+                "to": "passenger-app"
+              },
+              "segmentIndex": 0,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "c16",
+                  "from": "osrm",
+                  "to": "eta-service",
+                  "label": "distance_m, duration_s",
+                  "variant": "dashed"
+                },
+                "relationIndex": 15,
+                "label": "distance_m, duration_s",
+                "x": 855.2,
+                "y": 326,
+                "width": 115.6,
+                "height": 14,
+                "lx": 913,
+                "ly": 336
+              },
+              "from": [
+                910,
+                392
+              ],
+              "to": [
+                910,
+                324
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase architecture label \"RouteInfo {distance, duration}\" on connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance, duration}\" is 2px from connections[14] id \"c15\" \"eta-service\" -> \"osrm\" label \"RouteInfo per segment\" segment 2 [926, 444] -> [926, 388] (label rect [833, 372, 154, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+            "subject": {
+              "diagramType": "architecture",
+              "collection": "connections",
+              "index": 16,
+              "id": "c17",
+              "from": "eta-service",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "label": "RouteInfo {distance, duration}",
+              "otherRelationship": {
+                "diagramType": "architecture",
+                "collection": "connections",
+                "index": 14,
+                "id": "c15",
+                "from": "eta-service",
+                "to": "osrm"
+              },
+              "segmentIndex": 2,
+              "clearancePx": 2,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "c17",
+                  "from": "eta-service",
+                  "to": "passenger-app",
+                  "label": "RouteInfo {distance, duration}",
+                  "variant": "dashed"
+                },
+                "relationIndex": 16,
+                "label": "RouteInfo {distance, duration}",
+                "x": 833,
+                "y": 372,
+                "width": 154,
+                "height": 14,
+                "lx": 910,
+                "ly": 382
+              },
+              "from": [
+                926,
+                444
+              ],
+              "to": [
+                926,
+                388
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+            ]
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"INSERT TripLocationLog\" overlaps component \"record-ping\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [485, 80, 116, 14]\n  component \"record-ping\" rect: [470, 50, 160, 50]\n  Suggested fix: set labelAt [543, 114] or set labelDy 24 (below); or set labelAt [543, 42] or set labelDy -48 (above)",
+            "subject": {
+              "diagramType": "architecture"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"GET ETA for destination\" overlaps component \"notification\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [840, 335, 120, 14]\n  component \"notification\" rect: [710, 290, 160, 50]\n  Suggested fix: set labelAt [900, 354] or set labelDy 9 (below); or set labelAt [900, 282] or set labelDy -63 (above)",
+            "subject": {
+              "diagramType": "architecture"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"GET ETA for destination\" overlaps component \"passenger-app\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [840, 335, 120, 14]\n  component \"passenger-app\" rect: [910, 290, 160, 50]\n  Suggested fix: set labelAt [900, 354] or set labelDy 9 (below); or set labelAt [900, 282] or set labelDy -63 (above)",
+            "subject": {
+              "diagramType": "architecture"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"READ vehicle position\" overlaps component \"is-near-stage\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [725, 255, 111, 14]\n  component \"is-near-stage\" rect: [710, 210, 160, 50]\n  Suggested fix: set labelAt [780, 274] or set labelDy 9 (below); or set labelAt [780, 202] or set labelDy -63 (above)",
+            "subject": {
+              "diagramType": "architecture"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"distance_m, duration_s\" overlaps component \"notification\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [855, 326, 116, 14]\n  component \"notification\" rect: [710, 290, 160, 50]\n  Suggested fix: set labelAt [913, 354] or set labelDy 18 (below); or set labelAt [913, 282] or set labelDy -54 (above)",
+            "subject": {
+              "diagramType": "architecture"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"distance_m, duration_s\" overlaps component \"passenger-app\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [855, 326, 116, 14]\n  component \"passenger-app\" rect: [910, 290, 160, 50]\n  Suggested fix: set labelAt [913, 354] or set labelDy 18 (below); or set labelAt [913, 282] or set labelDy -54 (above)",
+            "subject": {
+              "diagramType": "architecture"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"RouteInfo {distance, duration}\" overlaps component \"eta-service\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [833, 372, 154, 14]\n  component \"eta-service\" rect: [710, 370, 200, 50]\n  Suggested fix: set labelAt [910, 434] or set labelDy 52 (below); or set labelAt [910, 362] or set labelDy -20 (above)",
+            "subject": {
+              "diagramType": "architecture"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"RouteInfo {distance, duration}\" overlaps component \"osrm\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [833, 372, 154, 14]\n  component \"osrm\" rect: [950, 370, 160, 50]\n  Suggested fix: set labelAt [910, 434] or set labelDy 52 (below); or set labelAt [910, 362] or set labelDy -20 (above)",
+            "subject": {
+              "diagramType": "architecture"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          }
+        ],
+        "provenance": "absent",
+        "update": {
+          "status": "unavailable",
+          "installedVersion": null,
+          "availableVersion": null,
+          "releaseNotes": null,
+          "checkedAt": null,
+          "source": null,
+          "noticeRequired": false,
+          "noticeText": null,
+          "reason": "disabled"
+        }
+      },
+      "execution": "embedded-in-deliver"
+    },
+    "deliver": {
+      "status": "not-run",
+      "execution": "blocked-by-validate"
+    }
+  },
+  "diagnostics": [
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] architecture connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" first segment 0 [910, 392] -> [910, 324] does not honor inferred fromSide \"right\" — it must run horizontal rightward; keep automatic routing so the renderer can use a side-aware bridge, or set truthful fromSide/toSide with perpendicular via segments.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 16,
+        "id": "c17",
+        "from": "eta-service",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "endpoint": "source",
+        "authoredField": "fromSide",
+        "sideOrigin": "inferred",
+        "side": "right",
+        "segmentIndex": 0,
+        "from": [
+          910,
+          392
+        ],
+        "to": [
+          910,
+          324
+        ],
+        "expectedAxis": "horizontal",
+        "expectedDirection": "rightward"
+      },
+      "supportedFixes": [
+        "keep automatic routing so the renderer can use a side-aware bridge, or set truthful fromSide/toSide with perpendicular via segments"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] architecture connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" final segment 0 [910, 392] -> [910, 324] does not honor inferred toSide \"left\" — it must run horizontal rightward from the left; keep automatic routing so the renderer can use a side-aware bridge, or set truthful fromSide/toSide with perpendicular via segments.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 16,
+        "id": "c17",
+        "from": "eta-service",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "endpoint": "target",
+        "authoredField": "toSide",
+        "sideOrigin": "inferred",
+        "side": "left",
+        "segmentIndex": 0,
+        "from": [
+          910,
+          392
+        ],
+        "to": [
+          910,
+          324
+        ],
+        "expectedAxis": "horizontal",
+        "expectedDirection": "rightward from the left"
+      },
+      "supportedFixes": [
+        "keep automatic routing so the renderer can use a side-aware bridge, or set truthful fromSide/toSide with perpendicular via segments"
+      ]
+    },
+    {
+      "code": "clean-flow/edge-through-node",
+      "severity": "error",
+      "message": "[clean-flow/edge-through-node] architecture connections[13] id \"c14\" \"eta-service\" -> \"active-trip\" crosses component \"is-near-stage\" (unrelated to this relationship) on segment 2 [750, 275] -> [750, 180] (2px clearance) — adjust fromSide/toSide, set route/via, or move the component.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 13,
+        "id": "c14",
+        "from": "eta-service",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "obstacleKind": "component",
+        "obstacleId": "is-near-stage",
+        "segmentIndex": 2,
+        "from": [
+          750,
+          275
+        ],
+        "to": [
+          750,
+          180
+        ],
+        "clearancePx": 2
+      },
+      "supportedFixes": [
+        "adjust fromSide/toSide, set route/via, or move the component"
+      ]
+    },
+    {
+      "code": "clean-flow/edge-through-node",
+      "severity": "error",
+      "message": "[clean-flow/edge-through-node] architecture connections[13] id \"c14\" \"eta-service\" -> \"active-trip\" crosses component \"notification\" (unrelated to this relationship) on segment 0 [810, 370] -> [810, 275] (2px clearance) — adjust fromSide/toSide, set route/via, or move the component.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 13,
+        "id": "c14",
+        "from": "eta-service",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "obstacleKind": "component",
+        "obstacleId": "notification",
+        "segmentIndex": 0,
+        "from": [
+          810,
+          370
+        ],
+        "to": [
+          810,
+          275
+        ],
+        "clearancePx": 2
+      },
+      "supportedFixes": [
+        "adjust fromSide/toSide, set route/via, or move the component"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase architecture label \"Trigger journey processing\" on connections[4] id \"c5\" \"record-ping\" -> \"update-journey\" label \"Trigger journey processing\" is 0px from connections[2] id \"c3\" \"record-ping\" -> \"trip-location-log\" label \"INSERT TripLocationLog\" segment 0 [543, 100] -> [543, 130] (label rect [528, 104, 135, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 4,
+        "id": "c5",
+        "from": "record-ping",
+        "to": "update-journey"
+      },
+      "evidence": {
+        "label": "Trigger journey processing",
+        "otherRelationship": {
+          "diagramType": "architecture",
+          "collection": "connections",
+          "index": 2,
+          "id": "c3",
+          "from": "record-ping",
+          "to": "trip-location-log"
+        },
+        "segmentIndex": 0,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "c5",
+            "from": "record-ping",
+            "to": "update-journey",
+            "label": "Trigger journey processing",
+            "variant": "dashed"
+          },
+          "relationIndex": 4,
+          "label": "Trigger journey processing",
+          "x": 527.6,
+          "y": 104,
+          "width": 134.8,
+          "height": 14,
+          "lx": 595,
+          "ly": 114
+        },
+        "from": [
+          543,
+          100
+        ],
+        "to": [
+          543,
+          130
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase architecture label \"Trigger journey processing\" on connections[4] id \"c5\" \"record-ping\" -> \"update-journey\" label \"Trigger journey processing\" is 0px from connections[5] id \"c6\" \"update-journey\" -> \"active-trip\" label \"READ vehicle position\" segment 4 [646, 36] -> [646, 162] (label rect [528, 104, 135, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 4,
+        "id": "c5",
+        "from": "record-ping",
+        "to": "update-journey"
+      },
+      "evidence": {
+        "label": "Trigger journey processing",
+        "otherRelationship": {
+          "diagramType": "architecture",
+          "collection": "connections",
+          "index": 5,
+          "id": "c6",
+          "from": "update-journey",
+          "to": "active-trip"
+        },
+        "segmentIndex": 4,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "c5",
+            "from": "record-ping",
+            "to": "update-journey",
+            "label": "Trigger journey processing",
+            "variant": "dashed"
+          },
+          "relationIndex": 4,
+          "label": "Trigger journey processing",
+          "x": 527.6,
+          "y": 104,
+          "width": 134.8,
+          "height": 14,
+          "lx": 595,
+          "ly": 114
+        },
+        "from": [
+          646,
+          36
+        ],
+        "to": [
+          646,
+          162
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase architecture label \"Check stages (Haversine)\" on connections[6] id \"c7\" \"update-journey\" -> \"is-near-stage\" label \"Check stages (Haversine)\" is 0px from connections[9] id \"c10\" \"update-journey\" -> \"notification\" label \"INSERT Notification(s)\" segment 0 [584, 260] -> [584, 308] (label rect [565, 264, 125, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 6,
+        "id": "c7",
+        "from": "update-journey",
+        "to": "is-near-stage"
+      },
+      "evidence": {
+        "label": "Check stages (Haversine)",
+        "otherRelationship": {
+          "diagramType": "architecture",
+          "collection": "connections",
+          "index": 9,
+          "id": "c10",
+          "from": "update-journey",
+          "to": "notification"
+        },
+        "segmentIndex": 0,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "c7",
+            "from": "update-journey",
+            "to": "is-near-stage",
+            "label": "Check stages (Haversine)",
+            "variant": "default"
+          },
+          "relationIndex": 6,
+          "label": "Check stages (Haversine)",
+          "x": 565.4,
+          "y": 264,
+          "width": 125.19999999999999,
+          "height": 14,
+          "lx": 628,
+          "ly": 274
+        },
+        "from": [
+          584,
+          260
+        ],
+        "to": [
+          584,
+          308
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase architecture label \"GET ETA for destination\" on connections[12] id \"c13\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" is 0px from connections[7] id \"c8\" \"is-near-stage\" -> \"update-journey\" label \"true/false per stage\" segment 2 [873, 284] -> [873, 343] (label rect [840, 335, 120, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 12,
+        "id": "c13",
+        "from": "passenger-app",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "label": "GET ETA for destination",
+        "otherRelationship": {
+          "diagramType": "architecture",
+          "collection": "connections",
+          "index": 7,
+          "id": "c8",
+          "from": "is-near-stage",
+          "to": "update-journey"
+        },
+        "segmentIndex": 2,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "c13",
+            "from": "passenger-app",
+            "to": "eta-service",
+            "label": "GET ETA for destination",
+            "variant": "default"
+          },
+          "relationIndex": 12,
+          "label": "GET ETA for destination",
+          "x": 839.8,
+          "y": 335,
+          "width": 120.39999999999999,
+          "height": 14,
+          "lx": 900,
+          "ly": 345
+        },
+        "from": [
+          873,
+          284
+        ],
+        "to": [
+          873,
+          343
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase architecture label \"GET ETA for destination\" on connections[12] id \"c13\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" is 0px from connections[15] id \"c16\" \"osrm\" -> \"eta-service\" label \"distance_m, duration_s\" segment 1 [1030, 346] -> [796, 346] (label rect [840, 335, 120, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 12,
+        "id": "c13",
+        "from": "passenger-app",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "label": "GET ETA for destination",
+        "otherRelationship": {
+          "diagramType": "architecture",
+          "collection": "connections",
+          "index": 15,
+          "id": "c16",
+          "from": "osrm",
+          "to": "eta-service"
+        },
+        "segmentIndex": 1,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "c13",
+            "from": "passenger-app",
+            "to": "eta-service",
+            "label": "GET ETA for destination",
+            "variant": "default"
+          },
+          "relationIndex": 12,
+          "label": "GET ETA for destination",
+          "x": 839.8,
+          "y": 335,
+          "width": 120.39999999999999,
+          "height": 14,
+          "lx": 900,
+          "ly": 345
+        },
+        "from": [
+          1030,
+          346
+        ],
+        "to": [
+          796,
+          346
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase architecture label \"GET ETA for destination\" on connections[12] id \"c13\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" is 0px from connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance, duration}\" segment 0 [910, 392] -> [910, 324] (label rect [840, 335, 120, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 12,
+        "id": "c13",
+        "from": "passenger-app",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "label": "GET ETA for destination",
+        "otherRelationship": {
+          "diagramType": "architecture",
+          "collection": "connections",
+          "index": 16,
+          "id": "c17",
+          "from": "eta-service",
+          "to": "passenger-app"
+        },
+        "segmentIndex": 0,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "c13",
+            "from": "passenger-app",
+            "to": "eta-service",
+            "label": "GET ETA for destination",
+            "variant": "default"
+          },
+          "relationIndex": 12,
+          "label": "GET ETA for destination",
+          "x": 839.8,
+          "y": 335,
+          "width": 120.39999999999999,
+          "height": 14,
+          "lx": 900,
+          "ly": 345
+        },
+        "from": [
+          910,
+          392
+        ],
+        "to": [
+          910,
+          324
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase architecture label \"READ vehicle position\" on connections[13] id \"c14\" \"eta-service\" -> \"active-trip\" label \"READ vehicle position\" is 0px from connections[7] id \"c8\" \"is-near-stage\" -> \"update-journey\" label \"true/false per stage\" segment 0 [790, 260] -> [790, 284] (label rect [725, 255, 111, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 13,
+        "id": "c14",
+        "from": "eta-service",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "label": "READ vehicle position",
+        "otherRelationship": {
+          "diagramType": "architecture",
+          "collection": "connections",
+          "index": 7,
+          "id": "c8",
+          "from": "is-near-stage",
+          "to": "update-journey"
+        },
+        "segmentIndex": 0,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "c14",
+            "from": "eta-service",
+            "to": "active-trip",
+            "label": "READ vehicle position",
+            "variant": "default"
+          },
+          "relationIndex": 13,
+          "label": "READ vehicle position",
+          "x": 724.6,
+          "y": 255,
+          "width": 110.8,
+          "height": 14,
+          "lx": 780,
+          "ly": 265
+        },
+        "from": [
+          790,
+          260
+        ],
+        "to": [
+          790,
+          284
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase architecture label \"distance_m, duration_s\" on connections[15] id \"c16\" \"osrm\" -> \"eta-service\" label \"distance_m, duration_s\" is 0px from connections[7] id \"c8\" \"is-near-stage\" -> \"update-journey\" label \"true/false per stage\" segment 2 [873, 284] -> [873, 343] (label rect [855, 326, 116, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 15,
+        "id": "c16",
+        "from": "osrm",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "label": "distance_m, duration_s",
+        "otherRelationship": {
+          "diagramType": "architecture",
+          "collection": "connections",
+          "index": 7,
+          "id": "c8",
+          "from": "is-near-stage",
+          "to": "update-journey"
+        },
+        "segmentIndex": 2,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "c16",
+            "from": "osrm",
+            "to": "eta-service",
+            "label": "distance_m, duration_s",
+            "variant": "dashed"
+          },
+          "relationIndex": 15,
+          "label": "distance_m, duration_s",
+          "x": 855.2,
+          "y": 326,
+          "width": 115.6,
+          "height": 14,
+          "lx": 913,
+          "ly": 336
+        },
+        "from": [
+          873,
+          284
+        ],
+        "to": [
+          873,
+          343
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase architecture label \"distance_m, duration_s\" on connections[15] id \"c16\" \"osrm\" -> \"eta-service\" label \"distance_m, duration_s\" is 0px from connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance, duration}\" segment 0 [910, 392] -> [910, 324] (label rect [855, 326, 116, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 15,
+        "id": "c16",
+        "from": "osrm",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "label": "distance_m, duration_s",
+        "otherRelationship": {
+          "diagramType": "architecture",
+          "collection": "connections",
+          "index": 16,
+          "id": "c17",
+          "from": "eta-service",
+          "to": "passenger-app"
+        },
+        "segmentIndex": 0,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "c16",
+            "from": "osrm",
+            "to": "eta-service",
+            "label": "distance_m, duration_s",
+            "variant": "dashed"
+          },
+          "relationIndex": 15,
+          "label": "distance_m, duration_s",
+          "x": 855.2,
+          "y": 326,
+          "width": 115.6,
+          "height": 14,
+          "lx": 913,
+          "ly": 336
+        },
+        "from": [
+          910,
+          392
+        ],
+        "to": [
+          910,
+          324
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase architecture label \"RouteInfo {distance, duration}\" on connections[16] id \"c17\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance, duration}\" is 2px from connections[14] id \"c15\" \"eta-service\" -> \"osrm\" label \"RouteInfo per segment\" segment 2 [926, 444] -> [926, 388] (label rect [833, 372, 154, 14]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel.",
+      "subject": {
+        "diagramType": "architecture",
+        "collection": "connections",
+        "index": 16,
+        "id": "c17",
+        "from": "eta-service",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "label": "RouteInfo {distance, duration}",
+        "otherRelationship": {
+          "diagramType": "architecture",
+          "collection": "connections",
+          "index": 14,
+          "id": "c15",
+          "from": "eta-service",
+          "to": "osrm"
+        },
+        "segmentIndex": 2,
+        "clearancePx": 2,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "c17",
+            "from": "eta-service",
+            "to": "passenger-app",
+            "label": "RouteInfo {distance, duration}",
+            "variant": "dashed"
+          },
+          "relationIndex": 16,
+          "label": "RouteInfo {distance, duration}",
+          "x": 833,
+          "y": 372,
+          "width": 154,
+          "height": 14,
+          "lx": 910,
+          "ly": 382
+        },
+        "from": [
+          926,
+          444
+        ],
+        "to": [
+          926,
+          388
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other relationship route/via/channel"
+      ]
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"INSERT TripLocationLog\" overlaps component \"record-ping\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [485, 80, 116, 14]\n  component \"record-ping\" rect: [470, 50, 160, 50]\n  Suggested fix: set labelAt [543, 114] or set labelDy 24 (below); or set labelAt [543, 42] or set labelDy -48 (above)",
+      "subject": {
+        "diagramType": "architecture"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"GET ETA for destination\" overlaps component \"notification\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [840, 335, 120, 14]\n  component \"notification\" rect: [710, 290, 160, 50]\n  Suggested fix: set labelAt [900, 354] or set labelDy 9 (below); or set labelAt [900, 282] or set labelDy -63 (above)",
+      "subject": {
+        "diagramType": "architecture"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"GET ETA for destination\" overlaps component \"passenger-app\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [840, 335, 120, 14]\n  component \"passenger-app\" rect: [910, 290, 160, 50]\n  Suggested fix: set labelAt [900, 354] or set labelDy 9 (below); or set labelAt [900, 282] or set labelDy -63 (above)",
+      "subject": {
+        "diagramType": "architecture"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"READ vehicle position\" overlaps component \"is-near-stage\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [725, 255, 111, 14]\n  component \"is-near-stage\" rect: [710, 210, 160, 50]\n  Suggested fix: set labelAt [780, 274] or set labelDy 9 (below); or set labelAt [780, 202] or set labelDy -63 (above)",
+      "subject": {
+        "diagramType": "architecture"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"distance_m, duration_s\" overlaps component \"notification\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [855, 326, 116, 14]\n  component \"notification\" rect: [710, 290, 160, 50]\n  Suggested fix: set labelAt [913, 354] or set labelDy 18 (below); or set labelAt [913, 282] or set labelDy -54 (above)",
+      "subject": {
+        "diagramType": "architecture"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"distance_m, duration_s\" overlaps component \"passenger-app\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [855, 326, 116, 14]\n  component \"passenger-app\" rect: [910, 290, 160, 50]\n  Suggested fix: set labelAt [913, 354] or set labelDy 18 (below); or set labelAt [913, 282] or set labelDy -54 (above)",
+      "subject": {
+        "diagramType": "architecture"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"RouteInfo {distance, duration}\" overlaps component \"eta-service\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [833, 372, 154, 14]\n  component \"eta-service\" rect: [710, 370, 200, 50]\n  Suggested fix: set labelAt [910, 434] or set labelDy 52 (below); or set labelAt [910, 362] or set labelDy -20 (above)",
+      "subject": {
+        "diagramType": "architecture"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"RouteInfo {distance, duration}\" overlaps component \"osrm\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [833, 372, 154, 14]\n  component \"osrm\" rect: [950, 370, 160, 50]\n  Suggested fix: set labelAt [910, 434] or set labelDy 52 (below); or set labelAt [910, 362] or set labelDy -20 (above)",
+      "subject": {
+        "diagramType": "architecture"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    }
+  ],
+  "evidence": {
+    "receipt": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-architecture.finalize.json",
+    "summaryReceipt": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-architecture.finalize-summary.json"
+  },
+  "visualReview": "not-requested",
+  "failedStage": "validate",
+  "finishedAt": "2026-10-14T05:00:48.153Z",
+  "durationMs": 1348,
+  "update": {
+    "status": "update_available",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.1.0",
+    "releaseNotes": "https://github.com/tt-a1i/archify/releases/tag/v3.1.0",
+    "severity": "normal",
+    "checkedAt": "2026-10-14T04:05:29.798Z",
+    "source": "cache",
+    "noticeRequired": true,
+    "noticeText": "Archify update: 3.0.1 → 3.1.0. A previous check at 2026-10-14T04:05:29.798Z found a newer release. Release notes: https://github.com/tt-a1i/archify/releases/tag/v3.1.0. The installed Skill has not changed; ask to snooze or ignore this reminder.",
+    "eventKey": "archify@sha256:ffedc53390c9da6e859f41e432c5d2d0615a23cf00a503181f07efbba88a7ce8"
+  }
+}

@@ -1,0 +1,307 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "dataflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/candidate.json",
+    "sha256": "fa6dc714b99313cd2f6382ac17a0dd78e36ef4603e7c4364a3b5880cc2183145",
+    "bytes": 5647
+  },
+  "artifact": {
+    "path": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-dataflow.html"
+  },
+  "gates": {
+    "validate": "fail",
+    "deliver": "not-run",
+    "check": "not-run",
+    "browser-check": "not-run"
+  },
+  "failedStage": "validate",
+  "diagnostics": [
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" first segment 0 [107, 300] -> [103.5, 300] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 1,
+        "id": "write-log",
+        "from": "ingest-pipeline",
+        "to": "trip-location-log"
+      },
+      "evidence": {
+        "endpoint": "source",
+        "authoredField": "fromSide",
+        "sideOrigin": "inferred",
+        "side": "bottom",
+        "segmentIndex": 0,
+        "from": [
+          107,
+          300
+        ],
+        "to": [
+          103.5,
+          300
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "downward"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/edge-through-node",
+      "severity": "error",
+      "message": "[clean-flow/edge-through-node] dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" crosses node \"trip-location-log\" (unrelated to this relationship) on segment 1 [97, 300] -> [97, 470] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 2,
+        "id": "update-cache",
+        "from": "ingest-pipeline",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "obstacleKind": "node",
+        "obstacleId": "trip-location-log",
+        "segmentIndex": 1,
+        "from": [
+          96.5,
+          300
+        ],
+        "to": [
+          96.5,
+          470
+        ],
+        "clearancePx": 2
+      },
+      "supportedFixes": [
+        "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" crosses flows[10] id \"read-pos-eta\" \"eta-service\" -> \"active-trip\" at [311.5, 271] (segments 1 and 0) — adjust route/via or channelX/channelY so the flows use separate stage corridors.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 6,
+        "id": "create-notif",
+        "from": "journey-engine",
+        "to": "notification"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 10,
+          "id": "read-pos-eta",
+          "from": "eta-service",
+          "to": "active-trip"
+        },
+        "point": [
+          311.5,
+          271
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 0
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so the flows use separate stage corridors"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" has a 3.5px source-stub segment 0 [107, 300] -> [103.5, 300] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 1,
+        "id": "write-log",
+        "from": "ingest-pipeline",
+        "to": "trip-location-log"
+      },
+      "evidence": {
+        "segmentIndex": 0,
+        "position": "source-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          107,
+          300
+        ],
+        "to": [
+          103.5,
+          300
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase dataflow label \"GPS ping {lat, lng, recorded_at}\" on flows[0] id \"gps-ping\" \"conductor-device\" -> \"ingest-pipeline\" label \"GPS ping {lat, lng, recorded_at}\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [16, 165, 169, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 0,
+        "id": "gps-ping",
+        "from": "conductor-device",
+        "to": "ingest-pipeline"
+      },
+      "evidence": {
+        "label": "GPS ping {lat, lng, recorded_at}",
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 4,
+          "id": "read-position",
+          "from": "journey-engine",
+          "to": "active-trip"
+        },
+        "segmentIndex": 1,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "gps-ping",
+            "from": "conductor-device",
+            "to": "ingest-pipeline",
+            "label": "GPS ping {lat, lng, recorded_at}"
+          },
+          "relationIndex": 0,
+          "label": "GPS ping {lat, lng, recorded_at}",
+          "x": 15.599999999999994,
+          "y": 165,
+          "width": 168.8,
+          "height": 16,
+          "lx": 100,
+          "ly": 176
+        },
+        "from": [
+          160.5,
+          164
+        ],
+        "to": [
+          160.5,
+          492
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+      ]
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Node \"ingest-pipeline\" exceeds the horizontal bounds of the viewBox — reduce node.width or increase meta.viewBox[0].",
+      "subject": {
+        "diagramType": "dataflow"
+      }
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" first segment 0 [93, 300] -> [96.5, 300] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 2,
+        "id": "update-cache",
+        "from": "ingest-pipeline",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "endpoint": "source",
+        "authoredField": "fromSide",
+        "sideOrigin": "inferred",
+        "side": "bottom",
+        "segmentIndex": 0,
+        "from": [
+          93,
+          300
+        ],
+        "to": [
+          96.5,
+          300
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "downward"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[3] id \"trigger-processing\" \"ingest-pipeline\" -> \"journey-engine\" first segment 0 [240, 271] -> [202.5, 271] does not honor inferred fromSide \"right\" — it must run horizontal rightward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 3,
+        "id": "trigger-processing",
+        "from": "ingest-pipeline",
+        "to": "journey-engine"
+      },
+      "evidence": {
+        "endpoint": "source",
+        "authoredField": "fromSide",
+        "sideOrigin": "inferred",
+        "side": "right",
+        "segmentIndex": 0,
+        "from": [
+          240,
+          271
+        ],
+        "to": [
+          202.5,
+          271
+        ],
+        "expectedAxis": "horizontal",
+        "expectedDirection": "rightward"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    }
+  ],
+  "diagnosticSummary": {
+    "total": 70,
+    "shown": 8,
+    "truncated": true
+  },
+  "evidence": {
+    "receipt": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-dataflow.finalize.json",
+    "summaryReceipt": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-dataflow.finalize-summary.json"
+  },
+  "update": {
+    "status": "update_available",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.1.0",
+    "releaseNotes": "https://github.com/tt-a1i/archify/releases/tag/v3.1.0",
+    "severity": "normal",
+    "checkedAt": "2026-10-14T04:05:29.798Z",
+    "source": "cache",
+    "noticeRequired": true,
+    "noticeText": "Archify update: 3.0.1 → 3.1.0. A previous check at 2026-10-14T04:05:29.798Z found a newer release. Release notes: https://github.com/tt-a1i/archify/releases/tag/v3.1.0. The installed Skill has not changed; ask to snooze or ignore this reminder.",
+    "eventKey": "archify@sha256:ffedc53390c9da6e859f41e432c5d2d0615a23cf00a503181f07efbba88a7ce8"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 970,
+  "nextAction": {
+    "action": "edit-in-place",
+    "candidate": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/candidate.json",
+    "constraint": "Preserve unaffected semantics and geometry; do not replace the whole candidate.",
+    "then": "finalize-once"
+  }
+}

@@ -1,0 +1,1475 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "workflow",
+  "quality": "showcase",
+  "startedAt": "2026-10-14T04:17:58.706Z",
+  "specification": {
+    "path": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/candidate.json",
+    "sha256": "cc34fb099d52b9eead11e46682c3e6645a5403cbef5d19c1cc1630f75b7372af",
+    "bytes": 8186
+  },
+  "artifact": {
+    "path": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-workflow.html"
+  },
+  "stages": {
+    "validate": {
+      "status": "fail",
+      "exitCode": 1,
+      "durationMs": null,
+      "command": [
+        "/home/noble/.nvm/versions/node/v24.20.0/bin/node",
+        "/home/noble/.agents/skills/archify/bin/archify.mjs",
+        "deliver",
+        "workflow",
+        "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/candidate.json",
+        "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-workflow.html",
+        "--quality",
+        "showcase",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": false,
+        "command": "deliver",
+        "receiptId": "e08bf627-d2a7-4628-bafa-f06a547ef379",
+        "stage": "render",
+        "type": "workflow",
+        "input": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/candidate.json",
+        "output": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-workflow.html",
+        "error": "Workflow layout validation failed:\n- Sublabel \"Every few seconds: {lat, lng, recorded_at}\" needs ~152px at the 6px legible minimum, but node \"gps-ping\" provides 84px — shorten the sublabel or increase node.width.\n- Label \"Conductor Alerts\" (~109px) is wider than node \"conductor-alert\" (92px) — shorten the label or increase node.width.\n- Sublabel \"Push: approaching, passenger arrived\" needs ~130px at the 6px legible minimum, but node \"conductor-alert\" provides 84px — shorten the sublabel or increase node.width.\n- Label \"POST /trips/ping/<trip_id>/\" (~184px) is wider than node \"ping-endpoint\" (92px) — shorten the label or increase node.width.\n- Sublabel \"trips.views.ping — auth check\" needs ~105px at the 6px legible minimum, but node \"ping-endpoint\" provides 84px — shorten the sublabel or increase node.width.\n- Sublabel \"trips.services.record_ping\" needs ~94px at the 6px legible minimum, but node \"record-ping\" provides 84px — shorten the sublabel or increase node.width.\n- Label \"Trigger Journey Processing\" (~177px) is wider than node \"trigger-journey\" (92px) — shorten the label or increase node.width.\n- Sublabel \"For each active JourneySession\" needs ~108px at the 6px legible minimum, but node \"trigger-journey\" provides 84px — shorten the sublabel or increase node.width.\n- Label \"TripLocationLog\" (~102px) is wider than node \"trip-location-log\" (92px) — shorten the label or increase node.width.\n- Sublabel \"Position cache (current_lat/lng, last_ping_at)\" needs ~166px at the 6px legible minimum, but node \"active-trip\" provides 84px — shorten the sublabel or increase node.width.\n- Sublabel \"FSM: SELECTED → IN_TRANSIT → APPROACHING → ARRIVED → ENDED\" needs ~209px at the 6px legible minimum, but node \"journey-session\" provides 84px — shorten the sublabel or increase node.width.\n- Sublabel \"In-app alerts for passenger + conductor\" needs ~141px at the 6px legible minimum, but node \"notification\" provides 84px — shorten the sublabel or increase node.width.\n- Label \"update_journey_status()\" (~156px) is wider than node \"update-journey\" (92px) — shorten the label or increase node.width.\n- Sublabel \"journeys.services.update_journey_status\" needs ~141px at the 6px legible minimum, but node \"update-journey\" provides 84px — shorten the sublabel or increase node.width.\n- Label \"is_near_stage()\" (~102px) is wider than node \"is-near-stage\" (92px) — shorten the label or increase node.width.\n- Sublabel \"Haversine ≤ 20m per stage\" needs ~90px at the 6px legible minimum, but node \"is-near-stage\" provides 84px — shorten the sublabel or increase node.width.\n- Sublabel \"Polls status & requests ETA\" needs ~98px at the 6px legible minimum, but node \"passenger-app\" provides 84px — shorten the sublabel or increase node.width.\n- Label \"remaining_road_distance()\" (~170px) is wider than node \"eta-service\" (92px) — shorten the label or increase node.width.\n- Sublabel \"OSRM road distance/ETA (Haversine fallback)\" needs ~155px at the 6px legible minimum, but node \"eta-service\" provides 84px — shorten the sublabel or increase node.width.\n- Phase \"phase-process\" (3..4) overlaps phase \"phase-ingest\" (0..3) — start at col 4 or later, or end the earlier phase at col 2.\n- Phase \"phase-consume\" (4..5) overlaps phase \"phase-process\" (3..4) — start at col 5 or later, or end the earlier phase at col 3.\n- [composition/proper-crossing] showcase workflow edges[1] id \"e10\" \"update-journey\" -> \"journey-session\" crosses edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" at [616.4, 414] (segments 1 and 2) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.\n- [composition/proper-crossing] showcase workflow edges[2] id \"e11\" \"update-journey\" -> \"notification\" crosses edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [942.8, 449] (segments 2 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.\n- [composition/proper-crossing] showcase workflow edges[3] id \"e12\" \"notification\" -> \"passenger-app\" crosses edges[7] id \"e16\" \"eta-service\" -> \"osrm\" at [1075, 491] (segments 1 and 2) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.\n- [composition/proper-crossing] showcase workflow edges[3] id \"e12\" \"notification\" -> \"passenger-app\" crosses edges[8] id \"e17\" \"osrm\" -> \"eta-service\" at [1075, 449] (segments 1 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.\n- [composition/proper-crossing] showcase workflow edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" crosses edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [616.4, 449] (segments 2 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.\n- [composition/proper-crossing] showcase workflow edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" crosses edges[17] id \"e9\" \"is-near-stage\" -> \"update-journey\" at [616.4, 449] (segments 2 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.\n- [composition/proper-crossing] showcase workflow edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" crosses edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [616.4, 449] (segments 1 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.\n- [composition/proper-crossing] showcase workflow edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" crosses edges[17] id \"e9\" \"is-near-stage\" -> \"update-journey\" at [616.4, 449] (segments 1 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.\n- [composition/ambiguous-corridor] showcase workflow edges[1] id \"e10\" \"update-journey\" -> \"journey-session\" shares a 62px corridor with edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" at [554.4, 414] -> [616.4, 414] (segments 1 and 2; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.\n- [composition/ambiguous-corridor] showcase workflow edges[6] id \"e15\" \"eta-service\" -> \"active-trip\" shares a 64.4px corridor with edges[9] id \"e18\" \"eta-service\" -> \"passenger-app\" at [878.4, 668] -> [942.8, 668] (segments 1 and 2; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.\n- [composition/ambiguous-corridor] showcase workflow edges[6] id \"e15\" \"eta-service\" -> \"active-trip\" shares a 47px corridor with edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" at [492.4, 367] -> [492.4, 414] (segments 2 and 3; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.\n- [composition/ambiguous-corridor] showcase workflow edges[8] id \"e17\" \"osrm\" -> \"eta-service\" shares a 70.2px corridor with edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [1004.8, 449] -> [1075, 449] (segments 1 and 1; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.\n- [composition/ambiguous-corridor] showcase workflow edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" shares a 77px corridor with edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" at [616.4, 414] -> [616.4, 491] (segments 2 and 1; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.\n- [composition/ambiguous-corridor] showcase workflow edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" shares a 194px corridor with edges[17] id \"e9\" \"is-near-stage\" -> \"update-journey\" at [578.4, 449] -> [772.4, 449] (segments 1 and 1; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+        "diagnostics": [
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Sublabel \"Every few seconds: {lat, lng, recorded_at}\" needs ~152px at the 6px legible minimum, but node \"gps-ping\" provides 84px — shorten the sublabel or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"Conductor Alerts\" (~109px) is wider than node \"conductor-alert\" (92px) — shorten the label or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Sublabel \"Push: approaching, passenger arrived\" needs ~130px at the 6px legible minimum, but node \"conductor-alert\" provides 84px — shorten the sublabel or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"POST /trips/ping/<trip_id>/\" (~184px) is wider than node \"ping-endpoint\" (92px) — shorten the label or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Sublabel \"trips.views.ping — auth check\" needs ~105px at the 6px legible minimum, but node \"ping-endpoint\" provides 84px — shorten the sublabel or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Sublabel \"trips.services.record_ping\" needs ~94px at the 6px legible minimum, but node \"record-ping\" provides 84px — shorten the sublabel or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"Trigger Journey Processing\" (~177px) is wider than node \"trigger-journey\" (92px) — shorten the label or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Sublabel \"For each active JourneySession\" needs ~108px at the 6px legible minimum, but node \"trigger-journey\" provides 84px — shorten the sublabel or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"TripLocationLog\" (~102px) is wider than node \"trip-location-log\" (92px) — shorten the label or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Sublabel \"Position cache (current_lat/lng, last_ping_at)\" needs ~166px at the 6px legible minimum, but node \"active-trip\" provides 84px — shorten the sublabel or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Sublabel \"FSM: SELECTED → IN_TRANSIT → APPROACHING → ARRIVED → ENDED\" needs ~209px at the 6px legible minimum, but node \"journey-session\" provides 84px — shorten the sublabel or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Sublabel \"In-app alerts for passenger + conductor\" needs ~141px at the 6px legible minimum, but node \"notification\" provides 84px — shorten the sublabel or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"update_journey_status()\" (~156px) is wider than node \"update-journey\" (92px) — shorten the label or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Sublabel \"journeys.services.update_journey_status\" needs ~141px at the 6px legible minimum, but node \"update-journey\" provides 84px — shorten the sublabel or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"is_near_stage()\" (~102px) is wider than node \"is-near-stage\" (92px) — shorten the label or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Sublabel \"Haversine ≤ 20m per stage\" needs ~90px at the 6px legible minimum, but node \"is-near-stage\" provides 84px — shorten the sublabel or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Sublabel \"Polls status & requests ETA\" needs ~98px at the 6px legible minimum, but node \"passenger-app\" provides 84px — shorten the sublabel or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"remaining_road_distance()\" (~170px) is wider than node \"eta-service\" (92px) — shorten the label or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Sublabel \"OSRM road distance/ETA (Haversine fallback)\" needs ~155px at the 6px legible minimum, but node \"eta-service\" provides 84px — shorten the sublabel or increase node.width.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Phase \"phase-process\" (3..4) overlaps phase \"phase-ingest\" (0..3) — start at col 4 or later, or end the earlier phase at col 2.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Phase \"phase-consume\" (4..5) overlaps phase \"phase-process\" (3..4) — start at col 5 or later, or end the earlier phase at col 3.",
+            "subject": {
+              "diagramType": "workflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "composition/proper-crossing",
+            "severity": "error",
+            "message": "[composition/proper-crossing] showcase workflow edges[1] id \"e10\" \"update-journey\" -> \"journey-session\" crosses edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" at [616.4, 414] (segments 1 and 2) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 1,
+              "id": "e10",
+              "from": "update-journey",
+              "to": "journey-session"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 14,
+                "id": "e6",
+                "from": "trigger-journey",
+                "to": "update-journey"
+              },
+              "point": [
+                616.3999999999999,
+                414
+              ],
+              "segmentIndex": 1,
+              "otherSegmentIndex": 2
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+            ]
+          },
+          {
+            "code": "composition/proper-crossing",
+            "severity": "error",
+            "message": "[composition/proper-crossing] showcase workflow edges[2] id \"e11\" \"update-journey\" -> \"notification\" crosses edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [942.8, 449] (segments 2 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 2,
+              "id": "e11",
+              "from": "update-journey",
+              "to": "notification"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 16,
+                "id": "e8",
+                "from": "update-journey",
+                "to": "is-near-stage"
+              },
+              "point": [
+                942.8,
+                449.00000000000006
+              ],
+              "segmentIndex": 2,
+              "otherSegmentIndex": 1
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+            ]
+          },
+          {
+            "code": "composition/proper-crossing",
+            "severity": "error",
+            "message": "[composition/proper-crossing] showcase workflow edges[3] id \"e12\" \"notification\" -> \"passenger-app\" crosses edges[7] id \"e16\" \"eta-service\" -> \"osrm\" at [1075, 491] (segments 1 and 2) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 3,
+              "id": "e12",
+              "from": "notification",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 7,
+                "id": "e16",
+                "from": "eta-service",
+                "to": "osrm"
+              },
+              "point": [
+                1074.9999999999998,
+                491.00000000000006
+              ],
+              "segmentIndex": 1,
+              "otherSegmentIndex": 2
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+            ]
+          },
+          {
+            "code": "composition/proper-crossing",
+            "severity": "error",
+            "message": "[composition/proper-crossing] showcase workflow edges[3] id \"e12\" \"notification\" -> \"passenger-app\" crosses edges[8] id \"e17\" \"osrm\" -> \"eta-service\" at [1075, 449] (segments 1 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 3,
+              "id": "e12",
+              "from": "notification",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 8,
+                "id": "e17",
+                "from": "osrm",
+                "to": "eta-service"
+              },
+              "point": [
+                1075,
+                449
+              ],
+              "segmentIndex": 1,
+              "otherSegmentIndex": 1
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+            ]
+          },
+          {
+            "code": "composition/proper-crossing",
+            "severity": "error",
+            "message": "[composition/proper-crossing] showcase workflow edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" crosses edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [616.4, 449] (segments 2 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 14,
+              "id": "e6",
+              "from": "trigger-journey",
+              "to": "update-journey"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 16,
+                "id": "e8",
+                "from": "update-journey",
+                "to": "is-near-stage"
+              },
+              "point": [
+                616.3999999999999,
+                449
+              ],
+              "segmentIndex": 2,
+              "otherSegmentIndex": 1
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+            ]
+          },
+          {
+            "code": "composition/proper-crossing",
+            "severity": "error",
+            "message": "[composition/proper-crossing] showcase workflow edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" crosses edges[17] id \"e9\" \"is-near-stage\" -> \"update-journey\" at [616.4, 449] (segments 2 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 14,
+              "id": "e6",
+              "from": "trigger-journey",
+              "to": "update-journey"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 17,
+                "id": "e9",
+                "from": "is-near-stage",
+                "to": "update-journey"
+              },
+              "point": [
+                616.3999999999999,
+                449
+              ],
+              "segmentIndex": 2,
+              "otherSegmentIndex": 1
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+            ]
+          },
+          {
+            "code": "composition/proper-crossing",
+            "severity": "error",
+            "message": "[composition/proper-crossing] showcase workflow edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" crosses edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [616.4, 449] (segments 1 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 15,
+              "id": "e7",
+              "from": "update-journey",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 16,
+                "id": "e8",
+                "from": "update-journey",
+                "to": "is-near-stage"
+              },
+              "point": [
+                616.3999999999997,
+                448.99999999999994
+              ],
+              "segmentIndex": 1,
+              "otherSegmentIndex": 1
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+            ]
+          },
+          {
+            "code": "composition/proper-crossing",
+            "severity": "error",
+            "message": "[composition/proper-crossing] showcase workflow edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" crosses edges[17] id \"e9\" \"is-near-stage\" -> \"update-journey\" at [616.4, 449] (segments 1 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 15,
+              "id": "e7",
+              "from": "update-journey",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 17,
+                "id": "e9",
+                "from": "is-near-stage",
+                "to": "update-journey"
+              },
+              "point": [
+                616.3999999999999,
+                449
+              ],
+              "segmentIndex": 1,
+              "otherSegmentIndex": 1
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+            ]
+          },
+          {
+            "code": "composition/ambiguous-corridor",
+            "severity": "error",
+            "message": "[composition/ambiguous-corridor] showcase workflow edges[1] id \"e10\" \"update-journey\" -> \"journey-session\" shares a 62px corridor with edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" at [554.4, 414] -> [616.4, 414] (segments 1 and 2; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 1,
+              "id": "e10",
+              "from": "update-journey",
+              "to": "journey-session"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 15,
+                "id": "e7",
+                "from": "update-journey",
+                "to": "active-trip"
+              },
+              "overlapLengthPx": 62,
+              "minimumPx": 8,
+              "from": [
+                554.4,
+                414
+              ],
+              "to": [
+                616.4,
+                414
+              ],
+              "segmentIndex": 1,
+              "otherSegmentIndex": 2
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+            ]
+          },
+          {
+            "code": "composition/ambiguous-corridor",
+            "severity": "error",
+            "message": "[composition/ambiguous-corridor] showcase workflow edges[6] id \"e15\" \"eta-service\" -> \"active-trip\" shares a 64.4px corridor with edges[9] id \"e18\" \"eta-service\" -> \"passenger-app\" at [878.4, 668] -> [942.8, 668] (segments 1 and 2; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 6,
+              "id": "e15",
+              "from": "eta-service",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 9,
+                "id": "e18",
+                "from": "eta-service",
+                "to": "passenger-app"
+              },
+              "overlapLengthPx": 64.4,
+              "minimumPx": 8,
+              "from": [
+                878.4,
+                668
+              ],
+              "to": [
+                942.8,
+                668
+              ],
+              "segmentIndex": 1,
+              "otherSegmentIndex": 2
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+            ]
+          },
+          {
+            "code": "composition/ambiguous-corridor",
+            "severity": "error",
+            "message": "[composition/ambiguous-corridor] showcase workflow edges[6] id \"e15\" \"eta-service\" -> \"active-trip\" shares a 47px corridor with edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" at [492.4, 367] -> [492.4, 414] (segments 2 and 3; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 6,
+              "id": "e15",
+              "from": "eta-service",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 15,
+                "id": "e7",
+                "from": "update-journey",
+                "to": "active-trip"
+              },
+              "overlapLengthPx": 47,
+              "minimumPx": 8,
+              "from": [
+                492.4,
+                367
+              ],
+              "to": [
+                492.4,
+                414
+              ],
+              "segmentIndex": 2,
+              "otherSegmentIndex": 3
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+            ]
+          },
+          {
+            "code": "composition/ambiguous-corridor",
+            "severity": "error",
+            "message": "[composition/ambiguous-corridor] showcase workflow edges[8] id \"e17\" \"osrm\" -> \"eta-service\" shares a 70.2px corridor with edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [1004.8, 449] -> [1075, 449] (segments 1 and 1; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 8,
+              "id": "e17",
+              "from": "osrm",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 16,
+                "id": "e8",
+                "from": "update-journey",
+                "to": "is-near-stage"
+              },
+              "overlapLengthPx": 70.2,
+              "minimumPx": 8,
+              "from": [
+                1004.8,
+                449
+              ],
+              "to": [
+                1075,
+                449
+              ],
+              "segmentIndex": 1,
+              "otherSegmentIndex": 1
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+            ]
+          },
+          {
+            "code": "composition/ambiguous-corridor",
+            "severity": "error",
+            "message": "[composition/ambiguous-corridor] showcase workflow edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" shares a 77px corridor with edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" at [616.4, 414] -> [616.4, 491] (segments 2 and 1; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 14,
+              "id": "e6",
+              "from": "trigger-journey",
+              "to": "update-journey"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 15,
+                "id": "e7",
+                "from": "update-journey",
+                "to": "active-trip"
+              },
+              "overlapLengthPx": 77,
+              "minimumPx": 8,
+              "from": [
+                616.4,
+                414
+              ],
+              "to": [
+                616.4,
+                491
+              ],
+              "segmentIndex": 2,
+              "otherSegmentIndex": 1
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+            ]
+          },
+          {
+            "code": "composition/ambiguous-corridor",
+            "severity": "error",
+            "message": "[composition/ambiguous-corridor] showcase workflow edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" shares a 194px corridor with edges[17] id \"e9\" \"is-near-stage\" -> \"update-journey\" at [578.4, 449] -> [772.4, 449] (segments 1 and 1; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+            "subject": {
+              "diagramType": "workflow",
+              "collection": "edges",
+              "index": 16,
+              "id": "e8",
+              "from": "update-journey",
+              "to": "is-near-stage"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "workflow",
+                "collection": "edges",
+                "index": 17,
+                "id": "e9",
+                "from": "is-near-stage",
+                "to": "update-journey"
+              },
+              "overlapLengthPx": 194,
+              "minimumPx": 8,
+              "from": [
+                578.4,
+                449
+              ],
+              "to": [
+                772.4,
+                449
+              ],
+              "segmentIndex": 1,
+              "otherSegmentIndex": 1
+            },
+            "supportedFixes": [
+              "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+            ]
+          }
+        ],
+        "provenance": "absent",
+        "update": {
+          "status": "unavailable",
+          "installedVersion": null,
+          "availableVersion": null,
+          "releaseNotes": null,
+          "checkedAt": null,
+          "source": null,
+          "noticeRequired": false,
+          "noticeText": null,
+          "reason": "disabled"
+        }
+      },
+      "execution": "embedded-in-deliver"
+    },
+    "deliver": {
+      "status": "not-run",
+      "execution": "blocked-by-validate"
+    }
+  },
+  "diagnostics": [
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"Every few seconds: {lat, lng, recorded_at}\" needs ~152px at the 6px legible minimum, but node \"gps-ping\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"Conductor Alerts\" (~109px) is wider than node \"conductor-alert\" (92px) — shorten the label or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"Push: approaching, passenger arrived\" needs ~130px at the 6px legible minimum, but node \"conductor-alert\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"POST /trips/ping/<trip_id>/\" (~184px) is wider than node \"ping-endpoint\" (92px) — shorten the label or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"trips.views.ping — auth check\" needs ~105px at the 6px legible minimum, but node \"ping-endpoint\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"trips.services.record_ping\" needs ~94px at the 6px legible minimum, but node \"record-ping\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"Trigger Journey Processing\" (~177px) is wider than node \"trigger-journey\" (92px) — shorten the label or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"For each active JourneySession\" needs ~108px at the 6px legible minimum, but node \"trigger-journey\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"TripLocationLog\" (~102px) is wider than node \"trip-location-log\" (92px) — shorten the label or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"Position cache (current_lat/lng, last_ping_at)\" needs ~166px at the 6px legible minimum, but node \"active-trip\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"FSM: SELECTED → IN_TRANSIT → APPROACHING → ARRIVED → ENDED\" needs ~209px at the 6px legible minimum, but node \"journey-session\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"In-app alerts for passenger + conductor\" needs ~141px at the 6px legible minimum, but node \"notification\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"update_journey_status()\" (~156px) is wider than node \"update-journey\" (92px) — shorten the label or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"journeys.services.update_journey_status\" needs ~141px at the 6px legible minimum, but node \"update-journey\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"is_near_stage()\" (~102px) is wider than node \"is-near-stage\" (92px) — shorten the label or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"Haversine ≤ 20m per stage\" needs ~90px at the 6px legible minimum, but node \"is-near-stage\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"Polls status & requests ETA\" needs ~98px at the 6px legible minimum, but node \"passenger-app\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"remaining_road_distance()\" (~170px) is wider than node \"eta-service\" (92px) — shorten the label or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"OSRM road distance/ETA (Haversine fallback)\" needs ~155px at the 6px legible minimum, but node \"eta-service\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Phase \"phase-process\" (3..4) overlaps phase \"phase-ingest\" (0..3) — start at col 4 or later, or end the earlier phase at col 2.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Phase \"phase-consume\" (4..5) overlaps phase \"phase-process\" (3..4) — start at col 5 or later, or end the earlier phase at col 3.",
+      "subject": {
+        "diagramType": "workflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[1] id \"e10\" \"update-journey\" -> \"journey-session\" crosses edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" at [616.4, 414] (segments 1 and 2) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 1,
+        "id": "e10",
+        "from": "update-journey",
+        "to": "journey-session"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 14,
+          "id": "e6",
+          "from": "trigger-journey",
+          "to": "update-journey"
+        },
+        "point": [
+          616.3999999999999,
+          414
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 2
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[2] id \"e11\" \"update-journey\" -> \"notification\" crosses edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [942.8, 449] (segments 2 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 2,
+        "id": "e11",
+        "from": "update-journey",
+        "to": "notification"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 16,
+          "id": "e8",
+          "from": "update-journey",
+          "to": "is-near-stage"
+        },
+        "point": [
+          942.8,
+          449.00000000000006
+        ],
+        "segmentIndex": 2,
+        "otherSegmentIndex": 1
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[3] id \"e12\" \"notification\" -> \"passenger-app\" crosses edges[7] id \"e16\" \"eta-service\" -> \"osrm\" at [1075, 491] (segments 1 and 2) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 3,
+        "id": "e12",
+        "from": "notification",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 7,
+          "id": "e16",
+          "from": "eta-service",
+          "to": "osrm"
+        },
+        "point": [
+          1074.9999999999998,
+          491.00000000000006
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 2
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[3] id \"e12\" \"notification\" -> \"passenger-app\" crosses edges[8] id \"e17\" \"osrm\" -> \"eta-service\" at [1075, 449] (segments 1 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 3,
+        "id": "e12",
+        "from": "notification",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 8,
+          "id": "e17",
+          "from": "osrm",
+          "to": "eta-service"
+        },
+        "point": [
+          1075,
+          449
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 1
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" crosses edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [616.4, 449] (segments 2 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 14,
+        "id": "e6",
+        "from": "trigger-journey",
+        "to": "update-journey"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 16,
+          "id": "e8",
+          "from": "update-journey",
+          "to": "is-near-stage"
+        },
+        "point": [
+          616.3999999999999,
+          449
+        ],
+        "segmentIndex": 2,
+        "otherSegmentIndex": 1
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" crosses edges[17] id \"e9\" \"is-near-stage\" -> \"update-journey\" at [616.4, 449] (segments 2 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 14,
+        "id": "e6",
+        "from": "trigger-journey",
+        "to": "update-journey"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 17,
+          "id": "e9",
+          "from": "is-near-stage",
+          "to": "update-journey"
+        },
+        "point": [
+          616.3999999999999,
+          449
+        ],
+        "segmentIndex": 2,
+        "otherSegmentIndex": 1
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" crosses edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [616.4, 449] (segments 1 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 15,
+        "id": "e7",
+        "from": "update-journey",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 16,
+          "id": "e8",
+          "from": "update-journey",
+          "to": "is-near-stage"
+        },
+        "point": [
+          616.3999999999997,
+          448.99999999999994
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 1
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" crosses edges[17] id \"e9\" \"is-near-stage\" -> \"update-journey\" at [616.4, 449] (segments 1 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 15,
+        "id": "e7",
+        "from": "update-journey",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 17,
+          "id": "e9",
+          "from": "is-near-stage",
+          "to": "update-journey"
+        },
+        "point": [
+          616.3999999999999,
+          449
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 1
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/ambiguous-corridor",
+      "severity": "error",
+      "message": "[composition/ambiguous-corridor] showcase workflow edges[1] id \"e10\" \"update-journey\" -> \"journey-session\" shares a 62px corridor with edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" at [554.4, 414] -> [616.4, 414] (segments 1 and 2; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 1,
+        "id": "e10",
+        "from": "update-journey",
+        "to": "journey-session"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 15,
+          "id": "e7",
+          "from": "update-journey",
+          "to": "active-trip"
+        },
+        "overlapLengthPx": 62,
+        "minimumPx": 8,
+        "from": [
+          554.4,
+          414
+        ],
+        "to": [
+          616.4,
+          414
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 2
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+      ]
+    },
+    {
+      "code": "composition/ambiguous-corridor",
+      "severity": "error",
+      "message": "[composition/ambiguous-corridor] showcase workflow edges[6] id \"e15\" \"eta-service\" -> \"active-trip\" shares a 64.4px corridor with edges[9] id \"e18\" \"eta-service\" -> \"passenger-app\" at [878.4, 668] -> [942.8, 668] (segments 1 and 2; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 6,
+        "id": "e15",
+        "from": "eta-service",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 9,
+          "id": "e18",
+          "from": "eta-service",
+          "to": "passenger-app"
+        },
+        "overlapLengthPx": 64.4,
+        "minimumPx": 8,
+        "from": [
+          878.4,
+          668
+        ],
+        "to": [
+          942.8,
+          668
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 2
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+      ]
+    },
+    {
+      "code": "composition/ambiguous-corridor",
+      "severity": "error",
+      "message": "[composition/ambiguous-corridor] showcase workflow edges[6] id \"e15\" \"eta-service\" -> \"active-trip\" shares a 47px corridor with edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" at [492.4, 367] -> [492.4, 414] (segments 2 and 3; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 6,
+        "id": "e15",
+        "from": "eta-service",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 15,
+          "id": "e7",
+          "from": "update-journey",
+          "to": "active-trip"
+        },
+        "overlapLengthPx": 47,
+        "minimumPx": 8,
+        "from": [
+          492.4,
+          367
+        ],
+        "to": [
+          492.4,
+          414
+        ],
+        "segmentIndex": 2,
+        "otherSegmentIndex": 3
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+      ]
+    },
+    {
+      "code": "composition/ambiguous-corridor",
+      "severity": "error",
+      "message": "[composition/ambiguous-corridor] showcase workflow edges[8] id \"e17\" \"osrm\" -> \"eta-service\" shares a 70.2px corridor with edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [1004.8, 449] -> [1075, 449] (segments 1 and 1; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 8,
+        "id": "e17",
+        "from": "osrm",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 16,
+          "id": "e8",
+          "from": "update-journey",
+          "to": "is-near-stage"
+        },
+        "overlapLengthPx": 70.2,
+        "minimumPx": 8,
+        "from": [
+          1004.8,
+          449
+        ],
+        "to": [
+          1075,
+          449
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 1
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+      ]
+    },
+    {
+      "code": "composition/ambiguous-corridor",
+      "severity": "error",
+      "message": "[composition/ambiguous-corridor] showcase workflow edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" shares a 77px corridor with edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" at [616.4, 414] -> [616.4, 491] (segments 2 and 1; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 14,
+        "id": "e6",
+        "from": "trigger-journey",
+        "to": "update-journey"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 15,
+          "id": "e7",
+          "from": "update-journey",
+          "to": "active-trip"
+        },
+        "overlapLengthPx": 77,
+        "minimumPx": 8,
+        "from": [
+          616.4,
+          414
+        ],
+        "to": [
+          616.4,
+          491
+        ],
+        "segmentIndex": 2,
+        "otherSegmentIndex": 1
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+      ]
+    },
+    {
+      "code": "composition/ambiguous-corridor",
+      "severity": "error",
+      "message": "[composition/ambiguous-corridor] showcase workflow edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" shares a 194px corridor with edges[17] id \"e9\" \"is-near-stage\" -> \"update-journey\" at [578.4, 449] -> [772.4, 449] (segments 1 and 1; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 16,
+        "id": "e8",
+        "from": "update-journey",
+        "to": "is-near-stage"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 17,
+          "id": "e9",
+          "from": "is-near-stage",
+          "to": "update-journey"
+        },
+        "overlapLengthPx": 194,
+        "minimumPx": 8,
+        "from": [
+          578.4,
+          449
+        ],
+        "to": [
+          772.4,
+          449
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 1
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+      ]
+    }
+  ],
+  "evidence": {
+    "receipt": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-workflow.finalize.json",
+    "summaryReceipt": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-workflow.finalize-summary.json"
+  },
+  "visualReview": "not-requested",
+  "failedStage": "validate",
+  "finishedAt": "2026-10-14T04:18:00.089Z",
+  "durationMs": 1382,
+  "update": {
+    "status": "update_available",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.1.0",
+    "releaseNotes": "https://github.com/tt-a1i/archify/releases/tag/v3.1.0",
+    "severity": "normal",
+    "checkedAt": "2026-10-14T04:05:29.798Z",
+    "source": "cache",
+    "noticeRequired": true,
+    "noticeText": "Archify update: 3.0.1 → 3.1.0. A previous check at 2026-10-14T04:05:29.798Z found a newer release. Release notes: https://github.com/tt-a1i/archify/releases/tag/v3.1.0. The installed Skill has not changed; ask to snooze or ignore this reminder.",
+    "eventKey": "archify@sha256:ffedc53390c9da6e859f41e432c5d2d0615a23cf00a503181f07efbba88a7ce8"
+  }
+}

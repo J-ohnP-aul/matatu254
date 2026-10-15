@@ -1,0 +1,4199 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "dataflow",
+  "quality": "showcase",
+  "startedAt": "2026-10-14T04:14:28.612Z",
+  "specification": {
+    "path": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/candidate.json",
+    "sha256": "fa6dc714b99313cd2f6382ac17a0dd78e36ef4603e7c4364a3b5880cc2183145",
+    "bytes": 5647
+  },
+  "artifact": {
+    "path": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-dataflow.html"
+  },
+  "stages": {
+    "validate": {
+      "status": "fail",
+      "exitCode": 1,
+      "durationMs": null,
+      "command": [
+        "/home/noble/.nvm/versions/node/v24.20.0/bin/node",
+        "/home/noble/.agents/skills/archify/bin/archify.mjs",
+        "deliver",
+        "dataflow",
+        "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/candidate.json",
+        "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-dataflow.html",
+        "--quality",
+        "showcase",
+        "--json"
+      ],
+      "receipt": {
+        "schemaVersion": 1,
+        "ok": false,
+        "command": "deliver",
+        "receiptId": "474e273b-bf58-4fc0-a283-8d8071f6e504",
+        "stage": "render",
+        "type": "dataflow",
+        "input": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/candidate.json",
+        "output": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-dataflow.html",
+        "error": "Data-flow layout validation failed:\n- Node \"ingest-pipeline\" exceeds the horizontal bounds of the viewBox — reduce node.width or increase meta.viewBox[0].\n- Nodes \"conductor-device\" and \"journey-engine\" are less than 10px apart — move one to another stage/row or adjust yOffset.\n- Nodes \"journey-engine\" and \"passenger-app\" are less than 10px apart — move one to another stage/row or adjust yOffset.\n- [clean-flow/endpoint-side-direction] dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" first segment 0 [107, 300] -> [103.5, 300] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" final segment 2 [103.5, 356] -> [100, 356] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" first segment 0 [93, 300] -> [96.5, 300] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" final segment 2 [96.5, 470] -> [100, 470] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[3] id \"trigger-processing\" \"ingest-pipeline\" -> \"journey-engine\" first segment 0 [240, 271] -> [202.5, 271] does not honor inferred fromSide \"right\" — it must run horizontal rightward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[3] id \"trigger-processing\" \"ingest-pipeline\" -> \"journey-engine\" final segment 2 [202.5, 150] -> [165, 150] does not honor inferred toSide \"left\" — it must run horizontal rightward from the left; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" first segment 0 [322, 186] -> [318.5, 186] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" final segment 2 [318.5, 242] -> [315, 242] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" first segment 0 [308, 186] -> [311.5, 186] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" final segment 2 [311.5, 356] -> [315, 356] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" first segment 0 [523, 186] -> [526.5, 186] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" final segment 2 [526.5, 242] -> [530, 242] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" first segment 0 [516, 242] -> [523, 242] does not honor inferred fromSide \"top\" — it must run vertical upward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" final segment 2 [523, 300] -> [530, 300] does not honor inferred toSide \"bottom\" — it must run vertical upward from below; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" first segment 0 [544, 242] -> [540.5, 242] does not honor inferred fromSide \"top\" — it must run vertical upward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/endpoint-side-direction] dataflow flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" final segment 2 [540.5, 186] -> [537, 186] does not honor inferred toSide \"bottom\" — it must run vertical upward from below; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.\n- [clean-flow/edge-through-node] dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" crosses node \"trip-location-log\" (unrelated to this relationship) on segment 1 [97, 300] -> [97, 470] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.\n- [clean-flow/edge-through-node] dataflow flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" crosses node \"ingest-pipeline\" (unrelated to this relationship) on segment 1 [161, 164] -> [161, 492] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.\n- [clean-flow/edge-through-node] dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" crosses node \"journey-session\" (unrelated to this relationship) on segment 1 [312, 186] -> [312, 356] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.\n- [clean-flow/edge-through-node] dataflow flows[7] id \"notify-passenger\" \"notification\" -> \"passenger-app\" crosses node \"journey-engine\" (unrelated to this relationship) on segment 1 [423, 378] -> [423, 157] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.\n- [clean-flow/edge-through-node] dataflow flows[7] id \"notify-passenger\" \"notification\" -> \"passenger-app\" crosses node \"eta-service\" (unrelated to this relationship) on segment 1 [423, 378] -> [423, 157] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.\n- [clean-flow/edge-through-node] dataflow flows[10] id \"read-pos-eta\" \"eta-service\" -> \"active-trip\" crosses node \"journey-session\" (unrelated to this relationship) on segment 0 [400, 271] -> [278, 271] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.\n- [clean-flow/edge-through-node] dataflow flows[10] id \"read-pos-eta\" \"eta-service\" -> \"active-trip\" crosses node \"notification\" (unrelated to this relationship) on segment 1 [278, 271] -> [278, 506] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.\n- [composition/proper-crossing] showcase dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" crosses flows[10] id \"read-pos-eta\" \"eta-service\" -> \"active-trip\" at [311.5, 271] (segments 1 and 0) — adjust route/via or channelX/channelY so the flows use separate stage corridors.\n- [composition/micro-segment] showcase dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" has a 3.5px source-stub segment 0 [107, 300] -> [103.5, 300] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" has a 3.5px target-stub segment 2 [103.5, 356] -> [100, 356] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" has a 3.5px source-stub segment 0 [93, 300] -> [96.5, 300] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" has a 3.5px target-stub segment 2 [96.5, 470] -> [100, 470] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" has a 4.5px source-stub segment 0 [165, 164] -> [160.5, 164] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" has a 4.5px target-stub segment 2 [160.5, 492] -> [156, 492] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" has a 3.5px source-stub segment 0 [322, 186] -> [318.5, 186] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" has a 3.5px target-stub segment 2 [318.5, 242] -> [315, 242] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" has a 3.5px source-stub segment 0 [308, 186] -> [311.5, 186] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" has a 3.5px target-stub segment 2 [311.5, 356] -> [315, 356] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[8] id \"notify-conductor\" \"notification\" -> \"conductor\" has a 7px interior segment 1 [422.5, 392] -> [422.5, 385] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" has a 3.5px source-stub segment 0 [523, 186] -> [526.5, 186] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" has a 3.5px target-stub segment 2 [526.5, 242] -> [530, 242] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" has a 7px source-stub segment 0 [516, 242] -> [523, 242] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" has a 7px target-stub segment 2 [523, 300] -> [530, 300] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" has a 3.5px source-stub segment 0 [544, 242] -> [540.5, 242] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- [composition/micro-segment] showcase dataflow flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" has a 3.5px target-stub segment 2 [540.5, 186] -> [537, 186] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.\n- Label \"GPS ping {lat, lng, recorded_at}\" overlaps node \"conductor-device\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [16, 165, 169, 16]\n  node \"conductor-device\" rect: [44, 128, 112, 58]\n  Suggested fix: set labelAt [100, 201] or set labelDy 25 (below); or set labelAt [100, 119] or set labelDy -57 (above)\n- Label \"GPS ping {lat, lng, recorded_at}\" overlaps node \"journey-engine\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [16, 165, 169, 16]\n  node \"journey-engine\" rect: [165, 128, 300, 58]\n  Suggested fix: set labelAt [100, 201] or set labelDy 25 (below); or set labelAt [100, 119] or set labelDy -57 (above)\n- Label \"UPDATE position cache (if newer)\" overlaps node \"trip-location-log\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [12, 364, 169, 16]\n  node \"trip-location-log\" rect: [44, 356, 112, 58]\n  Suggested fix: set labelAt [97, 429] or set labelDx 1 with labelDy 54 (below); or set labelAt [97, 347] or set labelDx 1 with labelDy -28 (above)\n- Label \"INSERT Notification(s)\" overlaps node \"journey-session\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [252, 250, 120, 16]\n  node \"journey-session\" rect: [259, 242, 112, 58]\n  Suggested fix: set labelAt [312, 315] or set labelDx 1 with labelDy 54 (below); or set labelAt [312, 233] or set labelDx 1 with labelDy -28 (above)\n- Label \"Push/poll: stage, approaching, arrived\" overlaps node \"journey-session\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [323, 247, 198, 16]\n  node \"journey-session\" rect: [259, 242, 112, 58]\n  Suggested fix: set labelAt [423, 315] or set labelDx 1 with labelDy 58 (below); or set labelAt [423, 233] or set labelDx 1 with labelDy -24 (above)\n- Label \"Push/poll: stage, approaching, arrived\" overlaps node \"eta-service\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [323, 247, 198, 16]\n  node \"eta-service\" rect: [400, 242, 260, 58]\n  Suggested fix: set labelAt [423, 315] or set labelDx 1 with labelDy 58 (below); or set labelAt [423, 233] or set labelDx 1 with labelDy -24 (above)\n- Label \"Push: approaching, arrived\" overlaps node \"notification\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [353, 368, 139, 16]\n  node \"notification\" rect: [259, 356, 112, 58]\n  Suggested fix: set labelAt [423, 429] or set labelDx 1 with labelDy 51 (below); or set labelAt [423, 347] or set labelDx 1 with labelDy -31 (above)\n- Label \"Push: approaching, arrived\" overlaps node \"conductor\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [353, 368, 139, 16]\n  node \"conductor\" rect: [474, 356, 112, 58]\n  Suggested fix: set labelAt [423, 429] or set labelDx 1 with labelDy 51 (below); or set labelAt [423, 347] or set labelDx 1 with labelDy -31 (above)\n- Label \"READ vehicle position\" overlaps node \"notification\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [221, 368, 115, 16]\n  node \"notification\" rect: [259, 356, 112, 58]\n  Suggested fix: set labelAt [278, 429] or set labelDy 51 (below); or set labelAt [278, 347] or set labelDy -31 (above)\n- Label \"OSRM route (fallback: Haversine)\" overlaps node \"eta-service\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [439, 250, 169, 16]\n  node \"eta-service\" rect: [400, 242, 260, 58]\n  Suggested fix: set labelAt [523, 315] or set labelDy 54 (below); or set labelAt [523, 233] or set labelDy -28 (above)\n- Labels \"INSERT TripLocationLog\" and \"READ vehicle position\" overlap — adjust labelDx/labelDy.\n  \"INSERT TripLocationLog\" [44, 307, 120, 16]; \"READ vehicle position\" [103, 307, 115, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor\n- Labels \"For each active JourneySession\" and \"UPDATE FSM status\" overlap — adjust labelDx/labelDy.\n  \"For each active JourneySession\" [123, 190, 159, 16]; \"UPDATE FSM status\" [271, 193, 95, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor\n- Labels \"INSERT Notification(s)\" and \"Push/poll: stage, approaching, arrived\" overlap — adjust labelDx/labelDy.\n  \"INSERT Notification(s)\" [252, 250, 120, 16]; \"Push/poll: stage, approaching, arrived\" [323, 247, 198, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor\n- Labels \"Push/poll: stage, approaching, arrived\" and \"OSRM route (fallback: Haversine)\" overlap — adjust labelDx/labelDy.\n  \"Push/poll: stage, approaching, arrived\" [323, 247, 198, 16]; \"OSRM route (fallback: Haversine)\" [439, 250, 169, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor\n- Labels \"GET ETA for destination\" and \"RouteInfo {distance_m, duration_s}\" overlap — adjust labelDx/labelDy.\n  \"GET ETA for destination\" [464, 193, 125, 16]; \"RouteInfo {distance_m, duration_s}\" [451, 193, 179, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor\n- [composition/label-route-clearance] showcase dataflow label \"GPS ping {lat, lng, recorded_at}\" on flows[0] id \"gps-ping\" \"conductor-device\" -> \"ingest-pipeline\" label \"GPS ping {lat, lng, recorded_at}\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [16, 165, 169, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.\n- [composition/label-route-clearance] showcase dataflow label \"INSERT TripLocationLog\" on flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" label \"INSERT TripLocationLog\" is 0px from flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" label \"UPDATE position cache (if newer)\" segment 1 [96.5, 300] -> [96.5, 470] (label rect [44, 307, 120, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.\n- [composition/label-route-clearance] showcase dataflow label \"INSERT TripLocationLog\" on flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" label \"INSERT TripLocationLog\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [44, 307, 120, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.\n- [composition/label-route-clearance] showcase dataflow label \"UPDATE position cache (if newer)\" on flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" label \"UPDATE position cache (if newer)\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [12, 364, 169, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.\n- [composition/label-route-clearance] showcase dataflow label \"For each active JourneySession\" on flows[3] id \"trigger-processing\" \"ingest-pipeline\" -> \"journey-engine\" label \"For each active JourneySession\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [123, 190, 159, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.\n- [composition/label-route-clearance] showcase dataflow label \"READ vehicle position\" on flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" is 0px from flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" label \"INSERT TripLocationLog\" segment 1 [103.5, 300] -> [103.5, 356] (label rect [103, 307, 115, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.\n- [composition/label-route-clearance] showcase dataflow label \"UPDATE FSM status\" on flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" label \"UPDATE FSM status\" is 0px from flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" label \"INSERT Notification(s)\" segment 1 [311.5, 186] -> [311.5, 356] (label rect [271, 193, 95, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.\n- [composition/label-route-clearance] showcase dataflow label \"Push/poll: stage, approaching, arrived\" on flows[7] id \"notify-passenger\" \"notification\" -> \"passenger-app\" label \"Push/poll: stage, approaching, arrived\" is 1.4px from flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" label \"OSRM route (fallback: Haversine)\" segment 1 [523, 242] -> [523, 300] (label rect [323, 247, 198, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.\n- [composition/label-route-clearance] showcase dataflow label \"Push: approaching, arrived\" on flows[8] id \"notify-conductor\" \"notification\" -> \"conductor\" label \"Push: approaching, arrived\" is 0px from flows[7] id \"notify-passenger\" \"notification\" -> \"passenger-app\" label \"Push/poll: stage, approaching, arrived\" segment 0 [371, 378] -> [422.5, 378] (label rect [353, 368, 139, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.\n- [composition/label-route-clearance] showcase dataflow label \"GET ETA for destination\" on flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" is 0px from flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance_m, duration_s}\" segment 1 [540.5, 242] -> [540.5, 186] (label rect [464, 193, 125, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.\n- [composition/label-route-clearance] showcase dataflow label \"RouteInfo {distance_m, duration_s}\" on flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance_m, duration_s}\" is 0px from flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" segment 1 [526.5, 186] -> [526.5, 242] (label rect [451, 193, 179, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+        "diagnostics": [
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" first segment 0 [107, 300] -> [103.5, 300] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 1,
+              "id": "write-log",
+              "from": "ingest-pipeline",
+              "to": "trip-location-log"
+            },
+            "evidence": {
+              "endpoint": "source",
+              "authoredField": "fromSide",
+              "sideOrigin": "inferred",
+              "side": "bottom",
+              "segmentIndex": 0,
+              "from": [
+                107,
+                300
+              ],
+              "to": [
+                103.5,
+                300
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "downward"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" final segment 2 [103.5, 356] -> [100, 356] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 1,
+              "id": "write-log",
+              "from": "ingest-pipeline",
+              "to": "trip-location-log"
+            },
+            "evidence": {
+              "endpoint": "target",
+              "authoredField": "toSide",
+              "sideOrigin": "inferred",
+              "side": "top",
+              "segmentIndex": 2,
+              "from": [
+                103.5,
+                356
+              ],
+              "to": [
+                100,
+                356
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "downward from above"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" first segment 0 [93, 300] -> [96.5, 300] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 2,
+              "id": "update-cache",
+              "from": "ingest-pipeline",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "endpoint": "source",
+              "authoredField": "fromSide",
+              "sideOrigin": "inferred",
+              "side": "bottom",
+              "segmentIndex": 0,
+              "from": [
+                93,
+                300
+              ],
+              "to": [
+                96.5,
+                300
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "downward"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" final segment 2 [96.5, 470] -> [100, 470] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 2,
+              "id": "update-cache",
+              "from": "ingest-pipeline",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "endpoint": "target",
+              "authoredField": "toSide",
+              "sideOrigin": "inferred",
+              "side": "top",
+              "segmentIndex": 2,
+              "from": [
+                96.5,
+                470
+              ],
+              "to": [
+                100,
+                470
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "downward from above"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[3] id \"trigger-processing\" \"ingest-pipeline\" -> \"journey-engine\" first segment 0 [240, 271] -> [202.5, 271] does not honor inferred fromSide \"right\" — it must run horizontal rightward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 3,
+              "id": "trigger-processing",
+              "from": "ingest-pipeline",
+              "to": "journey-engine"
+            },
+            "evidence": {
+              "endpoint": "source",
+              "authoredField": "fromSide",
+              "sideOrigin": "inferred",
+              "side": "right",
+              "segmentIndex": 0,
+              "from": [
+                240,
+                271
+              ],
+              "to": [
+                202.5,
+                271
+              ],
+              "expectedAxis": "horizontal",
+              "expectedDirection": "rightward"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[3] id \"trigger-processing\" \"ingest-pipeline\" -> \"journey-engine\" final segment 2 [202.5, 150] -> [165, 150] does not honor inferred toSide \"left\" — it must run horizontal rightward from the left; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 3,
+              "id": "trigger-processing",
+              "from": "ingest-pipeline",
+              "to": "journey-engine"
+            },
+            "evidence": {
+              "endpoint": "target",
+              "authoredField": "toSide",
+              "sideOrigin": "inferred",
+              "side": "left",
+              "segmentIndex": 2,
+              "from": [
+                202.5,
+                150
+              ],
+              "to": [
+                165,
+                150
+              ],
+              "expectedAxis": "horizontal",
+              "expectedDirection": "rightward from the left"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" first segment 0 [322, 186] -> [318.5, 186] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 5,
+              "id": "update-fsm",
+              "from": "journey-engine",
+              "to": "journey-session"
+            },
+            "evidence": {
+              "endpoint": "source",
+              "authoredField": "fromSide",
+              "sideOrigin": "inferred",
+              "side": "bottom",
+              "segmentIndex": 0,
+              "from": [
+                322,
+                186
+              ],
+              "to": [
+                318.5,
+                186
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "downward"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" final segment 2 [318.5, 242] -> [315, 242] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 5,
+              "id": "update-fsm",
+              "from": "journey-engine",
+              "to": "journey-session"
+            },
+            "evidence": {
+              "endpoint": "target",
+              "authoredField": "toSide",
+              "sideOrigin": "inferred",
+              "side": "top",
+              "segmentIndex": 2,
+              "from": [
+                318.5,
+                242
+              ],
+              "to": [
+                315,
+                242
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "downward from above"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" first segment 0 [308, 186] -> [311.5, 186] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 6,
+              "id": "create-notif",
+              "from": "journey-engine",
+              "to": "notification"
+            },
+            "evidence": {
+              "endpoint": "source",
+              "authoredField": "fromSide",
+              "sideOrigin": "inferred",
+              "side": "bottom",
+              "segmentIndex": 0,
+              "from": [
+                308,
+                186
+              ],
+              "to": [
+                311.5,
+                186
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "downward"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" final segment 2 [311.5, 356] -> [315, 356] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 6,
+              "id": "create-notif",
+              "from": "journey-engine",
+              "to": "notification"
+            },
+            "evidence": {
+              "endpoint": "target",
+              "authoredField": "toSide",
+              "sideOrigin": "inferred",
+              "side": "top",
+              "segmentIndex": 2,
+              "from": [
+                311.5,
+                356
+              ],
+              "to": [
+                315,
+                356
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "downward from above"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" first segment 0 [523, 186] -> [526.5, 186] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 9,
+              "id": "request-eta",
+              "from": "passenger-app",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "endpoint": "source",
+              "authoredField": "fromSide",
+              "sideOrigin": "inferred",
+              "side": "bottom",
+              "segmentIndex": 0,
+              "from": [
+                523,
+                186
+              ],
+              "to": [
+                526.5,
+                186
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "downward"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" final segment 2 [526.5, 242] -> [530, 242] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 9,
+              "id": "request-eta",
+              "from": "passenger-app",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "endpoint": "target",
+              "authoredField": "toSide",
+              "sideOrigin": "inferred",
+              "side": "top",
+              "segmentIndex": 2,
+              "from": [
+                526.5,
+                242
+              ],
+              "to": [
+                530,
+                242
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "downward from above"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" first segment 0 [516, 242] -> [523, 242] does not honor inferred fromSide \"top\" — it must run vertical upward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 11,
+              "id": "query-osrm",
+              "from": "eta-service",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "endpoint": "source",
+              "authoredField": "fromSide",
+              "sideOrigin": "inferred",
+              "side": "top",
+              "segmentIndex": 0,
+              "from": [
+                516,
+                242
+              ],
+              "to": [
+                523,
+                242
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "upward"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" final segment 2 [523, 300] -> [530, 300] does not honor inferred toSide \"bottom\" — it must run vertical upward from below; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 11,
+              "id": "query-osrm",
+              "from": "eta-service",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "endpoint": "target",
+              "authoredField": "toSide",
+              "sideOrigin": "inferred",
+              "side": "bottom",
+              "segmentIndex": 2,
+              "from": [
+                523,
+                300
+              ],
+              "to": [
+                530,
+                300
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "upward from below"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" first segment 0 [544, 242] -> [540.5, 242] does not honor inferred fromSide \"top\" — it must run vertical upward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 12,
+              "id": "return-eta",
+              "from": "eta-service",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "endpoint": "source",
+              "authoredField": "fromSide",
+              "sideOrigin": "inferred",
+              "side": "top",
+              "segmentIndex": 0,
+              "from": [
+                544,
+                242
+              ],
+              "to": [
+                540.5,
+                242
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "upward"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/endpoint-side-direction",
+            "severity": "error",
+            "message": "[clean-flow/endpoint-side-direction] dataflow flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" final segment 2 [540.5, 186] -> [537, 186] does not honor inferred toSide \"bottom\" — it must run vertical upward from below; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 12,
+              "id": "return-eta",
+              "from": "eta-service",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "endpoint": "target",
+              "authoredField": "toSide",
+              "sideOrigin": "inferred",
+              "side": "bottom",
+              "segmentIndex": 2,
+              "from": [
+                540.5,
+                186
+              ],
+              "to": [
+                537,
+                186
+              ],
+              "expectedAxis": "vertical",
+              "expectedDirection": "upward from below"
+            },
+            "supportedFixes": [
+              "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+            ]
+          },
+          {
+            "code": "clean-flow/edge-through-node",
+            "severity": "error",
+            "message": "[clean-flow/edge-through-node] dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" crosses node \"trip-location-log\" (unrelated to this relationship) on segment 1 [97, 300] -> [97, 470] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 2,
+              "id": "update-cache",
+              "from": "ingest-pipeline",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "obstacleKind": "node",
+              "obstacleId": "trip-location-log",
+              "segmentIndex": 1,
+              "from": [
+                96.5,
+                300
+              ],
+              "to": [
+                96.5,
+                470
+              ],
+              "clearancePx": 2
+            },
+            "supportedFixes": [
+              "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+            ]
+          },
+          {
+            "code": "clean-flow/edge-through-node",
+            "severity": "error",
+            "message": "[clean-flow/edge-through-node] dataflow flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" crosses node \"ingest-pipeline\" (unrelated to this relationship) on segment 1 [161, 164] -> [161, 492] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 4,
+              "id": "read-position",
+              "from": "journey-engine",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "obstacleKind": "node",
+              "obstacleId": "ingest-pipeline",
+              "segmentIndex": 1,
+              "from": [
+                160.5,
+                164
+              ],
+              "to": [
+                160.5,
+                492
+              ],
+              "clearancePx": 2
+            },
+            "supportedFixes": [
+              "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+            ]
+          },
+          {
+            "code": "clean-flow/edge-through-node",
+            "severity": "error",
+            "message": "[clean-flow/edge-through-node] dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" crosses node \"journey-session\" (unrelated to this relationship) on segment 1 [312, 186] -> [312, 356] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 6,
+              "id": "create-notif",
+              "from": "journey-engine",
+              "to": "notification"
+            },
+            "evidence": {
+              "obstacleKind": "node",
+              "obstacleId": "journey-session",
+              "segmentIndex": 1,
+              "from": [
+                311.5,
+                186
+              ],
+              "to": [
+                311.5,
+                356
+              ],
+              "clearancePx": 2
+            },
+            "supportedFixes": [
+              "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+            ]
+          },
+          {
+            "code": "clean-flow/edge-through-node",
+            "severity": "error",
+            "message": "[clean-flow/edge-through-node] dataflow flows[7] id \"notify-passenger\" \"notification\" -> \"passenger-app\" crosses node \"journey-engine\" (unrelated to this relationship) on segment 1 [423, 378] -> [423, 157] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 7,
+              "id": "notify-passenger",
+              "from": "notification",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "obstacleKind": "node",
+              "obstacleId": "journey-engine",
+              "segmentIndex": 1,
+              "from": [
+                422.5,
+                378
+              ],
+              "to": [
+                422.5,
+                157
+              ],
+              "clearancePx": 2
+            },
+            "supportedFixes": [
+              "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+            ]
+          },
+          {
+            "code": "clean-flow/edge-through-node",
+            "severity": "error",
+            "message": "[clean-flow/edge-through-node] dataflow flows[7] id \"notify-passenger\" \"notification\" -> \"passenger-app\" crosses node \"eta-service\" (unrelated to this relationship) on segment 1 [423, 378] -> [423, 157] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 7,
+              "id": "notify-passenger",
+              "from": "notification",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "obstacleKind": "node",
+              "obstacleId": "eta-service",
+              "segmentIndex": 1,
+              "from": [
+                422.5,
+                378
+              ],
+              "to": [
+                422.5,
+                157
+              ],
+              "clearancePx": 2
+            },
+            "supportedFixes": [
+              "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+            ]
+          },
+          {
+            "code": "clean-flow/edge-through-node",
+            "severity": "error",
+            "message": "[clean-flow/edge-through-node] dataflow flows[10] id \"read-pos-eta\" \"eta-service\" -> \"active-trip\" crosses node \"journey-session\" (unrelated to this relationship) on segment 0 [400, 271] -> [278, 271] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 10,
+              "id": "read-pos-eta",
+              "from": "eta-service",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "obstacleKind": "node",
+              "obstacleId": "journey-session",
+              "segmentIndex": 0,
+              "from": [
+                400,
+                271
+              ],
+              "to": [
+                278,
+                271
+              ],
+              "clearancePx": 2
+            },
+            "supportedFixes": [
+              "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+            ]
+          },
+          {
+            "code": "clean-flow/edge-through-node",
+            "severity": "error",
+            "message": "[clean-flow/edge-through-node] dataflow flows[10] id \"read-pos-eta\" \"eta-service\" -> \"active-trip\" crosses node \"notification\" (unrelated to this relationship) on segment 1 [278, 271] -> [278, 506] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 10,
+              "id": "read-pos-eta",
+              "from": "eta-service",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "obstacleKind": "node",
+              "obstacleId": "notification",
+              "segmentIndex": 1,
+              "from": [
+                278,
+                271
+              ],
+              "to": [
+                278,
+                506
+              ],
+              "clearancePx": 2
+            },
+            "supportedFixes": [
+              "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+            ]
+          },
+          {
+            "code": "composition/proper-crossing",
+            "severity": "error",
+            "message": "[composition/proper-crossing] showcase dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" crosses flows[10] id \"read-pos-eta\" \"eta-service\" -> \"active-trip\" at [311.5, 271] (segments 1 and 0) — adjust route/via or channelX/channelY so the flows use separate stage corridors.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 6,
+              "id": "create-notif",
+              "from": "journey-engine",
+              "to": "notification"
+            },
+            "evidence": {
+              "otherRelationship": {
+                "diagramType": "dataflow",
+                "collection": "flows",
+                "index": 10,
+                "id": "read-pos-eta",
+                "from": "eta-service",
+                "to": "active-trip"
+              },
+              "point": [
+                311.5,
+                271
+              ],
+              "segmentIndex": 1,
+              "otherSegmentIndex": 0
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so the flows use separate stage corridors"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" has a 3.5px source-stub segment 0 [107, 300] -> [103.5, 300] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 1,
+              "id": "write-log",
+              "from": "ingest-pipeline",
+              "to": "trip-location-log"
+            },
+            "evidence": {
+              "segmentIndex": 0,
+              "position": "source-stub",
+              "lengthPx": 3.5,
+              "minimumPx": 8,
+              "from": [
+                107,
+                300
+              ],
+              "to": [
+                103.5,
+                300
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" has a 3.5px target-stub segment 2 [103.5, 356] -> [100, 356] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 1,
+              "id": "write-log",
+              "from": "ingest-pipeline",
+              "to": "trip-location-log"
+            },
+            "evidence": {
+              "segmentIndex": 2,
+              "position": "target-stub",
+              "lengthPx": 3.5,
+              "minimumPx": 8,
+              "from": [
+                103.5,
+                356
+              ],
+              "to": [
+                100,
+                356
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" has a 3.5px source-stub segment 0 [93, 300] -> [96.5, 300] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 2,
+              "id": "update-cache",
+              "from": "ingest-pipeline",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "segmentIndex": 0,
+              "position": "source-stub",
+              "lengthPx": 3.5,
+              "minimumPx": 8,
+              "from": [
+                93,
+                300
+              ],
+              "to": [
+                96.5,
+                300
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" has a 3.5px target-stub segment 2 [96.5, 470] -> [100, 470] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 2,
+              "id": "update-cache",
+              "from": "ingest-pipeline",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "segmentIndex": 2,
+              "position": "target-stub",
+              "lengthPx": 3.5,
+              "minimumPx": 8,
+              "from": [
+                96.5,
+                470
+              ],
+              "to": [
+                100,
+                470
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" has a 4.5px source-stub segment 0 [165, 164] -> [160.5, 164] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 4,
+              "id": "read-position",
+              "from": "journey-engine",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "segmentIndex": 0,
+              "position": "source-stub",
+              "lengthPx": 4.5,
+              "minimumPx": 8,
+              "from": [
+                165,
+                164
+              ],
+              "to": [
+                160.5,
+                164
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" has a 4.5px target-stub segment 2 [160.5, 492] -> [156, 492] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 4,
+              "id": "read-position",
+              "from": "journey-engine",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "segmentIndex": 2,
+              "position": "target-stub",
+              "lengthPx": 4.5,
+              "minimumPx": 8,
+              "from": [
+                160.5,
+                492
+              ],
+              "to": [
+                156,
+                492
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" has a 3.5px source-stub segment 0 [322, 186] -> [318.5, 186] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 5,
+              "id": "update-fsm",
+              "from": "journey-engine",
+              "to": "journey-session"
+            },
+            "evidence": {
+              "segmentIndex": 0,
+              "position": "source-stub",
+              "lengthPx": 3.5,
+              "minimumPx": 8,
+              "from": [
+                322,
+                186
+              ],
+              "to": [
+                318.5,
+                186
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" has a 3.5px target-stub segment 2 [318.5, 242] -> [315, 242] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 5,
+              "id": "update-fsm",
+              "from": "journey-engine",
+              "to": "journey-session"
+            },
+            "evidence": {
+              "segmentIndex": 2,
+              "position": "target-stub",
+              "lengthPx": 3.5,
+              "minimumPx": 8,
+              "from": [
+                318.5,
+                242
+              ],
+              "to": [
+                315,
+                242
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" has a 3.5px source-stub segment 0 [308, 186] -> [311.5, 186] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 6,
+              "id": "create-notif",
+              "from": "journey-engine",
+              "to": "notification"
+            },
+            "evidence": {
+              "segmentIndex": 0,
+              "position": "source-stub",
+              "lengthPx": 3.5,
+              "minimumPx": 8,
+              "from": [
+                308,
+                186
+              ],
+              "to": [
+                311.5,
+                186
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" has a 3.5px target-stub segment 2 [311.5, 356] -> [315, 356] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 6,
+              "id": "create-notif",
+              "from": "journey-engine",
+              "to": "notification"
+            },
+            "evidence": {
+              "segmentIndex": 2,
+              "position": "target-stub",
+              "lengthPx": 3.5,
+              "minimumPx": 8,
+              "from": [
+                311.5,
+                356
+              ],
+              "to": [
+                315,
+                356
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[8] id \"notify-conductor\" \"notification\" -> \"conductor\" has a 7px interior segment 1 [422.5, 392] -> [422.5, 385] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 8,
+              "id": "notify-conductor",
+              "from": "notification",
+              "to": "conductor"
+            },
+            "evidence": {
+              "segmentIndex": 1,
+              "position": "interior",
+              "lengthPx": 7,
+              "minimumPx": 8,
+              "from": [
+                422.5,
+                392
+              ],
+              "to": [
+                422.5,
+                385
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" has a 3.5px source-stub segment 0 [523, 186] -> [526.5, 186] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 9,
+              "id": "request-eta",
+              "from": "passenger-app",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "segmentIndex": 0,
+              "position": "source-stub",
+              "lengthPx": 3.5,
+              "minimumPx": 8,
+              "from": [
+                523,
+                186
+              ],
+              "to": [
+                526.5,
+                186
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" has a 3.5px target-stub segment 2 [526.5, 242] -> [530, 242] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 9,
+              "id": "request-eta",
+              "from": "passenger-app",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "segmentIndex": 2,
+              "position": "target-stub",
+              "lengthPx": 3.5,
+              "minimumPx": 8,
+              "from": [
+                526.5,
+                242
+              ],
+              "to": [
+                530,
+                242
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" has a 7px source-stub segment 0 [516, 242] -> [523, 242] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 11,
+              "id": "query-osrm",
+              "from": "eta-service",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "segmentIndex": 0,
+              "position": "source-stub",
+              "lengthPx": 7,
+              "minimumPx": 8,
+              "from": [
+                516,
+                242
+              ],
+              "to": [
+                523,
+                242
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" has a 7px target-stub segment 2 [523, 300] -> [530, 300] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 11,
+              "id": "query-osrm",
+              "from": "eta-service",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "segmentIndex": 2,
+              "position": "target-stub",
+              "lengthPx": 7,
+              "minimumPx": 8,
+              "from": [
+                523,
+                300
+              ],
+              "to": [
+                530,
+                300
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" has a 3.5px source-stub segment 0 [544, 242] -> [540.5, 242] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 12,
+              "id": "return-eta",
+              "from": "eta-service",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "segmentIndex": 0,
+              "position": "source-stub",
+              "lengthPx": 3.5,
+              "minimumPx": 8,
+              "from": [
+                544,
+                242
+              ],
+              "to": [
+                540.5,
+                242
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/micro-segment",
+            "severity": "error",
+            "message": "[composition/micro-segment] showcase dataflow flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" has a 3.5px target-stub segment 2 [540.5, 186] -> [537, 186] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 12,
+              "id": "return-eta",
+              "from": "eta-service",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "segmentIndex": 2,
+              "position": "target-stub",
+              "lengthPx": 3.5,
+              "minimumPx": 8,
+              "from": [
+                540.5,
+                186
+              ],
+              "to": [
+                537,
+                186
+              ]
+            },
+            "supportedFixes": [
+              "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase dataflow label \"GPS ping {lat, lng, recorded_at}\" on flows[0] id \"gps-ping\" \"conductor-device\" -> \"ingest-pipeline\" label \"GPS ping {lat, lng, recorded_at}\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [16, 165, 169, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 0,
+              "id": "gps-ping",
+              "from": "conductor-device",
+              "to": "ingest-pipeline"
+            },
+            "evidence": {
+              "label": "GPS ping {lat, lng, recorded_at}",
+              "otherRelationship": {
+                "diagramType": "dataflow",
+                "collection": "flows",
+                "index": 4,
+                "id": "read-position",
+                "from": "journey-engine",
+                "to": "active-trip"
+              },
+              "segmentIndex": 1,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "gps-ping",
+                  "from": "conductor-device",
+                  "to": "ingest-pipeline",
+                  "label": "GPS ping {lat, lng, recorded_at}"
+                },
+                "relationIndex": 0,
+                "label": "GPS ping {lat, lng, recorded_at}",
+                "x": 15.599999999999994,
+                "y": 165,
+                "width": 168.8,
+                "height": 16,
+                "lx": 100,
+                "ly": 176
+              },
+              "from": [
+                160.5,
+                164
+              ],
+              "to": [
+                160.5,
+                492
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase dataflow label \"INSERT TripLocationLog\" on flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" label \"INSERT TripLocationLog\" is 0px from flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" label \"UPDATE position cache (if newer)\" segment 1 [96.5, 300] -> [96.5, 470] (label rect [44, 307, 120, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 1,
+              "id": "write-log",
+              "from": "ingest-pipeline",
+              "to": "trip-location-log"
+            },
+            "evidence": {
+              "label": "INSERT TripLocationLog",
+              "otherRelationship": {
+                "diagramType": "dataflow",
+                "collection": "flows",
+                "index": 2,
+                "id": "update-cache",
+                "from": "ingest-pipeline",
+                "to": "active-trip"
+              },
+              "segmentIndex": 1,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "write-log",
+                  "from": "ingest-pipeline",
+                  "to": "trip-location-log",
+                  "label": "INSERT TripLocationLog"
+                },
+                "relationIndex": 1,
+                "label": "INSERT TripLocationLog",
+                "x": 43.6,
+                "y": 307,
+                "width": 119.8,
+                "height": 16,
+                "lx": 103.5,
+                "ly": 318
+              },
+              "from": [
+                96.5,
+                300
+              ],
+              "to": [
+                96.5,
+                470
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase dataflow label \"INSERT TripLocationLog\" on flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" label \"INSERT TripLocationLog\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [44, 307, 120, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 1,
+              "id": "write-log",
+              "from": "ingest-pipeline",
+              "to": "trip-location-log"
+            },
+            "evidence": {
+              "label": "INSERT TripLocationLog",
+              "otherRelationship": {
+                "diagramType": "dataflow",
+                "collection": "flows",
+                "index": 4,
+                "id": "read-position",
+                "from": "journey-engine",
+                "to": "active-trip"
+              },
+              "segmentIndex": 1,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "write-log",
+                  "from": "ingest-pipeline",
+                  "to": "trip-location-log",
+                  "label": "INSERT TripLocationLog"
+                },
+                "relationIndex": 1,
+                "label": "INSERT TripLocationLog",
+                "x": 43.6,
+                "y": 307,
+                "width": 119.8,
+                "height": 16,
+                "lx": 103.5,
+                "ly": 318
+              },
+              "from": [
+                160.5,
+                164
+              ],
+              "to": [
+                160.5,
+                492
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase dataflow label \"UPDATE position cache (if newer)\" on flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" label \"UPDATE position cache (if newer)\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [12, 364, 169, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 2,
+              "id": "update-cache",
+              "from": "ingest-pipeline",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "label": "UPDATE position cache (if newer)",
+              "otherRelationship": {
+                "diagramType": "dataflow",
+                "collection": "flows",
+                "index": 4,
+                "id": "read-position",
+                "from": "journey-engine",
+                "to": "active-trip"
+              },
+              "segmentIndex": 1,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "update-cache",
+                  "from": "ingest-pipeline",
+                  "to": "active-trip",
+                  "label": "UPDATE position cache (if newer)"
+                },
+                "relationIndex": 2,
+                "label": "UPDATE position cache (if newer)",
+                "x": 12.099999999999994,
+                "y": 364,
+                "width": 168.8,
+                "height": 16,
+                "lx": 96.5,
+                "ly": 375
+              },
+              "from": [
+                160.5,
+                164
+              ],
+              "to": [
+                160.5,
+                492
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase dataflow label \"For each active JourneySession\" on flows[3] id \"trigger-processing\" \"ingest-pipeline\" -> \"journey-engine\" label \"For each active JourneySession\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [123, 190, 159, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 3,
+              "id": "trigger-processing",
+              "from": "ingest-pipeline",
+              "to": "journey-engine"
+            },
+            "evidence": {
+              "label": "For each active JourneySession",
+              "otherRelationship": {
+                "diagramType": "dataflow",
+                "collection": "flows",
+                "index": 4,
+                "id": "read-position",
+                "from": "journey-engine",
+                "to": "active-trip"
+              },
+              "segmentIndex": 1,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "trigger-processing",
+                  "from": "ingest-pipeline",
+                  "to": "journey-engine",
+                  "label": "For each active JourneySession"
+                },
+                "relationIndex": 3,
+                "label": "For each active JourneySession",
+                "x": 123,
+                "y": 189.5,
+                "width": 159,
+                "height": 16,
+                "lx": 202.5,
+                "ly": 200.5
+              },
+              "from": [
+                160.5,
+                164
+              ],
+              "to": [
+                160.5,
+                492
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase dataflow label \"READ vehicle position\" on flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" is 0px from flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" label \"INSERT TripLocationLog\" segment 1 [103.5, 300] -> [103.5, 356] (label rect [103, 307, 115, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 4,
+              "id": "read-position",
+              "from": "journey-engine",
+              "to": "active-trip"
+            },
+            "evidence": {
+              "label": "READ vehicle position",
+              "otherRelationship": {
+                "diagramType": "dataflow",
+                "collection": "flows",
+                "index": 1,
+                "id": "write-log",
+                "from": "ingest-pipeline",
+                "to": "trip-location-log"
+              },
+              "segmentIndex": 1,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "read-position",
+                  "from": "journey-engine",
+                  "to": "active-trip",
+                  "label": "READ vehicle position"
+                },
+                "relationIndex": 4,
+                "label": "READ vehicle position",
+                "x": 103.05,
+                "y": 307,
+                "width": 114.9,
+                "height": 16,
+                "lx": 160.5,
+                "ly": 318
+              },
+              "from": [
+                103.5,
+                300
+              ],
+              "to": [
+                103.5,
+                356
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase dataflow label \"UPDATE FSM status\" on flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" label \"UPDATE FSM status\" is 0px from flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" label \"INSERT Notification(s)\" segment 1 [311.5, 186] -> [311.5, 356] (label rect [271, 193, 95, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 5,
+              "id": "update-fsm",
+              "from": "journey-engine",
+              "to": "journey-session"
+            },
+            "evidence": {
+              "label": "UPDATE FSM status",
+              "otherRelationship": {
+                "diagramType": "dataflow",
+                "collection": "flows",
+                "index": 6,
+                "id": "create-notif",
+                "from": "journey-engine",
+                "to": "notification"
+              },
+              "segmentIndex": 1,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "update-fsm",
+                  "from": "journey-engine",
+                  "to": "journey-session",
+                  "label": "UPDATE FSM status"
+                },
+                "relationIndex": 5,
+                "label": "UPDATE FSM status",
+                "x": 270.85,
+                "y": 193,
+                "width": 95.3,
+                "height": 16,
+                "lx": 318.5,
+                "ly": 204
+              },
+              "from": [
+                311.5,
+                186
+              ],
+              "to": [
+                311.5,
+                356
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase dataflow label \"Push/poll: stage, approaching, arrived\" on flows[7] id \"notify-passenger\" \"notification\" -> \"passenger-app\" label \"Push/poll: stage, approaching, arrived\" is 1.4px from flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" label \"OSRM route (fallback: Haversine)\" segment 1 [523, 242] -> [523, 300] (label rect [323, 247, 198, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 7,
+              "id": "notify-passenger",
+              "from": "notification",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "label": "Push/poll: stage, approaching, arrived",
+              "otherRelationship": {
+                "diagramType": "dataflow",
+                "collection": "flows",
+                "index": 11,
+                "id": "query-osrm",
+                "from": "eta-service",
+                "to": "eta-service"
+              },
+              "segmentIndex": 1,
+              "clearancePx": 1.4,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "notify-passenger",
+                  "from": "notification",
+                  "to": "passenger-app",
+                  "label": "Push/poll: stage, approaching, arrived",
+                  "variant": "dashed"
+                },
+                "relationIndex": 7,
+                "label": "Push/poll: stage, approaching, arrived",
+                "x": 323.4,
+                "y": 246.5,
+                "width": 198.2,
+                "height": 16,
+                "lx": 422.5,
+                "ly": 257.5
+              },
+              "from": [
+                523,
+                242
+              ],
+              "to": [
+                523,
+                300
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase dataflow label \"Push: approaching, arrived\" on flows[8] id \"notify-conductor\" \"notification\" -> \"conductor\" label \"Push: approaching, arrived\" is 0px from flows[7] id \"notify-passenger\" \"notification\" -> \"passenger-app\" label \"Push/poll: stage, approaching, arrived\" segment 0 [371, 378] -> [422.5, 378] (label rect [353, 368, 139, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 8,
+              "id": "notify-conductor",
+              "from": "notification",
+              "to": "conductor"
+            },
+            "evidence": {
+              "label": "Push: approaching, arrived",
+              "otherRelationship": {
+                "diagramType": "dataflow",
+                "collection": "flows",
+                "index": 7,
+                "id": "notify-passenger",
+                "from": "notification",
+                "to": "passenger-app"
+              },
+              "segmentIndex": 0,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "notify-conductor",
+                  "from": "notification",
+                  "to": "conductor",
+                  "label": "Push: approaching, arrived",
+                  "variant": "dashed"
+                },
+                "relationIndex": 8,
+                "label": "Push: approaching, arrived",
+                "x": 352.8,
+                "y": 367.5,
+                "width": 139.4,
+                "height": 16,
+                "lx": 422.5,
+                "ly": 378.5
+              },
+              "from": [
+                371,
+                378
+              ],
+              "to": [
+                422.5,
+                378
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase dataflow label \"GET ETA for destination\" on flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" is 0px from flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance_m, duration_s}\" segment 1 [540.5, 242] -> [540.5, 186] (label rect [464, 193, 125, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 9,
+              "id": "request-eta",
+              "from": "passenger-app",
+              "to": "eta-service"
+            },
+            "evidence": {
+              "label": "GET ETA for destination",
+              "otherRelationship": {
+                "diagramType": "dataflow",
+                "collection": "flows",
+                "index": 12,
+                "id": "return-eta",
+                "from": "eta-service",
+                "to": "passenger-app"
+              },
+              "segmentIndex": 1,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "request-eta",
+                  "from": "passenger-app",
+                  "to": "eta-service",
+                  "label": "GET ETA for destination"
+                },
+                "relationIndex": 9,
+                "label": "GET ETA for destination",
+                "x": 464.15,
+                "y": 193,
+                "width": 124.7,
+                "height": 16,
+                "lx": 526.5,
+                "ly": 204
+              },
+              "from": [
+                540.5,
+                242
+              ],
+              "to": [
+                540.5,
+                186
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+            ]
+          },
+          {
+            "code": "composition/label-route-clearance",
+            "severity": "error",
+            "message": "[composition/label-route-clearance] showcase dataflow label \"RouteInfo {distance_m, duration_s}\" on flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance_m, duration_s}\" is 0px from flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" segment 1 [526.5, 186] -> [526.5, 242] (label rect [451, 193, 179, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+            "subject": {
+              "diagramType": "dataflow",
+              "collection": "flows",
+              "index": 12,
+              "id": "return-eta",
+              "from": "eta-service",
+              "to": "passenger-app"
+            },
+            "evidence": {
+              "label": "RouteInfo {distance_m, duration_s}",
+              "otherRelationship": {
+                "diagramType": "dataflow",
+                "collection": "flows",
+                "index": 9,
+                "id": "request-eta",
+                "from": "passenger-app",
+                "to": "eta-service"
+              },
+              "segmentIndex": 1,
+              "clearancePx": 0,
+              "minimumPx": 4,
+              "labelRect": {
+                "relation": {
+                  "id": "return-eta",
+                  "from": "eta-service",
+                  "to": "passenger-app",
+                  "label": "RouteInfo {distance_m, duration_s}"
+                },
+                "relationIndex": 12,
+                "label": "RouteInfo {distance_m, duration_s}",
+                "x": 451.2,
+                "y": 193,
+                "width": 178.6,
+                "height": 16,
+                "lx": 540.5,
+                "ly": 204
+              },
+              "from": [
+                526.5,
+                186
+              ],
+              "to": [
+                526.5,
+                242
+              ]
+            },
+            "supportedFixes": [
+              "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+            ]
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Node \"ingest-pipeline\" exceeds the horizontal bounds of the viewBox — reduce node.width or increase meta.viewBox[0].",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Nodes \"conductor-device\" and \"journey-engine\" are less than 10px apart — move one to another stage/row or adjust yOffset.",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Nodes \"journey-engine\" and \"passenger-app\" are less than 10px apart — move one to another stage/row or adjust yOffset.",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"GPS ping {lat, lng, recorded_at}\" overlaps node \"conductor-device\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [16, 165, 169, 16]\n  node \"conductor-device\" rect: [44, 128, 112, 58]\n  Suggested fix: set labelAt [100, 201] or set labelDy 25 (below); or set labelAt [100, 119] or set labelDy -57 (above)",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"GPS ping {lat, lng, recorded_at}\" overlaps node \"journey-engine\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [16, 165, 169, 16]\n  node \"journey-engine\" rect: [165, 128, 300, 58]\n  Suggested fix: set labelAt [100, 201] or set labelDy 25 (below); or set labelAt [100, 119] or set labelDy -57 (above)",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"UPDATE position cache (if newer)\" overlaps node \"trip-location-log\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [12, 364, 169, 16]\n  node \"trip-location-log\" rect: [44, 356, 112, 58]\n  Suggested fix: set labelAt [97, 429] or set labelDx 1 with labelDy 54 (below); or set labelAt [97, 347] or set labelDx 1 with labelDy -28 (above)",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"INSERT Notification(s)\" overlaps node \"journey-session\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [252, 250, 120, 16]\n  node \"journey-session\" rect: [259, 242, 112, 58]\n  Suggested fix: set labelAt [312, 315] or set labelDx 1 with labelDy 54 (below); or set labelAt [312, 233] or set labelDx 1 with labelDy -28 (above)",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"Push/poll: stage, approaching, arrived\" overlaps node \"journey-session\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [323, 247, 198, 16]\n  node \"journey-session\" rect: [259, 242, 112, 58]\n  Suggested fix: set labelAt [423, 315] or set labelDx 1 with labelDy 58 (below); or set labelAt [423, 233] or set labelDx 1 with labelDy -24 (above)",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"Push/poll: stage, approaching, arrived\" overlaps node \"eta-service\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [323, 247, 198, 16]\n  node \"eta-service\" rect: [400, 242, 260, 58]\n  Suggested fix: set labelAt [423, 315] or set labelDx 1 with labelDy 58 (below); or set labelAt [423, 233] or set labelDx 1 with labelDy -24 (above)",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"Push: approaching, arrived\" overlaps node \"notification\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [353, 368, 139, 16]\n  node \"notification\" rect: [259, 356, 112, 58]\n  Suggested fix: set labelAt [423, 429] or set labelDx 1 with labelDy 51 (below); or set labelAt [423, 347] or set labelDx 1 with labelDy -31 (above)",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"Push: approaching, arrived\" overlaps node \"conductor\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [353, 368, 139, 16]\n  node \"conductor\" rect: [474, 356, 112, 58]\n  Suggested fix: set labelAt [423, 429] or set labelDx 1 with labelDy 51 (below); or set labelAt [423, 347] or set labelDx 1 with labelDy -31 (above)",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"READ vehicle position\" overlaps node \"notification\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [221, 368, 115, 16]\n  node \"notification\" rect: [259, 356, 112, 58]\n  Suggested fix: set labelAt [278, 429] or set labelDy 51 (below); or set labelAt [278, 347] or set labelDy -31 (above)",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Label \"OSRM route (fallback: Haversine)\" overlaps node \"eta-service\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [439, 250, 169, 16]\n  node \"eta-service\" rect: [400, 242, 260, 58]\n  Suggested fix: set labelAt [523, 315] or set labelDy 54 (below); or set labelAt [523, 233] or set labelDy -28 (above)",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Labels \"INSERT TripLocationLog\" and \"READ vehicle position\" overlap — adjust labelDx/labelDy.\n  \"INSERT TripLocationLog\" [44, 307, 120, 16]; \"READ vehicle position\" [103, 307, 115, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Labels \"For each active JourneySession\" and \"UPDATE FSM status\" overlap — adjust labelDx/labelDy.\n  \"For each active JourneySession\" [123, 190, 159, 16]; \"UPDATE FSM status\" [271, 193, 95, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Labels \"INSERT Notification(s)\" and \"Push/poll: stage, approaching, arrived\" overlap — adjust labelDx/labelDy.\n  \"INSERT Notification(s)\" [252, 250, 120, 16]; \"Push/poll: stage, approaching, arrived\" [323, 247, 198, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Labels \"Push/poll: stage, approaching, arrived\" and \"OSRM route (fallback: Haversine)\" overlap — adjust labelDx/labelDy.\n  \"Push/poll: stage, approaching, arrived\" [323, 247, 198, 16]; \"OSRM route (fallback: Haversine)\" [439, 250, 169, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          },
+          {
+            "code": "layout/constraint",
+            "severity": "error",
+            "message": "Labels \"GET ETA for destination\" and \"RouteInfo {distance_m, duration_s}\" overlap — adjust labelDx/labelDy.\n  \"GET ETA for destination\" [464, 193, 125, 16]; \"RouteInfo {distance_m, duration_s}\" [451, 193, 179, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor",
+            "subject": {
+              "diagramType": "dataflow"
+            },
+            "evidence": {},
+            "supportedFixes": []
+          }
+        ],
+        "provenance": "absent",
+        "update": {
+          "status": "unavailable",
+          "installedVersion": null,
+          "availableVersion": null,
+          "releaseNotes": null,
+          "checkedAt": null,
+          "source": null,
+          "noticeRequired": false,
+          "noticeText": null,
+          "reason": "disabled"
+        }
+      },
+      "execution": "embedded-in-deliver"
+    },
+    "deliver": {
+      "status": "not-run",
+      "execution": "blocked-by-validate"
+    }
+  },
+  "diagnostics": [
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" first segment 0 [107, 300] -> [103.5, 300] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 1,
+        "id": "write-log",
+        "from": "ingest-pipeline",
+        "to": "trip-location-log"
+      },
+      "evidence": {
+        "endpoint": "source",
+        "authoredField": "fromSide",
+        "sideOrigin": "inferred",
+        "side": "bottom",
+        "segmentIndex": 0,
+        "from": [
+          107,
+          300
+        ],
+        "to": [
+          103.5,
+          300
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "downward"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" final segment 2 [103.5, 356] -> [100, 356] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 1,
+        "id": "write-log",
+        "from": "ingest-pipeline",
+        "to": "trip-location-log"
+      },
+      "evidence": {
+        "endpoint": "target",
+        "authoredField": "toSide",
+        "sideOrigin": "inferred",
+        "side": "top",
+        "segmentIndex": 2,
+        "from": [
+          103.5,
+          356
+        ],
+        "to": [
+          100,
+          356
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "downward from above"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" first segment 0 [93, 300] -> [96.5, 300] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 2,
+        "id": "update-cache",
+        "from": "ingest-pipeline",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "endpoint": "source",
+        "authoredField": "fromSide",
+        "sideOrigin": "inferred",
+        "side": "bottom",
+        "segmentIndex": 0,
+        "from": [
+          93,
+          300
+        ],
+        "to": [
+          96.5,
+          300
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "downward"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" final segment 2 [96.5, 470] -> [100, 470] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 2,
+        "id": "update-cache",
+        "from": "ingest-pipeline",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "endpoint": "target",
+        "authoredField": "toSide",
+        "sideOrigin": "inferred",
+        "side": "top",
+        "segmentIndex": 2,
+        "from": [
+          96.5,
+          470
+        ],
+        "to": [
+          100,
+          470
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "downward from above"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[3] id \"trigger-processing\" \"ingest-pipeline\" -> \"journey-engine\" first segment 0 [240, 271] -> [202.5, 271] does not honor inferred fromSide \"right\" — it must run horizontal rightward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 3,
+        "id": "trigger-processing",
+        "from": "ingest-pipeline",
+        "to": "journey-engine"
+      },
+      "evidence": {
+        "endpoint": "source",
+        "authoredField": "fromSide",
+        "sideOrigin": "inferred",
+        "side": "right",
+        "segmentIndex": 0,
+        "from": [
+          240,
+          271
+        ],
+        "to": [
+          202.5,
+          271
+        ],
+        "expectedAxis": "horizontal",
+        "expectedDirection": "rightward"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[3] id \"trigger-processing\" \"ingest-pipeline\" -> \"journey-engine\" final segment 2 [202.5, 150] -> [165, 150] does not honor inferred toSide \"left\" — it must run horizontal rightward from the left; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 3,
+        "id": "trigger-processing",
+        "from": "ingest-pipeline",
+        "to": "journey-engine"
+      },
+      "evidence": {
+        "endpoint": "target",
+        "authoredField": "toSide",
+        "sideOrigin": "inferred",
+        "side": "left",
+        "segmentIndex": 2,
+        "from": [
+          202.5,
+          150
+        ],
+        "to": [
+          165,
+          150
+        ],
+        "expectedAxis": "horizontal",
+        "expectedDirection": "rightward from the left"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" first segment 0 [322, 186] -> [318.5, 186] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 5,
+        "id": "update-fsm",
+        "from": "journey-engine",
+        "to": "journey-session"
+      },
+      "evidence": {
+        "endpoint": "source",
+        "authoredField": "fromSide",
+        "sideOrigin": "inferred",
+        "side": "bottom",
+        "segmentIndex": 0,
+        "from": [
+          322,
+          186
+        ],
+        "to": [
+          318.5,
+          186
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "downward"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" final segment 2 [318.5, 242] -> [315, 242] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 5,
+        "id": "update-fsm",
+        "from": "journey-engine",
+        "to": "journey-session"
+      },
+      "evidence": {
+        "endpoint": "target",
+        "authoredField": "toSide",
+        "sideOrigin": "inferred",
+        "side": "top",
+        "segmentIndex": 2,
+        "from": [
+          318.5,
+          242
+        ],
+        "to": [
+          315,
+          242
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "downward from above"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" first segment 0 [308, 186] -> [311.5, 186] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 6,
+        "id": "create-notif",
+        "from": "journey-engine",
+        "to": "notification"
+      },
+      "evidence": {
+        "endpoint": "source",
+        "authoredField": "fromSide",
+        "sideOrigin": "inferred",
+        "side": "bottom",
+        "segmentIndex": 0,
+        "from": [
+          308,
+          186
+        ],
+        "to": [
+          311.5,
+          186
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "downward"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" final segment 2 [311.5, 356] -> [315, 356] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 6,
+        "id": "create-notif",
+        "from": "journey-engine",
+        "to": "notification"
+      },
+      "evidence": {
+        "endpoint": "target",
+        "authoredField": "toSide",
+        "sideOrigin": "inferred",
+        "side": "top",
+        "segmentIndex": 2,
+        "from": [
+          311.5,
+          356
+        ],
+        "to": [
+          315,
+          356
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "downward from above"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" first segment 0 [523, 186] -> [526.5, 186] does not honor inferred fromSide \"bottom\" — it must run vertical downward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 9,
+        "id": "request-eta",
+        "from": "passenger-app",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "endpoint": "source",
+        "authoredField": "fromSide",
+        "sideOrigin": "inferred",
+        "side": "bottom",
+        "segmentIndex": 0,
+        "from": [
+          523,
+          186
+        ],
+        "to": [
+          526.5,
+          186
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "downward"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" final segment 2 [526.5, 242] -> [530, 242] does not honor inferred toSide \"top\" — it must run vertical downward from above; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 9,
+        "id": "request-eta",
+        "from": "passenger-app",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "endpoint": "target",
+        "authoredField": "toSide",
+        "sideOrigin": "inferred",
+        "side": "top",
+        "segmentIndex": 2,
+        "from": [
+          526.5,
+          242
+        ],
+        "to": [
+          530,
+          242
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "downward from above"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" first segment 0 [516, 242] -> [523, 242] does not honor inferred fromSide \"top\" — it must run vertical upward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 11,
+        "id": "query-osrm",
+        "from": "eta-service",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "endpoint": "source",
+        "authoredField": "fromSide",
+        "sideOrigin": "inferred",
+        "side": "top",
+        "segmentIndex": 0,
+        "from": [
+          516,
+          242
+        ],
+        "to": [
+          523,
+          242
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "upward"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" final segment 2 [523, 300] -> [530, 300] does not honor inferred toSide \"bottom\" — it must run vertical upward from below; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 11,
+        "id": "query-osrm",
+        "from": "eta-service",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "endpoint": "target",
+        "authoredField": "toSide",
+        "sideOrigin": "inferred",
+        "side": "bottom",
+        "segmentIndex": 2,
+        "from": [
+          523,
+          300
+        ],
+        "to": [
+          530,
+          300
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "upward from below"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" first segment 0 [544, 242] -> [540.5, 242] does not honor inferred fromSide \"top\" — it must run vertical upward; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 12,
+        "id": "return-eta",
+        "from": "eta-service",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "endpoint": "source",
+        "authoredField": "fromSide",
+        "sideOrigin": "inferred",
+        "side": "top",
+        "segmentIndex": 0,
+        "from": [
+          544,
+          242
+        ],
+        "to": [
+          540.5,
+          242
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "upward"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/endpoint-side-direction",
+      "severity": "error",
+      "message": "[clean-flow/endpoint-side-direction] dataflow flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" final segment 2 [540.5, 186] -> [537, 186] does not honor inferred toSide \"bottom\" — it must run vertical upward from below; keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 12,
+        "id": "return-eta",
+        "from": "eta-service",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "endpoint": "target",
+        "authoredField": "toSide",
+        "sideOrigin": "inferred",
+        "side": "bottom",
+        "segmentIndex": 2,
+        "from": [
+          540.5,
+          186
+        ],
+        "to": [
+          537,
+          186
+        ],
+        "expectedAxis": "vertical",
+        "expectedDirection": "upward from below"
+      },
+      "supportedFixes": [
+        "keep automatic routing, or choose fromSide/toSide and via points whose first and final segments cross node borders perpendicularly"
+      ]
+    },
+    {
+      "code": "clean-flow/edge-through-node",
+      "severity": "error",
+      "message": "[clean-flow/edge-through-node] dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" crosses node \"trip-location-log\" (unrelated to this relationship) on segment 1 [97, 300] -> [97, 470] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 2,
+        "id": "update-cache",
+        "from": "ingest-pipeline",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "obstacleKind": "node",
+        "obstacleId": "trip-location-log",
+        "segmentIndex": 1,
+        "from": [
+          96.5,
+          300
+        ],
+        "to": [
+          96.5,
+          470
+        ],
+        "clearancePx": 2
+      },
+      "supportedFixes": [
+        "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+      ]
+    },
+    {
+      "code": "clean-flow/edge-through-node",
+      "severity": "error",
+      "message": "[clean-flow/edge-through-node] dataflow flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" crosses node \"ingest-pipeline\" (unrelated to this relationship) on segment 1 [161, 164] -> [161, 492] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 4,
+        "id": "read-position",
+        "from": "journey-engine",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "obstacleKind": "node",
+        "obstacleId": "ingest-pipeline",
+        "segmentIndex": 1,
+        "from": [
+          160.5,
+          164
+        ],
+        "to": [
+          160.5,
+          492
+        ],
+        "clearancePx": 2
+      },
+      "supportedFixes": [
+        "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+      ]
+    },
+    {
+      "code": "clean-flow/edge-through-node",
+      "severity": "error",
+      "message": "[clean-flow/edge-through-node] dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" crosses node \"journey-session\" (unrelated to this relationship) on segment 1 [312, 186] -> [312, 356] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 6,
+        "id": "create-notif",
+        "from": "journey-engine",
+        "to": "notification"
+      },
+      "evidence": {
+        "obstacleKind": "node",
+        "obstacleId": "journey-session",
+        "segmentIndex": 1,
+        "from": [
+          311.5,
+          186
+        ],
+        "to": [
+          311.5,
+          356
+        ],
+        "clearancePx": 2
+      },
+      "supportedFixes": [
+        "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+      ]
+    },
+    {
+      "code": "clean-flow/edge-through-node",
+      "severity": "error",
+      "message": "[clean-flow/edge-through-node] dataflow flows[7] id \"notify-passenger\" \"notification\" -> \"passenger-app\" crosses node \"journey-engine\" (unrelated to this relationship) on segment 1 [423, 378] -> [423, 157] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 7,
+        "id": "notify-passenger",
+        "from": "notification",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "obstacleKind": "node",
+        "obstacleId": "journey-engine",
+        "segmentIndex": 1,
+        "from": [
+          422.5,
+          378
+        ],
+        "to": [
+          422.5,
+          157
+        ],
+        "clearancePx": 2
+      },
+      "supportedFixes": [
+        "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+      ]
+    },
+    {
+      "code": "clean-flow/edge-through-node",
+      "severity": "error",
+      "message": "[clean-flow/edge-through-node] dataflow flows[7] id \"notify-passenger\" \"notification\" -> \"passenger-app\" crosses node \"eta-service\" (unrelated to this relationship) on segment 1 [423, 378] -> [423, 157] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 7,
+        "id": "notify-passenger",
+        "from": "notification",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "obstacleKind": "node",
+        "obstacleId": "eta-service",
+        "segmentIndex": 1,
+        "from": [
+          422.5,
+          378
+        ],
+        "to": [
+          422.5,
+          157
+        ],
+        "clearancePx": 2
+      },
+      "supportedFixes": [
+        "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+      ]
+    },
+    {
+      "code": "clean-flow/edge-through-node",
+      "severity": "error",
+      "message": "[clean-flow/edge-through-node] dataflow flows[10] id \"read-pos-eta\" \"eta-service\" -> \"active-trip\" crosses node \"journey-session\" (unrelated to this relationship) on segment 0 [400, 271] -> [278, 271] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 10,
+        "id": "read-pos-eta",
+        "from": "eta-service",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "obstacleKind": "node",
+        "obstacleId": "journey-session",
+        "segmentIndex": 0,
+        "from": [
+          400,
+          271
+        ],
+        "to": [
+          278,
+          271
+        ],
+        "clearancePx": 2
+      },
+      "supportedFixes": [
+        "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+      ]
+    },
+    {
+      "code": "clean-flow/edge-through-node",
+      "severity": "error",
+      "message": "[clean-flow/edge-through-node] dataflow flows[10] id \"read-pos-eta\" \"eta-service\" -> \"active-trip\" crosses node \"notification\" (unrelated to this relationship) on segment 1 [278, 271] -> [278, 506] (2px clearance) — adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 10,
+        "id": "read-pos-eta",
+        "from": "eta-service",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "obstacleKind": "node",
+        "obstacleId": "notification",
+        "segmentIndex": 1,
+        "from": [
+          278,
+          271
+        ],
+        "to": [
+          278,
+          506
+        ],
+        "clearancePx": 2
+      },
+      "supportedFixes": [
+        "adjust fromSide/toSide, set route/via or channelX/channelY, or move the node to another stage/row"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" crosses flows[10] id \"read-pos-eta\" \"eta-service\" -> \"active-trip\" at [311.5, 271] (segments 1 and 0) — adjust route/via or channelX/channelY so the flows use separate stage corridors.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 6,
+        "id": "create-notif",
+        "from": "journey-engine",
+        "to": "notification"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 10,
+          "id": "read-pos-eta",
+          "from": "eta-service",
+          "to": "active-trip"
+        },
+        "point": [
+          311.5,
+          271
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 0
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so the flows use separate stage corridors"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" has a 3.5px source-stub segment 0 [107, 300] -> [103.5, 300] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 1,
+        "id": "write-log",
+        "from": "ingest-pipeline",
+        "to": "trip-location-log"
+      },
+      "evidence": {
+        "segmentIndex": 0,
+        "position": "source-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          107,
+          300
+        ],
+        "to": [
+          103.5,
+          300
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" has a 3.5px target-stub segment 2 [103.5, 356] -> [100, 356] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 1,
+        "id": "write-log",
+        "from": "ingest-pipeline",
+        "to": "trip-location-log"
+      },
+      "evidence": {
+        "segmentIndex": 2,
+        "position": "target-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          103.5,
+          356
+        ],
+        "to": [
+          100,
+          356
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" has a 3.5px source-stub segment 0 [93, 300] -> [96.5, 300] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 2,
+        "id": "update-cache",
+        "from": "ingest-pipeline",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "segmentIndex": 0,
+        "position": "source-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          93,
+          300
+        ],
+        "to": [
+          96.5,
+          300
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" has a 3.5px target-stub segment 2 [96.5, 470] -> [100, 470] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 2,
+        "id": "update-cache",
+        "from": "ingest-pipeline",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "segmentIndex": 2,
+        "position": "target-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          96.5,
+          470
+        ],
+        "to": [
+          100,
+          470
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" has a 4.5px source-stub segment 0 [165, 164] -> [160.5, 164] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 4,
+        "id": "read-position",
+        "from": "journey-engine",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "segmentIndex": 0,
+        "position": "source-stub",
+        "lengthPx": 4.5,
+        "minimumPx": 8,
+        "from": [
+          165,
+          164
+        ],
+        "to": [
+          160.5,
+          164
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" has a 4.5px target-stub segment 2 [160.5, 492] -> [156, 492] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 4,
+        "id": "read-position",
+        "from": "journey-engine",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "segmentIndex": 2,
+        "position": "target-stub",
+        "lengthPx": 4.5,
+        "minimumPx": 8,
+        "from": [
+          160.5,
+          492
+        ],
+        "to": [
+          156,
+          492
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" has a 3.5px source-stub segment 0 [322, 186] -> [318.5, 186] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 5,
+        "id": "update-fsm",
+        "from": "journey-engine",
+        "to": "journey-session"
+      },
+      "evidence": {
+        "segmentIndex": 0,
+        "position": "source-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          322,
+          186
+        ],
+        "to": [
+          318.5,
+          186
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" has a 3.5px target-stub segment 2 [318.5, 242] -> [315, 242] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 5,
+        "id": "update-fsm",
+        "from": "journey-engine",
+        "to": "journey-session"
+      },
+      "evidence": {
+        "segmentIndex": 2,
+        "position": "target-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          318.5,
+          242
+        ],
+        "to": [
+          315,
+          242
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" has a 3.5px source-stub segment 0 [308, 186] -> [311.5, 186] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 6,
+        "id": "create-notif",
+        "from": "journey-engine",
+        "to": "notification"
+      },
+      "evidence": {
+        "segmentIndex": 0,
+        "position": "source-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          308,
+          186
+        ],
+        "to": [
+          311.5,
+          186
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" has a 3.5px target-stub segment 2 [311.5, 356] -> [315, 356] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 6,
+        "id": "create-notif",
+        "from": "journey-engine",
+        "to": "notification"
+      },
+      "evidence": {
+        "segmentIndex": 2,
+        "position": "target-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          311.5,
+          356
+        ],
+        "to": [
+          315,
+          356
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[8] id \"notify-conductor\" \"notification\" -> \"conductor\" has a 7px interior segment 1 [422.5, 392] -> [422.5, 385] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 8,
+        "id": "notify-conductor",
+        "from": "notification",
+        "to": "conductor"
+      },
+      "evidence": {
+        "segmentIndex": 1,
+        "position": "interior",
+        "lengthPx": 7,
+        "minimumPx": 8,
+        "from": [
+          422.5,
+          392
+        ],
+        "to": [
+          422.5,
+          385
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" has a 3.5px source-stub segment 0 [523, 186] -> [526.5, 186] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 9,
+        "id": "request-eta",
+        "from": "passenger-app",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "segmentIndex": 0,
+        "position": "source-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          523,
+          186
+        ],
+        "to": [
+          526.5,
+          186
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" has a 3.5px target-stub segment 2 [526.5, 242] -> [530, 242] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 9,
+        "id": "request-eta",
+        "from": "passenger-app",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "segmentIndex": 2,
+        "position": "target-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          526.5,
+          242
+        ],
+        "to": [
+          530,
+          242
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" has a 7px source-stub segment 0 [516, 242] -> [523, 242] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 11,
+        "id": "query-osrm",
+        "from": "eta-service",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "segmentIndex": 0,
+        "position": "source-stub",
+        "lengthPx": 7,
+        "minimumPx": 8,
+        "from": [
+          516,
+          242
+        ],
+        "to": [
+          523,
+          242
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" has a 7px target-stub segment 2 [523, 300] -> [530, 300] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 11,
+        "id": "query-osrm",
+        "from": "eta-service",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "segmentIndex": 2,
+        "position": "target-stub",
+        "lengthPx": 7,
+        "minimumPx": 8,
+        "from": [
+          523,
+          300
+        ],
+        "to": [
+          530,
+          300
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" has a 3.5px source-stub segment 0 [544, 242] -> [540.5, 242] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 12,
+        "id": "return-eta",
+        "from": "eta-service",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "segmentIndex": 0,
+        "position": "source-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          544,
+          242
+        ],
+        "to": [
+          540.5,
+          242
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/micro-segment",
+      "severity": "error",
+      "message": "[composition/micro-segment] showcase dataflow flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" has a 3.5px target-stub segment 2 [540.5, 186] -> [537, 186] that is below the 8px micro-segment floor — adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 12,
+        "id": "return-eta",
+        "from": "eta-service",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "segmentIndex": 2,
+        "position": "target-stub",
+        "lengthPx": 3.5,
+        "minimumPx": 8,
+        "from": [
+          540.5,
+          186
+        ],
+        "to": [
+          537,
+          186
+        ]
+      },
+      "supportedFixes": [
+        "adjust route/via or channelX/channelY so each turn uses a clear inter-stage corridor"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase dataflow label \"GPS ping {lat, lng, recorded_at}\" on flows[0] id \"gps-ping\" \"conductor-device\" -> \"ingest-pipeline\" label \"GPS ping {lat, lng, recorded_at}\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [16, 165, 169, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 0,
+        "id": "gps-ping",
+        "from": "conductor-device",
+        "to": "ingest-pipeline"
+      },
+      "evidence": {
+        "label": "GPS ping {lat, lng, recorded_at}",
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 4,
+          "id": "read-position",
+          "from": "journey-engine",
+          "to": "active-trip"
+        },
+        "segmentIndex": 1,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "gps-ping",
+            "from": "conductor-device",
+            "to": "ingest-pipeline",
+            "label": "GPS ping {lat, lng, recorded_at}"
+          },
+          "relationIndex": 0,
+          "label": "GPS ping {lat, lng, recorded_at}",
+          "x": 15.599999999999994,
+          "y": 165,
+          "width": 168.8,
+          "height": 16,
+          "lx": 100,
+          "ly": 176
+        },
+        "from": [
+          160.5,
+          164
+        ],
+        "to": [
+          160.5,
+          492
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase dataflow label \"INSERT TripLocationLog\" on flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" label \"INSERT TripLocationLog\" is 0px from flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" label \"UPDATE position cache (if newer)\" segment 1 [96.5, 300] -> [96.5, 470] (label rect [44, 307, 120, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 1,
+        "id": "write-log",
+        "from": "ingest-pipeline",
+        "to": "trip-location-log"
+      },
+      "evidence": {
+        "label": "INSERT TripLocationLog",
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 2,
+          "id": "update-cache",
+          "from": "ingest-pipeline",
+          "to": "active-trip"
+        },
+        "segmentIndex": 1,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "write-log",
+            "from": "ingest-pipeline",
+            "to": "trip-location-log",
+            "label": "INSERT TripLocationLog"
+          },
+          "relationIndex": 1,
+          "label": "INSERT TripLocationLog",
+          "x": 43.6,
+          "y": 307,
+          "width": 119.8,
+          "height": 16,
+          "lx": 103.5,
+          "ly": 318
+        },
+        "from": [
+          96.5,
+          300
+        ],
+        "to": [
+          96.5,
+          470
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase dataflow label \"INSERT TripLocationLog\" on flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" label \"INSERT TripLocationLog\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [44, 307, 120, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 1,
+        "id": "write-log",
+        "from": "ingest-pipeline",
+        "to": "trip-location-log"
+      },
+      "evidence": {
+        "label": "INSERT TripLocationLog",
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 4,
+          "id": "read-position",
+          "from": "journey-engine",
+          "to": "active-trip"
+        },
+        "segmentIndex": 1,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "write-log",
+            "from": "ingest-pipeline",
+            "to": "trip-location-log",
+            "label": "INSERT TripLocationLog"
+          },
+          "relationIndex": 1,
+          "label": "INSERT TripLocationLog",
+          "x": 43.6,
+          "y": 307,
+          "width": 119.8,
+          "height": 16,
+          "lx": 103.5,
+          "ly": 318
+        },
+        "from": [
+          160.5,
+          164
+        ],
+        "to": [
+          160.5,
+          492
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase dataflow label \"UPDATE position cache (if newer)\" on flows[2] id \"update-cache\" \"ingest-pipeline\" -> \"active-trip\" label \"UPDATE position cache (if newer)\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [12, 364, 169, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 2,
+        "id": "update-cache",
+        "from": "ingest-pipeline",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "label": "UPDATE position cache (if newer)",
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 4,
+          "id": "read-position",
+          "from": "journey-engine",
+          "to": "active-trip"
+        },
+        "segmentIndex": 1,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "update-cache",
+            "from": "ingest-pipeline",
+            "to": "active-trip",
+            "label": "UPDATE position cache (if newer)"
+          },
+          "relationIndex": 2,
+          "label": "UPDATE position cache (if newer)",
+          "x": 12.099999999999994,
+          "y": 364,
+          "width": 168.8,
+          "height": 16,
+          "lx": 96.5,
+          "ly": 375
+        },
+        "from": [
+          160.5,
+          164
+        ],
+        "to": [
+          160.5,
+          492
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase dataflow label \"For each active JourneySession\" on flows[3] id \"trigger-processing\" \"ingest-pipeline\" -> \"journey-engine\" label \"For each active JourneySession\" is 0px from flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" segment 1 [160.5, 164] -> [160.5, 492] (label rect [123, 190, 159, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 3,
+        "id": "trigger-processing",
+        "from": "ingest-pipeline",
+        "to": "journey-engine"
+      },
+      "evidence": {
+        "label": "For each active JourneySession",
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 4,
+          "id": "read-position",
+          "from": "journey-engine",
+          "to": "active-trip"
+        },
+        "segmentIndex": 1,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "trigger-processing",
+            "from": "ingest-pipeline",
+            "to": "journey-engine",
+            "label": "For each active JourneySession"
+          },
+          "relationIndex": 3,
+          "label": "For each active JourneySession",
+          "x": 123,
+          "y": 189.5,
+          "width": 159,
+          "height": 16,
+          "lx": 202.5,
+          "ly": 200.5
+        },
+        "from": [
+          160.5,
+          164
+        ],
+        "to": [
+          160.5,
+          492
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase dataflow label \"READ vehicle position\" on flows[4] id \"read-position\" \"journey-engine\" -> \"active-trip\" label \"READ vehicle position\" is 0px from flows[1] id \"write-log\" \"ingest-pipeline\" -> \"trip-location-log\" label \"INSERT TripLocationLog\" segment 1 [103.5, 300] -> [103.5, 356] (label rect [103, 307, 115, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 4,
+        "id": "read-position",
+        "from": "journey-engine",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "label": "READ vehicle position",
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 1,
+          "id": "write-log",
+          "from": "ingest-pipeline",
+          "to": "trip-location-log"
+        },
+        "segmentIndex": 1,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "read-position",
+            "from": "journey-engine",
+            "to": "active-trip",
+            "label": "READ vehicle position"
+          },
+          "relationIndex": 4,
+          "label": "READ vehicle position",
+          "x": 103.05,
+          "y": 307,
+          "width": 114.9,
+          "height": 16,
+          "lx": 160.5,
+          "ly": 318
+        },
+        "from": [
+          103.5,
+          300
+        ],
+        "to": [
+          103.5,
+          356
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase dataflow label \"UPDATE FSM status\" on flows[5] id \"update-fsm\" \"journey-engine\" -> \"journey-session\" label \"UPDATE FSM status\" is 0px from flows[6] id \"create-notif\" \"journey-engine\" -> \"notification\" label \"INSERT Notification(s)\" segment 1 [311.5, 186] -> [311.5, 356] (label rect [271, 193, 95, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 5,
+        "id": "update-fsm",
+        "from": "journey-engine",
+        "to": "journey-session"
+      },
+      "evidence": {
+        "label": "UPDATE FSM status",
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 6,
+          "id": "create-notif",
+          "from": "journey-engine",
+          "to": "notification"
+        },
+        "segmentIndex": 1,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "update-fsm",
+            "from": "journey-engine",
+            "to": "journey-session",
+            "label": "UPDATE FSM status"
+          },
+          "relationIndex": 5,
+          "label": "UPDATE FSM status",
+          "x": 270.85,
+          "y": 193,
+          "width": 95.3,
+          "height": 16,
+          "lx": 318.5,
+          "ly": 204
+        },
+        "from": [
+          311.5,
+          186
+        ],
+        "to": [
+          311.5,
+          356
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase dataflow label \"Push/poll: stage, approaching, arrived\" on flows[7] id \"notify-passenger\" \"notification\" -> \"passenger-app\" label \"Push/poll: stage, approaching, arrived\" is 1.4px from flows[11] id \"query-osrm\" \"eta-service\" -> \"eta-service\" label \"OSRM route (fallback: Haversine)\" segment 1 [523, 242] -> [523, 300] (label rect [323, 247, 198, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 7,
+        "id": "notify-passenger",
+        "from": "notification",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "label": "Push/poll: stage, approaching, arrived",
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 11,
+          "id": "query-osrm",
+          "from": "eta-service",
+          "to": "eta-service"
+        },
+        "segmentIndex": 1,
+        "clearancePx": 1.4,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "notify-passenger",
+            "from": "notification",
+            "to": "passenger-app",
+            "label": "Push/poll: stage, approaching, arrived",
+            "variant": "dashed"
+          },
+          "relationIndex": 7,
+          "label": "Push/poll: stage, approaching, arrived",
+          "x": 323.4,
+          "y": 246.5,
+          "width": 198.2,
+          "height": 16,
+          "lx": 422.5,
+          "ly": 257.5
+        },
+        "from": [
+          523,
+          242
+        ],
+        "to": [
+          523,
+          300
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase dataflow label \"Push: approaching, arrived\" on flows[8] id \"notify-conductor\" \"notification\" -> \"conductor\" label \"Push: approaching, arrived\" is 0px from flows[7] id \"notify-passenger\" \"notification\" -> \"passenger-app\" label \"Push/poll: stage, approaching, arrived\" segment 0 [371, 378] -> [422.5, 378] (label rect [353, 368, 139, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 8,
+        "id": "notify-conductor",
+        "from": "notification",
+        "to": "conductor"
+      },
+      "evidence": {
+        "label": "Push: approaching, arrived",
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 7,
+          "id": "notify-passenger",
+          "from": "notification",
+          "to": "passenger-app"
+        },
+        "segmentIndex": 0,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "notify-conductor",
+            "from": "notification",
+            "to": "conductor",
+            "label": "Push: approaching, arrived",
+            "variant": "dashed"
+          },
+          "relationIndex": 8,
+          "label": "Push: approaching, arrived",
+          "x": 352.8,
+          "y": 367.5,
+          "width": 139.4,
+          "height": 16,
+          "lx": 422.5,
+          "ly": 378.5
+        },
+        "from": [
+          371,
+          378
+        ],
+        "to": [
+          422.5,
+          378
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase dataflow label \"GET ETA for destination\" on flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" is 0px from flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance_m, duration_s}\" segment 1 [540.5, 242] -> [540.5, 186] (label rect [464, 193, 125, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 9,
+        "id": "request-eta",
+        "from": "passenger-app",
+        "to": "eta-service"
+      },
+      "evidence": {
+        "label": "GET ETA for destination",
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 12,
+          "id": "return-eta",
+          "from": "eta-service",
+          "to": "passenger-app"
+        },
+        "segmentIndex": 1,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "request-eta",
+            "from": "passenger-app",
+            "to": "eta-service",
+            "label": "GET ETA for destination"
+          },
+          "relationIndex": 9,
+          "label": "GET ETA for destination",
+          "x": 464.15,
+          "y": 193,
+          "width": 124.7,
+          "height": 16,
+          "lx": 526.5,
+          "ly": 204
+        },
+        "from": [
+          540.5,
+          242
+        ],
+        "to": [
+          540.5,
+          186
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+      ]
+    },
+    {
+      "code": "composition/label-route-clearance",
+      "severity": "error",
+      "message": "[composition/label-route-clearance] showcase dataflow label \"RouteInfo {distance_m, duration_s}\" on flows[12] id \"return-eta\" \"eta-service\" -> \"passenger-app\" label \"RouteInfo {distance_m, duration_s}\" is 0px from flows[9] id \"request-eta\" \"passenger-app\" -> \"eta-service\" label \"GET ETA for destination\" segment 1 [526.5, 186] -> [526.5, 242] (label rect [451, 193, 179, 16]; minimum 4px) — adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY.",
+      "subject": {
+        "diagramType": "dataflow",
+        "collection": "flows",
+        "index": 12,
+        "id": "return-eta",
+        "from": "eta-service",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "label": "RouteInfo {distance_m, duration_s}",
+        "otherRelationship": {
+          "diagramType": "dataflow",
+          "collection": "flows",
+          "index": 9,
+          "id": "request-eta",
+          "from": "passenger-app",
+          "to": "eta-service"
+        },
+        "segmentIndex": 1,
+        "clearancePx": 0,
+        "minimumPx": 4,
+        "labelRect": {
+          "relation": {
+            "id": "return-eta",
+            "from": "eta-service",
+            "to": "passenger-app",
+            "label": "RouteInfo {distance_m, duration_s}"
+          },
+          "relationIndex": 12,
+          "label": "RouteInfo {distance_m, duration_s}",
+          "x": 451.2,
+          "y": 193,
+          "width": 178.6,
+          "height": 16,
+          "lx": 540.5,
+          "ly": 204
+        },
+        "from": [
+          526.5,
+          186
+        ],
+        "to": [
+          526.5,
+          242
+        ]
+      },
+      "supportedFixes": [
+        "adjust labelAt, labelDx, labelDy, or labelSegment; otherwise adjust the other flow route/via/channelX/channelY"
+      ]
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Node \"ingest-pipeline\" exceeds the horizontal bounds of the viewBox — reduce node.width or increase meta.viewBox[0].",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Nodes \"conductor-device\" and \"journey-engine\" are less than 10px apart — move one to another stage/row or adjust yOffset.",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Nodes \"journey-engine\" and \"passenger-app\" are less than 10px apart — move one to another stage/row or adjust yOffset.",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"GPS ping {lat, lng, recorded_at}\" overlaps node \"conductor-device\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [16, 165, 169, 16]\n  node \"conductor-device\" rect: [44, 128, 112, 58]\n  Suggested fix: set labelAt [100, 201] or set labelDy 25 (below); or set labelAt [100, 119] or set labelDy -57 (above)",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"GPS ping {lat, lng, recorded_at}\" overlaps node \"journey-engine\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [16, 165, 169, 16]\n  node \"journey-engine\" rect: [165, 128, 300, 58]\n  Suggested fix: set labelAt [100, 201] or set labelDy 25 (below); or set labelAt [100, 119] or set labelDy -57 (above)",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"UPDATE position cache (if newer)\" overlaps node \"trip-location-log\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [12, 364, 169, 16]\n  node \"trip-location-log\" rect: [44, 356, 112, 58]\n  Suggested fix: set labelAt [97, 429] or set labelDx 1 with labelDy 54 (below); or set labelAt [97, 347] or set labelDx 1 with labelDy -28 (above)",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"INSERT Notification(s)\" overlaps node \"journey-session\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [252, 250, 120, 16]\n  node \"journey-session\" rect: [259, 242, 112, 58]\n  Suggested fix: set labelAt [312, 315] or set labelDx 1 with labelDy 54 (below); or set labelAt [312, 233] or set labelDx 1 with labelDy -28 (above)",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"Push/poll: stage, approaching, arrived\" overlaps node \"journey-session\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [323, 247, 198, 16]\n  node \"journey-session\" rect: [259, 242, 112, 58]\n  Suggested fix: set labelAt [423, 315] or set labelDx 1 with labelDy 58 (below); or set labelAt [423, 233] or set labelDx 1 with labelDy -24 (above)",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"Push/poll: stage, approaching, arrived\" overlaps node \"eta-service\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [323, 247, 198, 16]\n  node \"eta-service\" rect: [400, 242, 260, 58]\n  Suggested fix: set labelAt [423, 315] or set labelDx 1 with labelDy 58 (below); or set labelAt [423, 233] or set labelDx 1 with labelDy -24 (above)",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"Push: approaching, arrived\" overlaps node \"notification\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [353, 368, 139, 16]\n  node \"notification\" rect: [259, 356, 112, 58]\n  Suggested fix: set labelAt [423, 429] or set labelDx 1 with labelDy 51 (below); or set labelAt [423, 347] or set labelDx 1 with labelDy -31 (above)",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"Push: approaching, arrived\" overlaps node \"conductor\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [353, 368, 139, 16]\n  node \"conductor\" rect: [474, 356, 112, 58]\n  Suggested fix: set labelAt [423, 429] or set labelDx 1 with labelDy 51 (below); or set labelAt [423, 347] or set labelDx 1 with labelDy -31 (above)",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"READ vehicle position\" overlaps node \"notification\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [221, 368, 115, 16]\n  node \"notification\" rect: [259, 356, 112, 58]\n  Suggested fix: set labelAt [278, 429] or set labelDy 51 (below); or set labelAt [278, 347] or set labelDy -31 (above)",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Label \"OSRM route (fallback: Haversine)\" overlaps node \"eta-service\" — adjust labelDx/labelDy/labelSegment or set labelAt.\n  label rect: [439, 250, 169, 16]\n  node \"eta-service\" rect: [400, 242, 260, 58]\n  Suggested fix: set labelAt [523, 315] or set labelDy 54 (below); or set labelAt [523, 233] or set labelDy -28 (above)",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Labels \"INSERT TripLocationLog\" and \"READ vehicle position\" overlap — adjust labelDx/labelDy.\n  \"INSERT TripLocationLog\" [44, 307, 120, 16]; \"READ vehicle position\" [103, 307, 115, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Labels \"For each active JourneySession\" and \"UPDATE FSM status\" overlap — adjust labelDx/labelDy.\n  \"For each active JourneySession\" [123, 190, 159, 16]; \"UPDATE FSM status\" [271, 193, 95, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Labels \"INSERT Notification(s)\" and \"Push/poll: stage, approaching, arrived\" overlap — adjust labelDx/labelDy.\n  \"INSERT Notification(s)\" [252, 250, 120, 16]; \"Push/poll: stage, approaching, arrived\" [323, 247, 198, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Labels \"Push/poll: stage, approaching, arrived\" and \"OSRM route (fallback: Haversine)\" overlap — adjust labelDx/labelDy.\n  \"Push/poll: stage, approaching, arrived\" [323, 247, 198, 16]; \"OSRM route (fallback: Haversine)\" [439, 250, 169, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    },
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Labels \"GET ETA for destination\" and \"RouteInfo {distance_m, duration_s}\" overlap — adjust labelDx/labelDy.\n  \"GET ETA for destination\" [464, 193, 125, 16]; \"RouteInfo {distance_m, duration_s}\" [451, 193, 179, 16]\n  Suggested fix: adjust labelDx/labelDy/labelSegment, or route one relationship through a separate corridor",
+      "subject": {
+        "diagramType": "dataflow"
+      },
+      "evidence": {},
+      "supportedFixes": []
+    }
+  ],
+  "evidence": {
+    "receipt": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-dataflow.finalize.json",
+    "summaryReceipt": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-dataflow.finalize-summary.json"
+  },
+  "visualReview": "not-requested",
+  "failedStage": "validate",
+  "finishedAt": "2026-10-14T04:14:29.583Z",
+  "durationMs": 970,
+  "update": {
+    "status": "update_available",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.1.0",
+    "releaseNotes": "https://github.com/tt-a1i/archify/releases/tag/v3.1.0",
+    "severity": "normal",
+    "checkedAt": "2026-10-14T04:05:29.798Z",
+    "source": "cache",
+    "noticeRequired": true,
+    "noticeText": "Archify update: 3.0.1 → 3.1.0. A previous check at 2026-10-14T04:05:29.798Z found a newer release. Release notes: https://github.com/tt-a1i/archify/releases/tag/v3.1.0. The installed Skill has not changed; ask to snooze or ignore this reminder.",
+    "eventKey": "archify@sha256:ffedc53390c9da6e859f41e432c5d2d0615a23cf00a503181f07efbba88a7ce8"
+  }
+}

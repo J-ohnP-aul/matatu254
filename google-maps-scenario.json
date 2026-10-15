@@ -1,0 +1,23 @@
+{
+  "url": "https://www.google.com/maps/dir//",
+  "actions": [
+    {"type": "wait", "duration": 3000},
+    {"type": "click", "selector": "input[id='searchboxinput']"},
+    {"type": "type", "text": "Nairobi, Kenya"},
+    {"type": "key", "key": "Enter"},
+    {"type": "wait", "duration": 3000},
+    {"type": "click", "selector": "button[data-value='Directions']"},
+    {"type": "wait", "duration": 2000},
+    {"type": "click", "selector": "input[aria-label='Choose starting point, or click on the map...']"},
+    {"type": "type", "text": "Kenyatta Avenue, Nairobi"},
+    {"type": "key", "key": "Enter"},
+    {"type": "wait", "duration": 3000},
+    {"type": "click", "selector": "button[aria-label='Start navigation']"},
+    {"type": "wait", "duration": 5000}
+  ],
+  "capture": {
+    "network": true,
+    "console": true,
+    "dom": true
+  }
+}

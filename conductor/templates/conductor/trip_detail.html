@@ -1,15 +1,25 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}{{ trip.matatu.registration_number }} — Conductor Dashboard{% endblock %}
 {% block extra_head %}
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
   <style>
-    .conductor-page { max-width: 760px; margin: 0 auto; color: #17251c; }
+    /* Hide base header on tracking page */
+    .site-header { display: none; }
+
+    .main:has(.conductor-page) { padding-top: 16px; }
+    .conductor-page { width: 100%; max-width: 1180px; margin: 0 auto; color: #17251c; }
     .dashboard-kicker, .metric-label { color: #607565; font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
-    .dashboard-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
-    .dashboard-header h1 { margin: 2px 0; font-size: 1.8rem; line-height: 1.1; }
-    .dashboard-header p { margin: 4px 0 0; color: #607565; }
-    .dashboard-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .live-card { padding: 20px; border: 1px solid #d6e2d8; border-radius: 16px; background: white; box-shadow: 0 2px 8px #193c2410; }
+    .conductor-header {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      margin-bottom: 14px; padding: 16px; background: #fff;
+      border: 1px solid #d6e2d8; border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(23,37,28,0.05);
+    }
+    .conductor-header h1 { margin: 2px 0; font-size: 1.5rem; line-height: 1.1; }
+    .conductor-header p { margin: 4px 0 0; color: #607565; }
+    .conductor-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .live-card { padding: 20px; box-shadow: 0 2px 8px #193c2410; }
     .live-card-title { margin: 0 0 16px; font-size: 1.05rem; }
     .trip-progress { width: 100%; height: 8px; margin: 0 0 18px; border: 0; border-radius: 99px; background: #d6e7dc; }
     .trip-progress::-webkit-progress-bar { border-radius: 99px; background: #d6e7dc; }
@@ -18,6 +28,7 @@
     .trip-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 16px; }
     .metric-value { display: block; margin-top: 2px; font-size: .9rem; font-weight: 700; overflow-wrap: anywhere; }
     .conductor-alert { display: flex; align-items: center; gap: 12px; min-height: 56px; margin: 0 0 20px; padding: 14px 16px; border: 0; border-radius: 14px; background: #f7b51b; color: #302408; font-weight: 700; }
+    .conductor-alert[hidden] { display: none; }
     .conductor-alert svg { width: 22px; height: 22px; flex: none; }
     .conductor-alert.is-calm { background: #eaf3eb; color: #1c3021; }
     .section-title { margin: 28px 0 12px; font-size: 1.1rem; }
@@ -41,32 +52,105 @@
     .gps-freshness { margin: 12px 0 0; color: #087a45; font-size: .82rem; }
     .gps-freshness.is-stale { color: #9a5b00; font-weight: 700; }
     .passenger-card { margin-top: 22px; padding: 16px; border: 1px solid #d6e2d8; border-radius: 16px; background: white; }
-    @media (max-width: 520px) { .dashboard-header { align-items: flex-start; flex-direction: column; } .dashboard-header h1 { font-size: 1.55rem; } .live-card { padding: 17px; } .trip-metrics { gap: 15px 10px; } .stop-row { gap: 8px; padding-inline: 8px; } }
+    @media (max-width: 520px) { .live-card { padding: 17px; } .trip-metrics { gap: 15px 10px; } .stop-row { gap: 8px; padding-inline: 8px; } }
+
+    /* The map is a page section, not a full-screen background layer. */
+    #map-container {
+      position: relative; width: 100%; height: min(58vh, 620px); min-height: 360px;
+      margin-bottom: 16px; overflow: hidden; border: 1px solid #d6e2d8;
+      border-radius: 16px; background: #e8eee9; box-shadow: 0 8px 24px rgba(23,37,28,0.12);
+    }
+    #map { width: 100%; height: 100%; }
+    .map-mode-indicator {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 1100;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid #d6e2d8;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: .7rem;
+      font-weight: 600;
+      color: #087a45;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
+    }
+    .map-mode-indicator.free { background: #fff3e0; border-color: #ffe0b2; color: #ef6c00; }
+
+    .recenter-btn {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      z-index: 1100;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: #fff;
+      border: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .recenter-btn.visible { opacity: 1; transform: scale(1); }
+    .recenter-btn[hidden] { display: none; }
+    .recenter-btn svg { width: 22px; height: 22px; color: #087a45; }
+
+    .trip-progress-heading { display: flex; justify-content: space-between; margin: 0 0 6px; color: #607565; font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+    @media (max-width: 600px) {
+      .main:has(.conductor-page) { padding: 10px 10px 20px; }
+      #map-container { height: 50vh; min-height: 300px; border-radius: 12px; }
+      .conductor-header { align-items: flex-start; flex-direction: column; padding: 12px; }
+      .conductor-header h1 { font-size: 1.3rem; }
+      .live-card { padding: 16px; }
+    }
+    @media (max-width: 420px) {
+      .metric-value { font-size: .9rem; }
+    }
   </style>
 {% endblock %}
 {% block content %}
-  <main class="conductor-page" id="trip-dashboard" data-tracking-url="{% url 'conductor:trip-tracking-data' trip.id %}">
-    <header class="dashboard-header">
-      <div>
-        <div class="dashboard-kicker">Conductor dashboard</div>
-        <h1>{{ trip.matatu.registration_number }}</h1>
-        <p>{{ trip.route.name }}</p>
-      </div>
-      <div class="dashboard-actions">
-        <a class="btn btn-sm btn-outline" href="{% url 'conductor:dashboard' %}">← Trips</a>
-        <a class="btn btn-sm btn-outline" href="{% url 'conductor:notifications' %}">Notifications</a>
-      </div>
-    </header>
+  <div class="conductor-page">
+    <div id="trip-dashboard" data-tracking-url="{% url 'conductor:trip-tracking-data' trip.id %}" data-route-url="{% url 'conductor:trip-route-data' trip.id %}">
+      <header class="conductor-header">
+        <div>
+          <div class="dashboard-kicker">Conductor dashboard</div>
+          <h1>{{ trip.matatu.registration_number }}</h1>
+          <p>{{ trip.route.name }}</p>
+        </div>
+        <div class="conductor-actions">
+          <a class="btn btn-sm btn-outline" href="{% url 'conductor:dashboard' %}">← Trips</a>
+          <a class="btn btn-sm btn-outline" href="{% url 'conductor:notifications' %}">Notifications</a>
+        </div>
+      </header>
 
-    <div id="next-stop-alert" role="status" class="conductor-alert{% if not next_stage_remaining or next_stage_remaining.distance_m > 1200 %} is-calm{% endif %}"{% if not next_stage %} hidden{% endif %}>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
-      <span id="next-stop-alert-text">{% if next_stage_remaining and next_stage_remaining.distance_m <= 1200 %}Approaching {{ next_stage.name }} — {{ alighting_count }} alighting · {% if next_stage_remaining.distance_m >= 1000 %}{{ next_stage_remaining.distance_km|floatformat:1 }} km{% else %}{{ next_stage_remaining.distance_m|floatformat:0 }} m{% endif %}{% else %}Next stop: {{ next_stage.name|default:'Waiting for GPS' }} · {{ alighting_count }} alighting{% if next_stage_remaining %} · {% if next_stage_remaining.distance_m >= 1000 %}{{ next_stage_remaining.distance_km|floatformat:1 }} km{% else %}{{ next_stage_remaining.distance_m|floatformat:0 }} m{% endif %}{% endif %}{% endif %}</span>
-    </div>
+      <div id="map-container">
+        <div id="map"></div>
+        <div class="map-mode-indicator" id="mode-indicator">FOLLOW</div>
+        <button class="recenter-btn" id="recenter-btn" aria-label="Recenter on vehicle" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
+        </button>
+      </div>
 
-    <section class="live-card" aria-labelledby="live-trip-heading">
+      <div id="next-stop-alert" role="status" class="conductor-alert{% if not next_stage_remaining or next_stage_remaining.distance_m > 1200 %} is-calm{% endif %}"{% if not next_stage %} hidden{% endif %}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+        <span id="next-stop-alert-text">{% if next_stage_remaining and next_stage_remaining.distance_m <= 1200 %}Approaching {{ next_stage.name }} — {{ alighting_count }} alighting · {% if next_stage_remaining.distance_m >= 1000 %}{{ next_stage_remaining.distance_km|floatformat:1 }} km{% else %}{{ next_stage_remaining.distance_m|floatformat:0 }} m{% endif %}{% else %}Next stop: {{ next_stage.name|default:'Waiting for GPS' }} · {{ alighting_count }} alighting{% if next_stage_remaining %} · {% if next_stage_remaining.distance_m >= 1000 %}{{ next_stage_remaining.distance_km|floatformat:1 }} km{% else %}{{ next_stage_remaining.distance_m|floatformat:0 }} m{% endif %}{% endif %}{% endif %}</span>
+      </div>
+
+    <section class="live-card card card-border bg-base-100" aria-labelledby="live-trip-heading">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
         <h2 class="live-card-title" id="live-trip-heading">Live trip</h2>
         <span class="badge badge-soft {% if trip.status == 'active' %}badge-success{% else %}badge-neutral{% endif %}" id="trip-status">{{ trip.get_status_display }}</span>
+      </div>
+      <div class="trip-progress-heading">
+        <span>Trip progress</span>
+        <strong id="progress-percent">{{ progress_percent }}%</strong>
       </div>
       <progress id="trip-progress" class="progress progress-success trip-progress" value="{{ progress_percent }}" max="100" aria-label="Trip progress"></progress>
       <div class="trip-metrics">
@@ -120,7 +204,9 @@
     <section class="passenger-card" id="passenger-list">
       {% include "conductor/partials/passenger_list.html" with journeys=journeys %}
     </section>
-  </main>
+  </div>
+
+  </div>
 
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
   <script>
@@ -311,5 +397,82 @@
       document.getElementById('start-tracking-btn').style.display = 'inline-flex';
       document.getElementById('stop-tracking-btn').style.display = 'none';
     }
+
+    // Initialize LiveTrackingMap for conductor
+    let conductorMap = null;
+    async function initConductorMap() {
+      try {
+        const { createLiveTrackingMap } = await import("{% static 'js/map/index.js' %}");
+        conductorMap = await createLiveTrackingMap('map', {
+          tripId: "{{ trip.id }}",
+          routeDataUrl: tripDashboard.dataset.routeUrl,
+          apiBase: "",
+          center: [{% if trip.route.stages.first %}{{ trip.route.stages.first.latitude }}, {{ trip.route.stages.first.longitude }}{% else %}-1.2921, 36.8219{% endif %}],
+          zoom: 14,
+          gpsFilterAlpha: 0.3,
+          interpolationDuration: 1000,
+          lowSpeedThreshold: 5,
+          recenterThreshold: 50,
+          autoRecenterDelay: 2000,
+          onETAUpdate: (eta) => updateConductorETAUI(eta),
+          onStageChange: (stage, status) => updateConductorStageUI(stage, status),
+          onModeChange: (mode) => updateConductorModeIndicator(mode),
+          onError: (err) => console.error('Conductor map error:', err)
+        });
+      } catch (err) {
+        console.error('Failed to initialize conductor map:', err);
+        document.getElementById('map-container').innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:16px;padding:24px;text-align:center;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#9a5b00" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <p>Unable to load map. <a href="#" onclick="location.reload()">Retry</a></p>
+          </div>
+        `;
+      }
+    }
+
+    function updateConductorETAUI(eta) {
+      document.getElementById('next-stage-distance').textContent = eta.formattedDistance || 'Waiting for GPS';
+      document.getElementById('next-stage-eta').textContent = eta.formattedDuration || 'Waiting for GPS';
+      document.getElementById('progress-percent').textContent = `${Math.round(eta.progress || 0)}%`;
+      document.getElementById('trip-progress').value = Math.round(eta.progress || 0);
+      document.getElementById('trip-remaining-summary').textContent = eta.formattedDistance ? `${eta.formattedDistance} · ~${eta.formattedDuration}` : 'Waiting for GPS';
+      document.getElementById('next-stop-alert-text').textContent = eta.formattedDistance
+        ? `Next stop: ${document.getElementById('next-stage').textContent} · ${eta.formattedDistance}`
+        : `Next stop: ${document.getElementById('next-stage').textContent}`;
+    }
+
+    function updateConductorStageUI(stage, status) {
+      if (status === 'current') {
+        document.getElementById('current-stage').textContent = stage.name;
+      }
+      document.querySelectorAll('.stop-row[data-stage-order]').forEach((stop) => {
+        const order = Number(stop.dataset.stageOrder);
+        const isCurrent = stage && order === stage.sequence_order;
+        const isComplete = stage && order < stage.sequence_order;
+        const isNext = stage && order === stage.sequence_order + 1;
+        stop.classList.toggle('is-complete', isComplete || isCurrent);
+        stop.classList.toggle('is-next', isNext);
+        stop.querySelector('.next-stop-badge').hidden = !isNext;
+      });
+    }
+
+    function updateConductorModeIndicator(mode) {
+      const indicator = document.getElementById('mode-indicator');
+      if (indicator) indicator.textContent = mode.toUpperCase();
+      const recenterBtn = document.getElementById('recenter-btn');
+      if (recenterBtn) {
+        recenterBtn.hidden = mode !== 'free';
+        if (mode === 'free') recenterBtn.classList.add('visible');
+        else recenterBtn.classList.remove('visible');
+      }
+    }
+
+    document.getElementById('recenter-btn').addEventListener('click', () => conductorMap?.recenter());
+
+    // Initialize map
+    initConductorMap();
+
+    // Cleanup
+    window.addEventListener('beforeunload', () => conductorMap?.destroy());
   </script>
 {% endblock %}

@@ -1,0 +1,303 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Matatu254 System Architecture",
+    "subtitle": "Real-time GPS tracking → journey status → notifications",
+    "output": "matatu-architecture.html",
+    "quality_profile": "showcase",
+    "viewBox": [1400, 700]
+  },
+  "components": [
+    {
+      "id": "conductor-device",
+      "type": "external",
+      "label": "Conductor Device",
+      "sublabel": "GPS pings",
+      "icon": "person",
+      "pos": [50, 50],
+      "size": [160, 50]
+    },
+    {
+      "id": "ping-endpoint",
+      "type": "backend",
+      "label": "POST /trips/ping/",
+      "sublabel": "trips.views.ping",
+      "icon": "backend",
+      "pos": [250, 50],
+      "size": [180, 50]
+    },
+    {
+      "id": "record-ping",
+      "type": "backend",
+      "label": "record_ping()",
+      "sublabel": "trips.services",
+      "icon": "backend",
+      "pos": [470, 50],
+      "size": [160, 50]
+    },
+    {
+      "id": "trip-location-log",
+      "type": "database",
+      "label": "TripLocationLog",
+      "sublabel": "GPS history",
+      "icon": "database",
+      "pos": [470, 130],
+      "size": [160, 50]
+    },
+    {
+      "id": "active-trip",
+      "type": "database",
+      "label": "ActiveTrip",
+      "sublabel": "Position cache",
+      "icon": "database",
+      "pos": [670, 130],
+      "size": [160, 50]
+    },
+    {
+      "id": "update-journey",
+      "type": "backend",
+      "label": "update_journey_status()",
+      "sublabel": "journeys.services",
+      "icon": "backend",
+      "pos": [470, 210],
+      "size": [200, 50]
+    },
+    {
+      "id": "is-near-stage",
+      "type": "backend",
+      "label": "is_near_stage()",
+      "sublabel": "Haversine ≤ 20m",
+      "icon": "backend",
+      "pos": [710, 210],
+      "size": [160, 50]
+    },
+    {
+      "id": "journey-session",
+      "type": "database",
+      "label": "JourneySession",
+      "sublabel": "Passenger ride + FSM",
+      "icon": "database",
+      "pos": [910, 210],
+      "size": [180, 50]
+    },
+    {
+      "id": "notification",
+      "type": "database",
+      "label": "Notification",
+      "sublabel": "In-app alerts",
+      "icon": "database",
+      "pos": [710, 290],
+      "size": [160, 50]
+    },
+    {
+      "id": "passenger-app",
+      "type": "frontend",
+      "label": "Passenger App",
+      "sublabel": "Polls status & ETA",
+      "icon": "frontend",
+      "pos": [910, 290],
+      "size": [160, 50]
+    },
+    {
+      "id": "conductor",
+      "type": "external",
+      "label": "Conductor",
+      "sublabel": "Receives alerts",
+      "icon": "person",
+      "pos": [50, 290],
+      "size": [160, 50]
+    },
+    {
+      "id": "eta-service",
+      "type": "backend",
+      "label": "ETA Service",
+      "sublabel": "remaining_distance() + OSRM",
+      "icon": "backend",
+      "pos": [710, 370],
+      "size": [200, 50]
+    },
+    {
+      "id": "osrm",
+      "type": "external",
+      "label": "OSRM Server",
+      "sublabel": "Road routing",
+      "icon": "external",
+      "pos": [950, 370],
+      "size": [160, 50]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "GPS Ingestion",
+      "wraps": ["conductor-device", "ping-endpoint", "record-ping", "trip-location-log", "active-trip"],
+      "pad": 15
+    },
+    {
+      "kind": "region",
+      "label": "Journey Processing",
+      "wraps": ["update-journey", "is-near-stage", "journey-session", "notification"],
+      "pad": 15
+    },
+    {
+      "kind": "region",
+      "label": "Client Consumption",
+      "wraps": ["passenger-app", "conductor", "eta-service", "osrm"],
+      "pad": 15
+    }
+  ],
+  "connections": [
+    {
+      "id": "c1",
+      "from": "conductor-device",
+      "to": "ping-endpoint",
+      "label": "GPS ping {lat, lng}",
+      "variant": "default"
+    },
+    {
+      "id": "c2",
+      "from": "ping-endpoint",
+      "to": "record-ping",
+      "label": "Authorized → record_ping()",
+      "variant": "default"
+    },
+    {
+      "id": "c3",
+      "from": "record-ping",
+      "to": "trip-location-log",
+      "label": "INSERT TripLocationLog",
+      "variant": "default"
+    },
+    {
+      "id": "c4",
+      "from": "record-ping",
+      "to": "active-trip",
+      "label": "UPDATE position cache",
+      "variant": "default"
+    },
+    {
+      "id": "c5",
+      "from": "record-ping",
+      "to": "update-journey",
+      "label": "Trigger journey processing",
+      "variant": "dashed"
+    },
+    {
+      "id": "c6",
+      "from": "update-journey",
+      "to": "active-trip",
+      "label": "READ vehicle position",
+      "variant": "default"
+    },
+    {
+      "id": "c7",
+      "from": "update-journey",
+      "to": "is-near-stage",
+      "label": "Check stages (Haversine)",
+      "variant": "default"
+    },
+    {
+      "id": "c8",
+      "from": "is-near-stage",
+      "to": "update-journey",
+      "label": "true/false per stage",
+      "variant": "dashed"
+    },
+    {
+      "id": "c9",
+      "from": "update-journey",
+      "to": "journey-session",
+      "label": "UPDATE FSM status",
+      "variant": "default"
+    },
+    {
+      "id": "c10",
+      "from": "update-journey",
+      "to": "notification",
+      "label": "INSERT Notification(s)",
+      "variant": "default"
+    },
+    {
+      "id": "c11",
+      "from": "notification",
+      "to": "passenger-app",
+      "label": "Push/poll: stage, approaching, arrived",
+      "variant": "dashed"
+    },
+    {
+      "id": "c12",
+      "from": "notification",
+      "to": "conductor",
+      "label": "Push: approaching, arrived",
+      "variant": "dashed"
+    },
+    {
+      "id": "c13",
+      "from": "passenger-app",
+      "to": "eta-service",
+      "label": "GET ETA for destination",
+      "variant": "default"
+    },
+    {
+      "id": "c14",
+      "from": "eta-service",
+      "to": "active-trip",
+      "label": "READ vehicle position",
+      "variant": "default"
+    },
+    {
+      "id": "c15",
+      "from": "eta-service",
+      "to": "osrm",
+      "label": "RouteInfo per segment",
+      "variant": "emphasis"
+    },
+    {
+      "id": "c16",
+      "from": "osrm",
+      "to": "eta-service",
+      "label": "distance_m, duration_s",
+      "variant": "dashed"
+    },
+    {
+      "id": "c17",
+      "from": "eta-service",
+      "to": "passenger-app",
+      "label": "RouteInfo {distance, duration}",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "GPS Ingestion",
+      "items": [
+        "Conductor device POSTs GPS to /trips/ping/<trip_id>/",
+        "record_ping() validates auth, writes TripLocationLog",
+        "ActiveTrip cache updated only if ping.timestamp > last_ping_at",
+        "Triggers journey processing for each active session"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Journey Status Engine",
+      "items": [
+        "update_journey_status() reads ActiveTrip.position",
+        "is_near_stage() checks Haversine distance ≤ 20m per stage",
+        "JourneySession FSM: SELECTED → IN_TRANSIT → APPROACHING → ARRIVED → ENDED",
+        "Notifications created for passenger + conductor"
+      ]
+    },
+    {
+      "dot": "orange",
+      "title": "Client Consumption",
+      "items": [
+        "Passenger app polls journey status & requests ETA",
+        "remaining_road_distance() sums OSRM segments to destination",
+        "OSRM fallback to Haversine (25 km/h) on failure",
+        "Conductor receives approaching/arrived push alerts"
+      ]
+    }
+  ]
+}

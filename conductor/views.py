@@ -7,7 +7,7 @@ from fleet.models import Matatu
 from trips.models import ActiveTrip
 from journeys.models import JourneySession
 from notifications.models import Notification
-from r_outes.routes_services import is_near_stage, remaining_road_distance
+from r_outes.routes_services import is_near_stage, remaining_road_distance, get_route_polyline
 from core.geo import haversine_distance_m
 from tracking.models import TripLocationLog
 
@@ -290,4 +290,30 @@ def notifications(request):
     
     return render(request, "conductor/notifications.html", {
         "notifications": notifications,
+    })
+
+
+@login_required
+def trip_route_data(request, trip_id):
+    """Return route polyline and stage data for the conductor map."""
+    trip = get_object_or_404(ActiveTrip, pk=trip_id)
+    if not _is_authorized_conductor(request.user, trip.matatu):
+        return JsonResponse({"error": "Not authorized for this trip"}, status=403)
+    
+    # Get all stages for this route
+    stages = list(trip.route.stages.order_by("sequence_order").values(
+        'id', 'name', 'latitude', 'longitude', 'sequence_order'
+    ))
+    
+    # Get route polyline from OSRM (full route)
+    try:
+        origin = (float(trip.route.stages.first().longitude), float(trip.route.stages.first().latitude))
+        destination = (float(trip.route.stages.last().longitude), float(trip.route.stages.last().latitude))
+        polyline = get_route_polyline(origin, destination)
+    except Exception:
+        polyline = None
+    
+    return JsonResponse({
+        "polyline": polyline,
+        "stages": list(stages),
     })

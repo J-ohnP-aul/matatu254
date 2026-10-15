@@ -1,0 +1,298 @@
+{
+  "schemaVersion": 1,
+  "ok": false,
+  "command": "finalize",
+  "status": "fail",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/candidate.json",
+    "sha256": "cc34fb099d52b9eead11e46682c3e6645a5403cbef5d19c1cc1630f75b7372af",
+    "bytes": 8186
+  },
+  "artifact": {
+    "path": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-workflow.html"
+  },
+  "gates": {
+    "validate": "fail",
+    "deliver": "not-run",
+    "check": "not-run",
+    "browser-check": "not-run"
+  },
+  "failedStage": "validate",
+  "diagnostics": [
+    {
+      "code": "layout/constraint",
+      "severity": "error",
+      "message": "Sublabel \"Every few seconds: {lat, lng, recorded_at}\" needs ~152px at the 6px legible minimum, but node \"gps-ping\" provides 84px — shorten the sublabel or increase node.width.",
+      "subject": {
+        "diagramType": "workflow"
+      }
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[1] id \"e10\" \"update-journey\" -> \"journey-session\" crosses edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" at [616.4, 414] (segments 1 and 2) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 1,
+        "id": "e10",
+        "from": "update-journey",
+        "to": "journey-session"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 14,
+          "id": "e6",
+          "from": "trigger-journey",
+          "to": "update-journey"
+        },
+        "point": [
+          616.3999999999999,
+          414
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 2
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/ambiguous-corridor",
+      "severity": "error",
+      "message": "[composition/ambiguous-corridor] showcase workflow edges[1] id \"e10\" \"update-journey\" -> \"journey-session\" shares a 62px corridor with edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" at [554.4, 414] -> [616.4, 414] (segments 1 and 2; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 1,
+        "id": "e10",
+        "from": "update-journey",
+        "to": "journey-session"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 15,
+          "id": "e7",
+          "from": "update-journey",
+          "to": "active-trip"
+        },
+        "overlapLengthPx": 62,
+        "minimumPx": 8,
+        "from": [
+          554.4,
+          414
+        ],
+        "to": [
+          616.4,
+          414
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 2
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[2] id \"e11\" \"update-journey\" -> \"notification\" crosses edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [942.8, 449] (segments 2 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 2,
+        "id": "e11",
+        "from": "update-journey",
+        "to": "notification"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 16,
+          "id": "e8",
+          "from": "update-journey",
+          "to": "is-near-stage"
+        },
+        "point": [
+          942.8,
+          449.00000000000006
+        ],
+        "segmentIndex": 2,
+        "otherSegmentIndex": 1
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[3] id \"e12\" \"notification\" -> \"passenger-app\" crosses edges[7] id \"e16\" \"eta-service\" -> \"osrm\" at [1075, 491] (segments 1 and 2) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 3,
+        "id": "e12",
+        "from": "notification",
+        "to": "passenger-app"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 7,
+          "id": "e16",
+          "from": "eta-service",
+          "to": "osrm"
+        },
+        "point": [
+          1074.9999999999998,
+          491.00000000000006
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 2
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[14] id \"e6\" \"trigger-journey\" -> \"update-journey\" crosses edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [616.4, 449] (segments 2 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 14,
+        "id": "e6",
+        "from": "trigger-journey",
+        "to": "update-journey"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 16,
+          "id": "e8",
+          "from": "update-journey",
+          "to": "is-near-stage"
+        },
+        "point": [
+          616.3999999999999,
+          449
+        ],
+        "segmentIndex": 2,
+        "otherSegmentIndex": 1
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/proper-crossing",
+      "severity": "error",
+      "message": "[composition/proper-crossing] showcase workflow edges[15] id \"e7\" \"update-journey\" -> \"active-trip\" crosses edges[16] id \"e8\" \"update-journey\" -> \"is-near-stage\" at [616.4, 449] (segments 1 and 1) — adjust route/via, bias, or channel coordinates so the edges use separate lane corridors.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 15,
+        "id": "e7",
+        "from": "update-journey",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 16,
+          "id": "e8",
+          "from": "update-journey",
+          "to": "is-near-stage"
+        },
+        "point": [
+          616.3999999999997,
+          448.99999999999994
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 1
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so the edges use separate lane corridors"
+      ]
+    },
+    {
+      "code": "composition/ambiguous-corridor",
+      "severity": "error",
+      "message": "[composition/ambiguous-corridor] showcase workflow edges[6] id \"e15\" \"eta-service\" -> \"active-trip\" shares a 64.4px corridor with edges[9] id \"e18\" \"eta-service\" -> \"passenger-app\" at [878.4, 668] -> [942.8, 668] (segments 1 and 2; minimum 8px) — adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge.",
+      "subject": {
+        "diagramType": "workflow",
+        "collection": "edges",
+        "index": 6,
+        "id": "e15",
+        "from": "eta-service",
+        "to": "active-trip"
+      },
+      "evidence": {
+        "otherRelationship": {
+          "diagramType": "workflow",
+          "collection": "edges",
+          "index": 9,
+          "id": "e18",
+          "from": "eta-service",
+          "to": "passenger-app"
+        },
+        "overlapLengthPx": 64.4,
+        "minimumPx": 8,
+        "from": [
+          878.4,
+          668
+        ],
+        "to": [
+          942.8,
+          668
+        ],
+        "segmentIndex": 1,
+        "otherSegmentIndex": 2
+      },
+      "supportedFixes": [
+        "adjust route/via, bias, or channel coordinates so unrelated edges do not visually merge"
+      ]
+    }
+  ],
+  "diagnosticSummary": {
+    "total": 35,
+    "shown": 8,
+    "truncated": true
+  },
+  "evidence": {
+    "receipt": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-workflow.finalize.json",
+    "summaryReceipt": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/matatu-workflow.finalize-summary.json"
+  },
+  "update": {
+    "status": "update_available",
+    "installedVersion": "3.0.1",
+    "availableVersion": "3.1.0",
+    "releaseNotes": "https://github.com/tt-a1i/archify/releases/tag/v3.1.0",
+    "severity": "normal",
+    "checkedAt": "2026-10-14T04:05:29.798Z",
+    "source": "cache",
+    "noticeRequired": true,
+    "noticeText": "Archify update: 3.0.1 → 3.1.0. A previous check at 2026-10-14T04:05:29.798Z found a newer release. Release notes: https://github.com/tt-a1i/archify/releases/tag/v3.1.0. The installed Skill has not changed; ask to snooze or ignore this reminder.",
+    "eventKey": "archify@sha256:ffedc53390c9da6e859f41e432c5d2d0615a23cf00a503181f07efbba88a7ce8"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 1382,
+  "nextAction": {
+    "action": "edit-in-place",
+    "candidate": "/home/noble/Desktop/smart_matatu/matatu254/.archify/dataflow-matatu-tracking-20261014-143000/candidate.json",
+    "constraint": "Preserve unaffected semantics and geometry; do not replace the whole candidate.",
+    "then": "finalize-once"
+  }
+}

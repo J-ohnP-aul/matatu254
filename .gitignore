@@ -23,24 +23,15 @@ staticfiles/
 *.swp
 *.swo
 
-# Local AI / agent / chat artifacts
+# Local AI / agent / chat artifacts (only hidden local artifacts)
 .claude/
-claude/
-.claude* 
-claude*
+.claude*/
 .ai/
-ai/
+.ai*/
 *.claude
 *.ai
-.chat/
-chat/
-.agent/
-agent/
-*.agent
 
-# Local map / analysis artifacts
-map/
-maps/
+# Local analysis / generated output only, not core app folders
 *.map
 *.geojson
 *.pbf
@@ -48,8 +39,15 @@ maps/
 *.mbtiles
 *.tile
 *.cache
-geo-analysis/
-route-analysis/
+analysis/
+analytics/
+analysis-output/
+map-output/
+tracking-output/
+
+# Keep Render deployment files tracked
+!render.yaml
+!build.sh
 
 # Project notes / local docs not meant for Git
 notes/
@@ -91,8 +89,4 @@ tmp/
 *.dump
 
 # Ignore any app-local generated map data or analysis capture folders
-analysis/
-analytics/
-analysis-output/
-map-output/
-tracking-output/
+# (kept above; do not add generic app folders like agent/, map/, or chat/ here)

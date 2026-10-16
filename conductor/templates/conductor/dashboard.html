@@ -1,38 +1,29 @@
 {% extends 'base.html' %}
 {% block title %}Conductor Dashboard{% endblock %}
 {% block content %}
-  <div style="max-width: 900px; margin: 0 auto; padding: 1rem;">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-      <h1>Conductor Dashboard</h1>
-      <div>
-        <a href="{% url 'accounts:logout' %}" style="margin-right: 1rem;">Logout</a>
-        <a href="{% url 'conductor:notifications' %}" style="background: #2196f3; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none;">
-          Notifications
-        </a>
-      </div>
-    </header>
+  <div class="page-shell">
+    <header class="page-heading"><div><h1>Conductor dashboard</h1></div></header>
 
     {% if not matatu %}
-      <div style="padding: 2rem; background: #fff3e0; border-radius: 8px; text-align: center;">
+      <div class="surface empty-state">
         <h2>No Matatu Assigned</h2>
         <p>You are not currently assigned to a matatu. Contact an administrator.</p>
       </div>
     {% elif not active_trip %}
-      <div style="padding: 2rem; background: #e3f2fd; border-radius: 8px; text-align: center;">
+      <div class="surface empty-state">
         <h2>{{ matatu.registration_number }}</h2>
         <p>No active trip for this matatu.</p>
         <p>An administrator needs to start a trip for this vehicle.</p>
       </div>
     {% else %}
-      <div style="background: #e8f5e9; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
-        <h2 style="margin-top: 0;">{{ matatu.registration_number }} — {{ active_trip.route.name }}</h2>
-        <p><strong>Status:</strong> <span style="text-transform: capitalize; color: green;">{{ active_trip.get_status_display }}</span></p>
+      <div class="surface surface-pad active-trip-summary">
+        <h2>{{ matatu.registration_number }}</h2><p>{{ active_trip.route.name }}</p>
+        <p><strong>Status:</strong> <span class="badge badge-success badge-soft">{{ active_trip.get_status_display }}</span></p>
         <p><strong>Started:</strong> {{ active_trip.start_time|date:"M d, H:i" }}</p>
       </div>
 
-      <a href="{% url 'conductor:trip-detail' active_trip.id %}" 
-         style="display: inline-block; padding: 1rem 2rem; background: #4caf50; color: white; text-decoration: none; border-radius: 4px; font-size: 1.1rem;">
-        View Trip Dashboard
+      <a class="btn btn-primary" href="{% url 'conductor:trip-detail' active_trip.id %}">
+        Open trip dashboard
       </a>
     {% endif %}
   </div>

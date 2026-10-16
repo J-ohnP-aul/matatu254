@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 {% block title %}End Journey{% endblock %}
 {% block content %}
-  <h2>End Journey?</h2>
-  <p>You've arrived at <strong>{{ journey.destination_stage.name }}</strong>.</p>
+  <section class="auth-shell surface surface-pad">
+  <h1>You've reached your stop.</h1>
+  <p>Your destination was <strong>{{ journey.destination_stage.name }}</strong>. End this journey now?</p>
   
   <form method="post">
     {% csrf_token %}
-    <button type="submit" style="padding: 1rem 2rem; font-size: 1.2rem; background: #4caf50; color: white; border: none; border-radius: 4px;">
-      Confirm End Journey
+    <button type="submit" class="btn btn-primary">
+      End journey
     </button>
     <a href="{% url 'journeys:journey-detail' journey.id %}" style="margin-left: 1rem;">Cancel</a>
   </form>
+  </section>
 {% endblock %}

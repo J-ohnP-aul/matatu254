@@ -1,21 +1,23 @@
 {% extends 'base.html' %}
 {% block title %}Select Destination{% endblock %}
 {% block content %}
-  <h2>{{ trip.matatu.registration_number }} — {{ trip.route.name }}</h2>
-  <p>Tap your destination stage:</p>
+  <section class="page-shell">
+  <header class="page-heading"><div><h1>{{ trip.matatu.registration_number }}</h1><p>{{ trip.route.name }} · Select the stage where you plan to get off.</p></div></header>
 
-  <ul style="list-style: none; padding: 0;">
+  <ol class="surface surface-pad stage-list">
     {% for stage in stages %}
-      <li style="padding: 1rem; border-bottom: 1px solid #ddd;">
-        <strong>{{ stage.sequence_order }}. {{ stage.name }}</strong>
-        <form method="post" action="{% url 'journeys:select-destination' trip.id %}" style="display:inline;">
+      <li class="journey-stage">
+        <span class="stage-number">{{ stage.sequence_order }}</span>
+        <strong>{{ stage.name }}</strong>
+        <form method="post" action="{% url 'journeys:select-destination' trip.id %}">
           {% csrf_token %}
           <input type="hidden" name="destination_stage_id" value="{{ stage.id }}">
-          <button type="submit" style="margin-left: 1rem;">Select</button>
+          <button type="submit" class="btn btn-primary btn-sm">Choose stop</button>
         </form>
       </li>
     {% empty %}
       <li>No stages on this route</li>
     {% endfor %}
-  </ul>
+  </ol>
+  </section>
 {% endblock %}

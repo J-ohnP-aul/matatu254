@@ -2,53 +2,61 @@
 {% block title %}Welcome | Matatu254{% endblock %}
 
 {% block content %}
-  <div style="text-align: center; padding: 3rem 1rem;">
-    <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">🚌 Matatu254</h1>
-    <p style="font-size: 1.2rem; color: #666; max-width: 600px; margin: 0 auto 2rem;">
-      Smart Matatu Passenger Journey & Stop Notification System
-    </p>
-
-    {% if user.is_authenticated %}
-      <div style="display: grid; gap: 1rem; max-width: 400px; margin: 0 auto; text-align: left;">
+  <div class="ticket-page">
+    <section class="ticket-object" aria-label="Matatu254 route ticket">
+      <div class="ticket-layout">
+        <div>
+          <h1>Every stop.<br>In view.</h1>
+          <p class="ticket-intro">Live route progress and timely stop notifications for every leg of your matatu journey.</p>
+          {% if not user.is_authenticated %}
+            <div class="page-actions">
+              <a class="btn btn-primary" href="{% url 'accounts:login' %}">Sign in to start</a>
+              <a class="btn btn-outline" href="{% url 'accounts:register' %}">Create passenger account</a>
+            </div>
+          {% endif %}
+        </div>
+        <aside class="ticket-side" aria-label="Available journey actions">
+          {% if user.is_authenticated %}
+        <h2 class="ticket-side-title">Journey actions</h2>
         {% if user.role == 'PASSANGER' %}
-          <a href="{% if active_journey %}{% url 'journeys:journey-detail' active_journey.id %}{% else %}{% url 'journeys:scan-qr' %}{% endif %}" style="display: block; padding: 1.5rem; background: #e3f2fd; border-radius: 8px; text-decoration: none; border: 1px solid #bbdefb;">
-            <strong style="font-size: 1.1rem;">{% if active_journey %}🚌 Continue my journey{% else %}📷 Scan QR Code{% endif %}</strong><br>
-            <small>{% if active_journey %}View live progress to {{ active_journey.destination_stage.name }}{% else %}Start a new journey by scanning the matatu QR code{% endif %}</small>
+          <a href="{% if active_journey %}{% url 'journeys:journey-detail' active_journey.id %}{% else %}{% url 'journeys:scan-qr' %}{% endif %}">
+            <span><strong>{% if active_journey %}Continue journey{% else %}Scan a matatu QR{% endif %}</strong><small>{% if active_journey %}To {{ active_journey.destination_stage.name }}{% else %}Choose your destination{% endif %}</small></span><span aria-hidden="true">→</span>
           </a>
-          <a href="{% url 'notifications:list' %}" style="display: block; padding: 1.5rem; background: #eaf3eb; border-radius: 8px; text-decoration: none; border: 1px solid #c8e6c9;">
-            <strong style="font-size: 1.1rem;">🔔 Journey notifications</strong><br>
-            <small>See stage updates and destination alerts</small>
+          <a href="{% url 'notifications:list' %}">
+            <span><strong>Journey notifications</strong><small>Stage updates and arrival alerts</small></span><span aria-hidden="true">→</span>
           </a>
-          <a href="{% url 'journeys:history' %}" style="display: block; padding: 1.5rem; background: #f3e5f5; border-radius: 8px; text-decoration: none; border: 1px solid #e1bee7;">
-            <strong style="font-size: 1.1rem;">📋 Journey History</strong><br>
-            <small>View your completed journeys</small>
+          <a href="{% url 'journeys:history' %}">
+            <span><strong>Journey history</strong><small>Your completed rides</small></span><span aria-hidden="true">→</span>
           </a>
         {% elif user.role == 'CONDUCTOR' %}
-          <a href="{% url 'conductor:dashboard' %}" style="display: block; padding: 1.5rem; background: #e8f5e9; border-radius: 8px; text-decoration: none; border: 1px solid #c8e6c9;">
-            <strong style="font-size: 1.1rem;">🚌 Trip Dashboard</strong><br>
-            <small>View active trip, passengers & upcoming stops</small>
+          <a href="{% url 'conductor:dashboard' %}">
+            <span><strong>Trip dashboard</strong><small>Passengers and upcoming stops</small></span><span aria-hidden="true">→</span>
           </a>
-          <a href="{% url 'conductor:notifications' %}" style="display: block; padding: 1.5rem; background: #fff3e0; border-radius: 8px; text-decoration: none; border: 1px solid #ffe0b2;">
-            <strong style="font-size: 1.1rem;">🔔 Notifications</strong><br>
-            <small>View conductor notifications</small>
+          <a href="{% url 'conductor:notifications' %}">
+            <span><strong>Notifications</strong><small>Requests and trip alerts</small></span><span aria-hidden="true">→</span>
           </a>
         {% elif user.role == 'ADMIN' %}
-          <a href="/admin/" style="display: block; padding: 1.5rem; background: #fce4ec; border-radius: 8px; text-decoration: none; border: 1px solid #f8bbd0;">
-            <strong style="font-size: 1.1rem;">⚙️ Django Admin</strong><br>
-            <small>Manage routes, matatus, trips, users</small>
+          <a href="{% url 'management:dashboard' %}">
+            <span><strong>Management overview</strong><small>Fleet, routes, and trips</small></span><span aria-hidden="true">→</span>
           </a>
-          <a href="{% url 'fleet:index' %}" style="display: block; padding: 1.5rem; background: #e8f5e9; border-radius: 8px; text-decoration: none; border: 1px solid #c8e6c9;">
-            <strong style="font-size: 1.1rem;">🚌 Fleet Management</strong><br>
-            <small>Generate QR codes for matatus</small>
+          <a href="{% url 'fleet:index' %}">
+            <span><strong>Fleet QR tools</strong><small>Generate and manage codes</small></span><span aria-hidden="true">→</span>
           </a>
         {% endif %}
+        {% else %}
+          <h2 class="ticket-side-title">Your ride, step by step</h2>
+          <ol class="ticket-steps">
+            <li><span>1</span><div><strong>Scan the matatu code</strong><small>Identify your vehicle and route.</small></div></li>
+            <li><span>2</span><div><strong>Choose your stop</strong><small>Select a stage along the route.</small></div></li>
+            <li><span>3</span><div><strong>Follow your journey</strong><small>See progress and get a stop alert.</small></div></li>
+          </ol>
+        {% endif %}
+        </aside>
       </div>
-    {% else %}
-      <div style="display: inline-flex; gap: 1rem; margin-top: 1.5rem;">
-        <a href="{% url 'accounts:login' %}" style="padding: 1rem 2rem; background: #263238; color: white; text-decoration: none; border-radius: 4px; font-size: 1.1rem;">Login</a>
-        <a href="{% url 'accounts:register' %}" style="padding: 1rem 2rem; background: #4caf50; color: white; text-decoration: none; border-radius: 4px; font-size: 1.1rem;">Register</a>
+      <div class="ticket-rule"></div>
+      <div class="ticket-foot">
+        <span>MATATU254 · SCAN · SELECT · RIDE</span><span>Built around your route and destination</span>
       </div>
-    {% endif %}
+    </section>
   </div>
-
 {% endblock %}

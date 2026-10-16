@@ -2,24 +2,19 @@
 {% load static %}
 {% block title %}{{ journey.destination_stage.name }} — Journey Tracking{% endblock %}
 {% block extra_head %}
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
   <style>
-    /* Hide base header on tracking page */
-    .site-header { display: none; }
-
-    .main:has(.journey-page) { padding-top: 16px; }
+    .app-user .main:has(.journey-page) { padding-top: 1rem; }
     .journey-page { width: 100%; max-width: 1180px; margin: 0 auto; color: #17251c; }
-    .journey-header { 
+    .journey-header {
       padding: 16px;
       margin-bottom: 14px;
-      background: #fff; 
-      border: 1px solid #d6e2d8;
+      background: #fff;
+      border: 0;
       border-radius: 14px;
       display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
-      box-shadow: 0 2px 10px rgba(23,37,28,0.05);
     }
     .journey-header h1 { margin: 4px 0 0; font-size: 1.1rem; }
-    .journey-kicker { color: #607565; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .route-meta { margin: 0; color: #607565; font-size: .9rem; }
     
     #map-container { 
       position: relative;
@@ -51,7 +46,7 @@
     
     .progress-section { margin-bottom: 12px; }
     .progress-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
-    .progress-kicker { color: #607565; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .progress-label { color: #607565; font-size: .82rem; font-weight: 700; }
     .progress-bar { width: 100%; height: 8px; border: 0; border-radius: 99px; background: #d6e7dc; }
     .progress-bar::-webkit-progress-bar { border-radius: 99px; background: #d6e7dc; }
     .progress-bar::-webkit-progress-value { border-radius: 99px; background: #087a45; transition: width .35s ease; }
@@ -95,7 +90,7 @@
       color: #087a45;
       backdrop-filter: blur(8px);
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      transition: all 0.2s ease;
+      transition: color 0.18s ease, background-color 0.18s ease;
     }
     .map-mode-indicator.free { background: #fff3e0; border-color: #ffe0b2; color: #ef6c00; }
     
@@ -120,7 +115,7 @@
     .recenter-btn svg { width: 22px; height: 22px; color: #087a45; }
     
     @media (max-width: 600px) {
-      .main:has(.journey-page) { padding: 10px 10px 20px; }
+      .app-user .main:has(.journey-page) { padding: 10px 10px 20px; }
       .journey-header { padding: 12px; }
       .journey-header h1 { font-size: 1rem; }
       #map-container { height: 50vh; min-height: 300px; border-radius: 12px; }
@@ -137,13 +132,10 @@
   <div class="journey-page">
     <header class="journey-header">
       <div>
-        <div class="journey-kicker">{{ trip.matatu.registration_number }} · {{ trip.route.name }}</div>
+        <p class="route-meta">{{ trip.matatu.registration_number }} · {{ trip.route.name }}</p>
         <h1>Your journey to {{ destination.name }}</h1>
       </div>
-      <div style="display:grid; justify-items:end; gap:8px;">
-        <span id="journey-status" class="badge badge-soft badge-success" style="white-space:nowrap;">{{ journey.get_status_display }}</span>
-        <a class="link" href="{% url 'notifications:list' %}" style="font-size:.8rem;">Notifications</a>
-      </div>
+      <span id="journey-status" class="badge badge-soft badge-success" style="white-space:nowrap;">{{ journey.get_status_display }}</span>
     </header>
 
     <div id="map-container">
@@ -162,7 +154,7 @@
   <div class="metrics-overlay card bg-base-100 border border-base-300" id="metrics-overlay">
     <div class="progress-section">
       <div class="progress-header">
-        <span class="progress-kicker">Journey progress</span>
+        <span class="progress-label">Journey progress</span>
         <strong id="progress-percent">{{ progress_percent }}%</strong>
       </div>
       <progress id="journey-progress" class="progress-bar progress progress-success" value="{{ progress_percent }}" max="100" aria-label="Journey progress"></progress>

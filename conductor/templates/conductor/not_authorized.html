@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}Not Authorized{% endblock %}
 {% block content %}
-  <div style="max-width: 600px; margin: 2rem auto; padding: 2rem; text-align: center;">
-    <h1>Not Authorized</h1>
-    <p>You are not assigned to this matatu/trip.</p>
-    <a href="{% url 'conductor:dashboard' %}">Back to Dashboard</a>
-  </div>
+  <section class="auth-shell surface surface-pad">
+    <h1>This trip is not assigned to you.</h1>
+    <p>Open your assigned trips or contact an administrator if this looks wrong.</p>
+    <a class="btn btn-primary" href="{% url 'conductor:dashboard' %}">Back to your trips</a>
+  </section>
 {% endblock %}

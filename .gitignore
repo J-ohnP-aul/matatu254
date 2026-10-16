@@ -24,6 +24,7 @@ staticfiles/
 *.swo
 
 # Local AI / agent / chat artifacts (only hidden local artifacts)
+.superpowers/
 .claude/
 .claude*/
 .ai/
@@ -90,3 +91,4 @@ tmp/
 
 # Ignore any app-local generated map data or analysis capture folders
 # (kept above; do not add generic app folders like agent/, map/, or chat/ here)
+.taste-skill/

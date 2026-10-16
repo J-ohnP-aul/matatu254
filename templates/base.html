@@ -4,56 +4,73 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Matatu254{% endblock %}</title>
+  {% load static %}
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
   {% block extra_head %}{% endblock %}
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="https://unpkg.com/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.js"></script>
-  <style>
-    * { box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; line-height: 1.5; color: #333; }
-    .site-header { background: #263238; color: white; padding: 1rem; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
-    .site-header .container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-    .site-header h1 { margin: 0; font-size: 1.25rem; }
-    .site-header nav a { color: #b0bec5; text-decoration: none; margin-left: 1rem; font-size: 0.9rem; }
-    .site-header nav a:hover { color: white; }
-    .main { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; padding-top: 60px; }
-    .flash-messages { list-style: none; padding: 0; margin: 0 0 1rem; }
-    .flash-messages li { padding: 0.75rem 1rem; border-radius: 4px; margin-bottom: 0.5rem; }
-    .flash-messages .success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
-    .flash-messages .error { background: #fce4ec; color: #c62828; border: 1px solid #f8bbd0; }
-    .flash-messages .info { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
-    .flash-messages .warning { background: #fff3e0; color: #ef6c00; border: 1px solid #ffe0b2; }
-    footer { border-top: 1px solid #eee; padding: 1rem; text-align: center; color: #666; font-size: 0.85rem; }
-  </style>
 </head>
-<body>
-  <header class="site-header">
+<body data-theme="emerald"{% if user.is_authenticated %} class="app-user"{% endif %}>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  {% if user.is_authenticated %}
+  <header class="site-header app-site-header navbar">
     <div class="container">
-      <h1>🚌 Matatu254</h1>
-      <nav>
-        {% if user.is_authenticated %}
-          {% if user.role == 'PASSANGER' %}
-            <a href="{% url 'core:dashboard' %}">My Journey</a>
-            <a href="{% url 'notifications:list' %}">Notifications</a>
-            <a href="{% url 'journeys:history' %}">History</a>
-          {% else %}
-            <a href="{% url 'core:dashboard' %}">Dashboard</a>
-          {% endif %}
-          {% if user.role == 'CONDUCTOR' %}
-            <a href="{% url 'conductor:dashboard' %}">Trip Dashboard</a>
-            <a href="{% url 'conductor:notifications' %}">Notifications</a>
-          {% endif %}
-          {% if user.role == 'ADMIN' %}
-            <a href="/admin/">Admin</a>
-          {% endif %}
-          <a href="{% url 'accounts:logout' %}">Logout ({{ user.username }})</a>
+      {% if user.role == 'ADMIN' %}
+        <a class="app-brand navbar-start" href="{% url 'management:dashboard' %}">
+          <span class="app-brand-mark" aria-hidden="true">M</span>
+          <span class="app-brand-name">Matatu254 <small>/ Admin</small></span>
+        </a>
+      {% elif user.role == 'CONDUCTOR' %}
+        <a class="app-brand navbar-start" href="{% url 'conductor:dashboard' %}">
+          <span class="app-brand-mark" aria-hidden="true">M</span>
+          <span class="app-brand-name">Matatu254 <small>/ Conductor</small></span>
+        </a>
+      {% else %}
+        <a class="app-brand navbar-start" href="{% url 'core:dashboard' %}">
+          <span class="app-brand-mark" aria-hidden="true">M</span>
+          <span class="app-brand-name">Matatu254 <small>/ Passenger</small></span>
+        </a>
+      {% endif %}
+      <nav class="navbar-center" aria-label="Primary navigation">
+        {% if user.role == 'ADMIN' %}
+        <a class="{% if request.resolver_match.url_name == 'dashboard' %}is-active{% endif %}"{% if request.resolver_match.url_name == 'dashboard' %} aria-current="page"{% endif %} href="{% url 'management:dashboard' %}">Overview</a>
+        <a class="{% if request.resolver_match.url_name|slice:":6" == 'matatu' %}is-active{% endif %}"{% if request.resolver_match.url_name|slice:":6" == 'matatu' %} aria-current="page"{% endif %} href="{% url 'management:matatu-list' %}">Matatus</a>
+        <a class="{% if request.resolver_match.url_name|slice:":5" == 'route' or request.resolver_match.url_name|slice:":5" == 'stage' %}is-active{% endif %}"{% if request.resolver_match.url_name|slice:":5" == 'route' or request.resolver_match.url_name|slice:":5" == 'stage' %} aria-current="page"{% endif %} href="{% url 'management:route-list' %}">Routes</a>
+        <a class="{% if request.resolver_match.url_name|slice:":4" == 'trip' %}is-active{% endif %}"{% if request.resolver_match.url_name|slice:":4" == 'trip' %} aria-current="page"{% endif %} href="{% url 'management:trip-list' %}">Trips</a>
+        <a class="{% if request.resolver_match.url_name|slice:":13" == 'system-config' %}is-active{% endif %}"{% if request.resolver_match.url_name|slice:":13" == 'system-config' %} aria-current="page"{% endif %} href="{% url 'management:system-config' %}">Settings</a>
+        {% elif user.role == 'CONDUCTOR' %}
+        <a class="{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name != 'notifications' %}is-active{% endif %}"{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name != 'notifications' %} aria-current="page"{% endif %} href="{% url 'conductor:dashboard' %}">Dashboard</a>
+        <a class="{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name == 'notifications' %}is-active{% endif %}"{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name == 'notifications' %} aria-current="page"{% endif %} href="{% url 'conductor:notifications' %}">Notifications</a>
         {% else %}
-          <a href="{% url 'accounts:login' %}">Login</a>
-          <a href="{% url 'accounts:register' %}">Register</a>
+        <a class="{% if request.resolver_match.namespace == 'core' and request.resolver_match.url_name == 'dashboard' %}is-active{% endif %}"{% if request.resolver_match.namespace == 'core' and request.resolver_match.url_name == 'dashboard' %} aria-current="page"{% endif %} href="{% url 'core:dashboard' %}">Dashboard</a>
+        <a class="{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name != 'history' %}is-active{% endif %}"{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name != 'history' %} aria-current="page"{% endif %} href="{% url 'journeys:scan-qr' %}">Scan QR</a>
+        <a class="{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name == 'history' %}is-active{% endif %}"{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name == 'history' %} aria-current="page"{% endif %} href="{% url 'journeys:history' %}">History</a>
+        <a class="{% if request.resolver_match.namespace == 'notifications' %}is-active{% endif %}"{% if request.resolver_match.namespace == 'notifications' %} aria-current="page"{% endif %} href="{% url 'notifications:list' %}">Notifications</a>
         {% endif %}
+      </nav>
+      <div class="app-account navbar-end">
+        <span>{{ user.username }}</span>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+      </div>
+    </div>
+  </header>
+  {% else %}
+  <header class="site-header navbar">
+    <div class="container">
+      <a class="app-brand navbar-start" href="{% url 'core:home' %}">
+        <span class="app-brand-mark" aria-hidden="true">M</span>
+        <span class="app-brand-name">Matatu254</span>
+      </a>
+      <nav class="public-nav navbar-end" aria-label="Account">
+        <a href="{% url 'accounts:login' %}">Sign in</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'accounts:register' %}">Create account</a>
       </nav>
     </div>
   </header>
+  {% endif %}
 
   {% if messages %}
     <ul class="flash-messages">

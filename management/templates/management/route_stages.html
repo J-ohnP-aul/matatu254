@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 {% block title %}{{ route.name }} — Stages{% endblock %}
 {% block content %}
-  <div style="max-width: 1000px; margin: 0 auto; padding: 1rem;">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+  <div class="page-shell admin-list">
+    <header class="page-heading">
       <div>
         <h1>{{ route.name }}</h1>
-        <p style="color: #666;">{{ route.description|default:'No description' }}</p>
+        <p>{{ route.description|default:'No description' }}</p>
       </div>
-      <div style="display: flex; gap: 0.5rem;">
-        <a href="{% url 'management:route-list' %}" style="padding: 0.5rem 1rem; background: #757575; color: white; text-decoration: none; border-radius: 4px;">← Back</a>
-        <a href="{% url 'management:stage-create' route.pk %}" style="padding: 0.5rem 1rem; background: #4caf50; color: white; text-decoration: none; border-radius: 4px;">+ Add Stage</a>
+      <div class="page-actions">
+        <a class="btn btn-outline" href="{% url 'management:route-list' %}">All routes</a>
+        <a class="btn btn-primary" href="{% url 'management:stage-create' route.pk %}">Add stage</a>
       </div>
     </header>
 
     {% if stages %}
       <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse;">
+        <table class="table">
           <thead>
             <tr style="background: #f5f5f5;">
               <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Order</th>

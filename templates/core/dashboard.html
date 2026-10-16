@@ -3,74 +3,29 @@
 {% block title %}Dashboard {% endblock %}
 
 {% block content %}
-  <nav style="padding: 1rem; background: #f5f5f5; border-bottom: 1px solid #ddd;">
-    <a href="{% url 'core:home' %}">Home</a> |
-    <a href="{% url 'accounts:logout' %}">Logout</a>
-    {% if user.role == 'CONDUCTOR' %}
-      | <a href="{% url 'conductor:dashboard' %}">Conductor Dashboard</a>
-    {% endif %}
+  <div class="page-shell">
+    <header class="page-heading"><div><h1>Welcome, {{ user.username }}</h1></div></header>
     {% if user.role == 'PASSANGER' %}
-      | <a href="{% url 'journeys:scan-qr' %}">Scan QR</a>
-      | <a href="{% url 'journeys:history' %}">History</a>
-    {% endif %}
-    {% if user.role == 'ADMIN' %}
-      | <a href="/admin/">Admin</a>
-    {% endif %}
-  </nav>
-
-  <div style="max-width: 800px; margin: 2rem auto; padding: 1rem;">
-    {% if user.role == 'PASSANGER' %}
-      <h1>Passenger Dashboard</h1>
-      <p>Welcome, {{ user.username }}!</p>
-      <ul style="list-style: none; padding: 0;">
-        <li style="padding: 1rem; margin: 0.5rem 0; background: #e3f2fd; border-radius: 4px;">
-          <a href="{% url 'journeys:scan-qr' %}" style="text-decoration: none; font-size: 1.2rem;">
-            📷 Scan QR Code — Start New Journey
-          </a>
-        </li>
-        <li style="padding: 1rem; margin: 0.5rem 0; background: #f3e5f5; border-radius: 4px;">
-          <a href="{% url 'journeys:history' %}" style="text-decoration: none; font-size: 1.2rem;">
-            📋 View Journey History
-          </a>
-        </li>
-        <li style="padding: 1rem; margin: 0.5rem 0; background: #e0f7fa; border-radius: 4px;">
-          <a href="{% url 'notifications:list' %}" style="text-decoration: none; font-size: 1.2rem;">
-            🔔 Notifications
-          </a>
-        </li>
-      </ul>
+      <section class="surface surface-pad"><h2>Make your next ride simpler.</h2>
+        <div class="journey-links">
+          <a class="journey-link journey-link-primary" href="{% url 'journeys:scan-qr' %}"><span><strong>Scan a matatu QR code</strong><small>Start a journey and choose your destination</small></span><span aria-hidden="true">→</span></a>
+          <a class="journey-link" href="{% url 'journeys:history' %}"><span><strong>Journey history</strong><small>Review your completed trips</small></span><span aria-hidden="true">→</span></a>
+          <a class="journey-link" href="{% url 'notifications:list' %}"><span><strong>Notifications</strong><small>See stop updates and arrival alerts</small></span><span aria-hidden="true">→</span></a>
+        </div></section>
 
     {% elif user.role == 'CONDUCTOR' %}
-      <h1>Conductor Dashboard</h1>
-      <p>Welcome, {{ user.username }}!</p>
-      <ul style="list-style: none; padding: 0;">
-        <li style="padding: 1rem; margin: 0.5rem 0; background: #e8f5e9; border-radius: 4px;">
-          <a href="{% url 'conductor:dashboard' %}" style="text-decoration: none; font-size: 1.2rem;">
-            🚌 View Active Trip Dashboard
-          </a>
-        </li>
-        <li style="padding: 1rem; margin: 0.5rem 0; background: #fff3e0; border-radius: 4px;">
-          <a href="{% url 'conductor:notifications' %}" style="text-decoration: none; font-size: 1.2rem;">
-            🔔 Notifications
-          </a>
-        </li>
-      </ul>
+      <section class="surface surface-pad"><h2>Keep your trip moving.</h2>
+        <div class="journey-links">
+          <a class="journey-link journey-link-primary" href="{% url 'conductor:dashboard' %}"><span><strong>Open trip dashboard</strong><small>GPS, passenger requests, upcoming stops</small></span><span aria-hidden="true">→</span></a>
+          <a class="journey-link" href="{% url 'conductor:notifications' %}"><span><strong>Notifications</strong><small>Review trip updates and alerts</small></span><span aria-hidden="true">→</span></a>
+        </div></section>
 
     {% elif user.role == 'ADMIN' %}
-      <h1>Admin Dashboard</h1>
-      <p>Welcome, {{ user.username }}!</p>
-      <ul style="list-style: none; padding: 0;">
-        <li style="padding: 1rem; margin: 0.5rem 0; background: #fce4ec; border-radius: 4px;">
-          <a href="{% url 'management:dashboard' %}" style="text-decoration: none; font-size: 1.2rem;">
-            ⚙️ Management Frontend (manage trips, routes, matatus)
-          </a>
-        </li>
-        <li style="padding: 1rem; margin: 0.5rem 0; background: #e8f5e9; border-radius: 4px;">
-          <a href="{% url 'fleet:index' %}" style="text-decoration: none; font-size: 1.2rem;">
-            🚌 Fleet Management (QR codes)
-          </a>
-        </li>
-      </ul>
+      <section class="surface surface-pad"><h2>Operations at a glance.</h2>
+        <div class="journey-links">
+          <a class="journey-link journey-link-primary" href="{% url 'management:dashboard' %}"><span><strong>Management overview</strong><small>Manage trips, routes, stages, and vehicles</small></span><span aria-hidden="true">→</span></a>
+          <a class="journey-link" href="{% url 'fleet:index' %}"><span><strong>Fleet QR tools</strong><small>Generate and manage matatu codes</small></span><span aria-hidden="true">→</span></a>
+        </div></section>
 
     {% else %}
       <p>Unknown role. Contact administrator.</p>

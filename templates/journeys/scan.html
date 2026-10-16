@@ -1,20 +1,19 @@
 {% extends 'base.html' %}
 {% block title %}Scan QR Code{% endblock %}
 {% block content %}
-  <h2>Scan Matatu QR Code</h2>
-  <p>Point camera at the QR code inside the vehicle</p>
+  <section class="page-shell">
+  <header class="page-heading"><div><h1>Scan the vehicle code.</h1><p>Point your camera at the QR code inside the matatu.</p></div></header>
+  <div class="surface surface-pad scan-panel">
+  <video id="scanner" width="100%" style="max-width: 400px; display:none;" aria-label="Matatu QR code camera view"></video>
+  <button id="start-scan" type="button" class="btn btn-primary">Start camera</button>
+  <p id="scan-status" role="status" aria-live="polite"></p>
 
-  <video id="scanner" width="100%" style="max-width: 400px; display:none;"></video>
-  <br><br>
-  <button id="start-scan" type="button">Start Scanning</button>
-  <p id="scan-status" style="color: red;"></p>
-
-  <div id="manual-entry" style="display:none; margin-top: 16px; padding: 16px; border: 1px solid #ddd; border-radius: 8px;">
-    <h3>Manual Entry</h3>
+  <div id="manual-entry" class="manual-entry" style="display:none;">
+    <h3>Enter code manually</h3>
     <p>Camera not available. Enter the QR code value manually:</p>
-    <input type="text" id="manual-code" placeholder="QR code value" style="width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+    <input type="text" id="manual-code" class="field-input" placeholder="QR code value" autocomplete="off">
     <br><br>
-    <button type="button" id="submit-manual" style="padding: 10px 20px; font-size: 1rem;">Submit</button>
+    <button type="button" id="submit-manual" class="btn btn-primary">Use this code</button>
   </div>
 
   <form id="scan-form" method="post" action="{% url 'journeys:scan-result' %}" style="display:none;">
@@ -39,7 +38,7 @@
     }
 
     function showManualEntry(message) {
-      manualEntry.style.display = 'block';
+      manualEntry.style.display = 'grid';
       startBtn.style.display = 'none';
       video.style.display = 'none';
       status.textContent = message;
@@ -108,4 +107,6 @@
       }
     });
   </script>
+  </div>
+  </section>
 {% endblock %}

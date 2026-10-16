@@ -1,14 +1,13 @@
 {% extends 'base.html' %}
 {% block title %}System Configuration{% endblock %}
 {% block content %}
-  <div style="max-width: 800px; margin: 0 auto; padding: 1rem;">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-      <h1>System Configuration</h1>
-      <button onclick="document.getElementById('add-config-form').style.display='block'" style="padding: 0.5rem 1rem; background: #4caf50; color: white; border: none; border-radius: 4px;">+ Add Config</button>
+  <div class="page-shell admin-list">
+    <header class="page-heading"><div><h1>System configuration</h1></div>
+      <button class="btn btn-primary" onclick="document.getElementById('add-config-form').style.display='block'">Add configuration</button>
     </header>
 
     <!-- Add Config Form (hidden by default) -->
-    <div id="add-config-form" style="display: none; background: #f5f5f5; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+    <div id="add-config-form" class="surface surface-pad config-add" style="display: none; margin-bottom: 1rem;">
       <h3>Add New Configuration</h3>
       <form method="post">
         {% csrf_token %}
@@ -22,14 +21,14 @@
             <input type="text" name="value" required placeholder="e.g., 100" style="width: 100%; padding: 0.5rem;">
           </div>
         </div>
-        <button type="submit" style="padding: 0.5rem 1rem; background: #4caf50; color: white; border: none; border-radius: 4px;">Save</button>
-        <button type="button" onclick="document.getElementById('add-config-form').style.display='none'" style="margin-left: 0.5rem; padding: 0.5rem 1rem; background: #757575; color: white; border: none; border-radius: 4px;">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save configuration</button>
+        <button type="button" class="btn btn-outline" onclick="document.getElementById('add-config-form').style.display='none'">Cancel</button>
       </form>
     </div>
 
     {% if configs %}
       <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse;">
+        <table class="table">
           <thead>
             <tr style="background: #f5f5f5;">
               <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Key</th>
@@ -59,7 +58,7 @@
     {% endif %}
 
     <!-- Common Config Keys Reference -->
-    <details style="margin-top: 2rem;">
+    <details class="surface surface-pad config-reference">
       <summary style="cursor: pointer; font-weight: bold;">Common Configuration Keys</summary>
       <div style="margin-top: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 8px; font-size: 0.9rem;">
         <table style="width: 100%; border-collapse: collapse;">

@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}{{ action }} Matatu{% endblock %}
 {% block content %}
-  <div style="max-width: 600px; margin: 0 auto; padding: 1rem;">
-    <h1>{{ action }} Matatu</h1>
+  <div class="page-shell admin-form">
+    <header class="page-heading"><div><h1>{{ action }} matatu</h1></div></header>
     <form method="post">
       {% csrf_token %}
       <div style="margin-bottom: 1rem;">
@@ -24,8 +24,8 @@
           {% endfor %}
         </select>
       </div>
-      <button type="submit" style="padding: 0.75rem 1.5rem; background: #4caf50; color: white; border: none; border-radius: 4px;">{{ action }}</button>
-      <a href="{% url 'management:matatu-list' %}" style="margin-left: 1rem; padding: 0.75rem 1.5rem; background: #757575; color: white; text-decoration: none; border-radius: 4px;">Cancel</a>
+      <button type="submit" class="btn btn-primary">{{ action }}</button>
+      <a class="btn btn-outline" href="{% url 'management:matatu-list' %}">Cancel</a>
     </form>
   </div>
 {% endblock %}

@@ -2,19 +2,14 @@
 {% load static %}
 {% block title %}{{ trip.matatu.registration_number }} — Conductor Dashboard{% endblock %}
 {% block extra_head %}
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
   <style>
-    /* Hide base header on tracking page */
-    .site-header { display: none; }
-
-    .main:has(.conductor-page) { padding-top: 16px; }
+    .app-user .main:has(.conductor-page) { padding-top: 1rem; }
     .conductor-page { width: 100%; max-width: 1180px; margin: 0 auto; color: #17251c; }
-    .dashboard-kicker, .metric-label { color: #607565; font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
+    .trip-route-meta, .metric-label { color: #607565; font-size: .82rem; font-weight: 600; }
     .conductor-header {
       display: flex; justify-content: space-between; align-items: center; gap: 12px;
       margin-bottom: 14px; padding: 16px; background: #fff;
-      border: 1px solid #d6e2d8; border-radius: 14px;
-      box-shadow: 0 2px 10px rgba(23,37,28,0.05);
+      border: 0; border-radius: 14px;
     }
     .conductor-header h1 { margin: 2px 0; font-size: 1.5rem; line-height: 1.1; }
     .conductor-header p { margin: 4px 0 0; color: #607565; }
@@ -75,7 +70,7 @@
       color: #087a45;
       backdrop-filter: blur(8px);
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      transition: all 0.2s ease;
+      transition: color 0.18s ease, background-color 0.18s ease;
     }
     .map-mode-indicator.free { background: #fff3e0; border-color: #ffe0b2; color: #ef6c00; }
 
@@ -101,7 +96,7 @@
 
     .trip-progress-heading { display: flex; justify-content: space-between; margin: 0 0 6px; color: #607565; font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; }
     @media (max-width: 600px) {
-      .main:has(.conductor-page) { padding: 10px 10px 20px; }
+      .app-user .main:has(.conductor-page) { padding: 10px 10px 20px; }
       #map-container { height: 50vh; min-height: 300px; border-radius: 12px; }
       .conductor-header { align-items: flex-start; flex-direction: column; padding: 12px; }
       .conductor-header h1 { font-size: 1.3rem; }
@@ -117,13 +112,8 @@
     <div id="trip-dashboard" data-tracking-url="{% url 'conductor:trip-tracking-data' trip.id %}" data-route-url="{% url 'conductor:trip-route-data' trip.id %}">
       <header class="conductor-header">
         <div>
-          <div class="dashboard-kicker">Conductor dashboard</div>
           <h1>{{ trip.matatu.registration_number }}</h1>
-          <p>{{ trip.route.name }}</p>
-        </div>
-        <div class="conductor-actions">
-          <a class="btn btn-sm btn-outline" href="{% url 'conductor:dashboard' %}">← Trips</a>
-          <a class="btn btn-sm btn-outline" href="{% url 'conductor:notifications' %}">Notifications</a>
+          <p class="trip-route-meta">{{ trip.route.name }}</p>
         </div>
       </header>
 
@@ -192,7 +182,7 @@
     </section>
 
     <section class="gps-card" aria-labelledby="gps-heading">
-      <h2 id="gps-heading">📍 GPS tracking</h2>
+      <h2 id="gps-heading">GPS tracking</h2>
       <p>Share the vehicle's live location with passengers on this trip.</p>
       <div class="gps-actions">
         <button id="start-tracking-btn" class="btn btn-sm btn-warning" type="button" onclick="startTracking({{ trip.id }})">Start tracking</button>

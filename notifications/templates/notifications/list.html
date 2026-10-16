@@ -3,38 +3,37 @@
 {% block title %}Notifications{% endblock %}
 
 {% block content %}
-  <div style="max-width: 800px; margin: 0 auto; padding: 1rem;">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap;">
-      <h1 style="margin: 0;">Notifications</h1>
-      <a href="{% url 'core:dashboard' %}" style="padding: 0.5rem 1rem; background: #757575; color: white; text-decoration: none; border-radius: 4px;">{% if active_journey %}← Back to my journey{% else %}← Dashboard{% endif %}</a>
+  <div class="page-shell">
+    <header class="page-heading"><div><h1>Notifications</h1></div>
+      <a class="btn btn-outline" href="{% url 'core:dashboard' %}">{% if active_journey %}Back to my journey{% else %}Dashboard{% endif %}</a>
     </header>
 
     {% if notifications %}
-      <div style="display: grid; gap: 0.75rem;">
+      <div class="surface surface-pad">
         {% for notification in notifications %}
-          <div style="padding: 1rem; border-radius: 8px; border-left: 4px solid {% if notification.status == 'read' %}#9e9e9e{% else %}#2196f3{% endif %}; background: #f5f5f5;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+          <article class="notification-row">
+            <div>
               <div>
                 <p style="margin: 0 0 0.5rem 0;">{{ notification.message }}</p>
-                <small style="color: #666;">{{ notification.timestamp|date:'M d, H:i:s' }}</small>
+                <small class="muted">{{ notification.timestamp|date:'M d, H:i:s' }}</small>
               </div>
-              <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span style="padding: 0.2rem 0.5rem; border-radius: 3px; font-size: 0.75rem; background: #e3f2fd; color: #1565c0; text-transform: uppercase;">
+              <div>
+                <span class="badge {% if notification.status == 'read' %}badge-ghost{% else %}badge-info badge-soft{% endif %}">
                   {{ notification.get_status_display }}
                 </span>
                 {% if notification.status != 'read' %}
                   <form method="post" action="{% url 'notifications:mark-read' notification.pk %}">
                     {% csrf_token %}
-                    <button type="submit" style="padding: 0.35rem 0.7rem; border: none; border-radius: 4px; background: #4caf50; color: white; cursor: pointer;">Mark read</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Mark read</button>
                   </form>
                 {% endif %}
               </div>
             </div>
-          </div>
+          </article>
         {% endfor %}
       </div>
     {% else %}
-      <div style="text-align: center; padding: 3rem; color: #666;">
+      <div class="surface empty-state">
         <p>No notifications yet.</p>
       </div>
     {% endif %}

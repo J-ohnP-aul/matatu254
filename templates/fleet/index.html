@@ -3,18 +3,18 @@
 {% block title %}Fleet Management{% endblock %}
 
 {% block content %}
-  <div style="max-width: 1000px; margin: 0 auto; padding: 1rem;">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+  <div class="page-shell">
+    <header class="page-heading">
       <div>
-        <h2 style="margin: 0;">Fleet Management</h2>
-        <p style="margin: 0.25rem 0 0; color: #666;">Real matatus and QR codes used by the passenger scan flow.</p>
+        <h1>Matatus</h1>
+        <p>Vehicles and QR codes used in the passenger scan flow.</p>
       </div>
-      <a href="{% url 'management:matatu-create' %}" style="padding: 0.6rem 1rem; background: #4caf50; color: white; text-decoration: none; border-radius: 4px;">+ Add Matatu</a>
+      <a class="btn btn-primary" href="{% url 'management:matatu-create' %}">Add matatu</a>
     </header>
 
     {% if matatus %}
-      <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse;">
+      <div class="surface table-wrap">
+        <table class="table">
           <thead>
             <tr style="background: #f5f5f5;">
               <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Registration</th>
@@ -33,12 +33,12 @@
                   {% if matatu.qr_code %}
                     {{ matatu.qr_code.code_value }}
                   {% else %}
-                    <span style="color: #999;">No QR</span>
+                    <span class="badge badge-ghost">No QR</span>
                   {% endif %}
                 </td>
                 <td style="padding: 0.75rem;">
                   {% if matatu.qr_code %}
-                    <span style="padding: 0.2rem 0.5rem; border-radius: 3px; font-size: 0.8rem; background: {% if matatu.qr_code.status == 'active' %}#e8f5e9{% else %}#fce4ec{% endif %}; color: {% if matatu.qr_code.status == 'active' %}green{% else %}red{% endif %};">
+                    <span class="badge {% if matatu.qr_code.status == 'active' %}badge-success{% else %}badge-error{% endif %} badge-soft">
                       {{ matatu.qr_code.get_status_display }}
                     </span>
                   {% else %}
@@ -58,7 +58,7 @@
         </table>
       </div>
     {% else %}
-      <p style="color: #666;">No matatus registered yet.</p>
+      <div class="surface empty-state"><p>No matatus registered yet.</p><a class="btn btn-primary" href="{% url 'management:matatu-create' %}">Add your first matatu</a></div>
     {% endif %}
   </div>
 {% endblock content %}

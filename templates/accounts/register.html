@@ -3,8 +3,9 @@
 {% block title %}Create account{% endblock %}
 
 {% block content %}
+  <section class="auth-shell form-panel">
   <h1>Create your account</h1>
-  <p>Fill in your details to register.</p>
+  <p class="muted">Register to save journeys and receive stop alerts.</p>
 
   {% if form.non_field_errors %}
     {{ form.non_field_errors }}
@@ -13,8 +14,9 @@
   <form method="post" action="{% url 'accounts:register' %}">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Create account</button>
+    <button type="submit" class="btn btn-primary">Create account</button>
   </form>
 
   <p>Already have an account? <a href="{% url 'accounts:login' %}">Log in</a></p>
+  </section>
 {% endblock content %}

@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}{{ action }} Stage{% endblock %}
 {% block content %}
-  <div style="max-width: 600px; margin: 0 auto; padding: 1rem;">
-    <header style="margin-bottom: 1rem;">
-      <h1>{{ action }} Stage for {{ route.name }}</h1>
-      <a href="{% url 'management:route-stages' route.pk %}" style="color: #666;">← Back to Stages</a>
+  <div class="page-shell admin-form">
+    <header class="page-heading"><div><h1>{{ action }} stage</h1><p>{{ route.name }}</p></div>
+      <a class="btn btn-outline" href="{% url 'management:route-stages' route.pk %}">Back to stages</a>
     </header>
 
     <form method="post">
@@ -20,7 +19,7 @@
       <div style="margin-bottom: 1rem;">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.5rem;">
           <label style="display: block; font-weight: bold; margin: 0;">Latitude</label>
-          <button type="button" id="use-current-location" style="padding: 0.5rem 0.75rem; background: #2196f3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Use current location</button>
+          <button type="button" id="use-current-location" class="btn btn-outline btn-sm">Use current location</button>
         </div>
         <input type="text" name="latitude" value="{{ stage.latitude|default:'' }}" required placeholder="-1.2921" style="width: 100%; padding: 0.5rem;">
       </div>
@@ -29,8 +28,8 @@
         <input type="text" name="longitude" value="{{ stage.longitude|default:'' }}" required placeholder="36.8219" style="width: 100%; padding: 0.5rem;">
       </div>
       <div id="location-status" style="margin-bottom: 1rem; min-height: 1.2rem; color: #666; font-size: 0.9rem;"></div>
-      <button type="submit" style="padding: 0.75rem 1.5rem; background: #4caf50; color: white; border: none; border-radius: 4px;">{{ action }}</button>
-      <a href="{% url 'management:route-stages' route.pk %}" style="margin-left: 1rem; padding: 0.75rem 1.5rem; background: #757575; color: white; text-decoration: none; border-radius: 4px;">Cancel</a>
+      <button type="submit" class="btn btn-primary">{{ action }}</button>
+      <a class="btn btn-outline" href="{% url 'management:route-stages' route.pk %}">Cancel</a>
     </form>
   </div>
 

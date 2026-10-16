@@ -1,22 +1,22 @@
 {% extends 'base.html' %}
 {% block title %}Journey History{% endblock %}
 {% block content %}
-  <h2>Journey History</h2>
+  <section class="page-shell">
+  <header class="page-heading"><div><h1>Journey history</h1></div><a class="btn btn-primary" href="{% url 'journeys:scan-qr' %}">Start a journey</a></header>
   
   {% if journeys %}
-    <ul style="list-style: none; padding: 0;">
+    <ul class="surface surface-pad history-list">
       {% for j in journeys %}
-        <li style="padding: 1rem; border-bottom: 1px solid #ddd;">
-          <strong>{{ j.trip.matatu.registration_number }} — {{ j.trip.route.name }}</strong><br>
-          <small>Destination: {{ j.destination_stage.name }}</small><br>
-          <small>Started: {{ j.start_time|date:"M d, H:i" }} | Ended: {{ j.end_time|date:"M d, H:i" }}</small><br>
-          <small>Duration: {{ j.end_time|timeuntil:j.start_time }}</small>
+        <li class="history-row">
+          <div><strong>{{ j.trip.matatu.registration_number }}</strong><span class="muted"> · {{ j.trip.route.name }}</span></div>
+          <p>Destination: <strong>{{ j.destination_stage.name }}</strong></p>
+          <small>Started {{ j.start_time|date:"M d, H:i" }} · Ended {{ j.end_time|date:"M d, H:i" }} · {{ j.end_time|timeuntil:j.start_time }}</small>
         </li>
       {% endfor %}
     </ul>
   {% else %}
-    <p>No completed journeys yet.</p>
+    <div class="surface empty-state"><p>No completed journeys yet.</p><a class="btn btn-primary" href="{% url 'journeys:scan-qr' %}">Scan a matatu QR</a></div>
   {% endif %}
   
-  <p><a href="{% url 'journeys:scan-qr' %}">Start New Journey</a></p>
+  </section>
 {% endblock %}

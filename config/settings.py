@@ -32,10 +32,15 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-in-pro
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-# Render provides the hostname via RENDER_EXTERNAL_HOSTNAME
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME, 'localhost', '127.0.0.1']
+# Render sets RENDER_EXTERNAL_HOSTNAME in the service environment. Allow a
+# manually configured public host as a fallback for deployments where it is
+# not injected (for example, a custom domain).
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '').strip()
+PUBLIC_HOSTNAME = os.environ.get('PUBLIC_HOSTNAME', '').strip()
+if RENDER_EXTERNAL_HOSTNAME or PUBLIC_HOSTNAME:
+    ALLOWED_HOSTS = list(dict.fromkeys([
+        host for host in (RENDER_EXTERNAL_HOSTNAME, PUBLIC_HOSTNAME, 'localhost', '127.0.0.1') if host
+    ]))
 else:
     ALLOWED_HOSTS = ['*']
 
@@ -51,8 +56,10 @@ if csrf_trusted_origins:
 if RENDER_EXTERNAL_HOSTNAME:
     trusted_origins.extend([
         f'https://{RENDER_EXTERNAL_HOSTNAME}',
-        f'https://www.{RENDER_EXTERNAL_HOSTNAME}',
     ])
+
+if PUBLIC_HOSTNAME:
+    trusted_origins.append(f'https://{PUBLIC_HOSTNAME}')
 
 trusted_origins.extend([
     'http://localhost:8000',

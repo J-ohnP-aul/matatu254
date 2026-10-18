@@ -21,6 +21,16 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  const requestUrl = new URL(event.request.url);
+  if (requestUrl.origin !== self.location.origin) return;
+
+  // Never cache navigations or authentication pages. Their HTML can contain
+  // session-specific state, including Django CSRF tokens.
+  if (event.request.mode === 'navigate' || requestUrl.pathname.startsWith('/accounts/')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -30,20 +40,17 @@ self.addEventListener('fetch', (event) => {
       return fetch(event.request)
         .then((networkResponse) => {
           const clonedResponse = networkResponse.clone();
-          const requestUrl = new URL(event.request.url);
-          const isSameOrigin = requestUrl.origin === self.location.origin;
           const shouldCache =
             requestUrl.pathname.startsWith('/static/') ||
-            requestUrl.pathname.startsWith('/media/') ||
-            event.request.mode === 'navigate';
+            requestUrl.pathname.startsWith('/media/');
 
-          if (isSameOrigin && shouldCache) {
+          if (shouldCache && networkResponse.ok) {
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clonedResponse));
           }
 
           return networkResponse;
         })
-        .catch(() => caches.match('/') || caches.match('/manifest.json'));
+        .catch(() => caches.match('/manifest.json'));
     })
   );
 });

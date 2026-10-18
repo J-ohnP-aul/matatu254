@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Profile · Matatu254{% endblock %}
+{% block app_title %}Profile{% endblock %}
+{% block content %}
+<section class="page-shell">
+  <header class="page-heading"><div><h1>Your account</h1><p>Manage your Matatu254 session and app access.</p></div></header>
+  <div class="surface surface-pad profile-card">
+    <div class="profile-row"><strong>Username</strong><span>{{ user.username }}</span></div>
+    <div class="profile-row"><strong>Email</strong><span>{{ user.email|default:'No email added' }}</span></div>
+    <div class="profile-row"><strong>Account type</strong><span>{{ user.get_role_display|default:user.role|title }}</span></div>
+    <div class="profile-row"><strong>Last sign in</strong><span>{% if user.last_login %}{{ user.last_login|date:'M j, Y · H:i' }}{% else %}This is your first sign in{% endif %}</span></div>
+    <div class="btn-row">
+      <button type="button" class="btn btn-secondary" data-install-app hidden>Install Matatu254</button>
+      <a class="btn btn-danger" href="{% url 'accounts:logout' %}">Sign out</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

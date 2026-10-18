@@ -1,11 +1,11 @@
 {
-  "name": "Matatu254",
+  "name": "Matatu254 · Matatu journeys",
   "short_name": "Matatu254",
   "description": "Live route progress and timely stop notifications for every matatu journey.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f4f6f2",
-  "theme_color": "#17643a",
+  "background_color": "#f7f9f6",
+  "theme_color": "#00823E",
   "orientation": "portrait",
   "icons": [
     {

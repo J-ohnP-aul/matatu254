@@ -1,0 +1,23 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#00823E">
+  <link rel="apple-touch-icon" href="{% static 'images/pwa-icon-192.png' %}">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261019">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261019">
+  <title>Offline · Matatu254</title>
+</head>
+<body>
+  <main class="main">
+    <section class="surface surface-pad error-state" aria-labelledby="offline-title">
+      <img src="{% static 'images/pwa-icon-192.png' %}" alt="" width="64" height="64">
+      <h1 id="offline-title">You’re offline</h1>
+      <p>Your saved app shell is ready. Reconnect to sign in, load routes, and receive live trip updates.</p>
+      <a class="btn btn-primary" href="{% url 'core:home' %}">Try again</a>
+    </section>
+  </main>
+</body>
+</html>

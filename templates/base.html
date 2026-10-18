@@ -1,142 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme-mode="system">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#00823E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>{% block title %}Matatu254{% endblock %}</title>
   {% load static %}
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap">
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
-  <meta name="theme-color" content="#17643a">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+  <link rel="apple-touch-icon" href="{% static 'images/pwa-icon-192.png' %}">
+  <link rel="icon" type="image/png" href="{% static 'images/pwa-icon-192.png' %}">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261019">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261019">
   {% block extra_head %}{% endblock %}
 </head>
-<body data-theme="emerald"{% if user.is_authenticated %} class="app-user"{% endif %}>
+<body{% if user.is_authenticated %} class="app-user"{% endif %}>
   <a class="skip-link" href="#main-content">Skip to content</a>
-  {% if user.is_authenticated %}
-  <header class="site-header app-site-header navbar">
-    <div class="container">
-      {% if user.role == 'ADMIN' %}
-        <a class="app-brand navbar-start" href="{% url 'management:dashboard' %}">
-          <span class="app-brand-mark" aria-hidden="true">M</span>
-          <span class="app-brand-name">Matatu254 <small>/ Admin</small></span>
-        </a>
-      {% elif user.role == 'CONDUCTOR' %}
-        <a class="app-brand navbar-start" href="{% url 'conductor:dashboard' %}">
-          <span class="app-brand-mark" aria-hidden="true">M</span>
-          <span class="app-brand-name">Matatu254 <small>/ Conductor</small></span>
-        </a>
-      {% else %}
-        <a class="app-brand navbar-start" href="{% url 'core:dashboard' %}">
-          <span class="app-brand-mark" aria-hidden="true">M</span>
-          <span class="app-brand-name">Matatu254 <small>/ Passenger</small></span>
-        </a>
-      {% endif %}
-      <nav class="navbar-center" aria-label="Primary navigation">
-        {% if user.role == 'ADMIN' %}
-        <a class="{% if request.resolver_match.url_name == 'dashboard' %}is-active{% endif %}"{% if request.resolver_match.url_name == 'dashboard' %} aria-current="page"{% endif %} href="{% url 'management:dashboard' %}">Overview</a>
-        <a class="{% if request.resolver_match.url_name|slice:":6" == 'matatu' %}is-active{% endif %}"{% if request.resolver_match.url_name|slice:":6" == 'matatu' %} aria-current="page"{% endif %} href="{% url 'management:matatu-list' %}">Matatus</a>
-        <a class="{% if request.resolver_match.url_name|slice:":5" == 'route' or request.resolver_match.url_name|slice:":5" == 'stage' %}is-active{% endif %}"{% if request.resolver_match.url_name|slice:":5" == 'route' or request.resolver_match.url_name|slice:":5" == 'stage' %} aria-current="page"{% endif %} href="{% url 'management:route-list' %}">Routes</a>
-        <a class="{% if request.resolver_match.url_name|slice:":4" == 'trip' %}is-active{% endif %}"{% if request.resolver_match.url_name|slice:":4" == 'trip' %} aria-current="page"{% endif %} href="{% url 'management:trip-list' %}">Trips</a>
-        <a class="{% if request.resolver_match.url_name|slice:":13" == 'system-config' %}is-active{% endif %}"{% if request.resolver_match.url_name|slice:":13" == 'system-config' %} aria-current="page"{% endif %} href="{% url 'management:system-config' %}">Settings</a>
-        {% elif user.role == 'CONDUCTOR' %}
-        <a class="{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name != 'notifications' %}is-active{% endif %}"{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name != 'notifications' %} aria-current="page"{% endif %} href="{% url 'conductor:dashboard' %}">Dashboard</a>
-        <a class="{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name == 'notifications' %}is-active{% endif %}"{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name == 'notifications' %} aria-current="page"{% endif %} href="{% url 'conductor:notifications' %}">Notifications</a>
-        {% else %}
-        <a class="{% if request.resolver_match.namespace == 'core' and request.resolver_match.url_name == 'dashboard' %}is-active{% endif %}"{% if request.resolver_match.namespace == 'core' and request.resolver_match.url_name == 'dashboard' %} aria-current="page"{% endif %} href="{% url 'core:dashboard' %}">Dashboard</a>
-        <a class="{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name != 'history' %}is-active{% endif %}"{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name != 'history' %} aria-current="page"{% endif %} href="{% url 'journeys:scan-qr' %}">Scan QR</a>
-        <a class="{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name == 'history' %}is-active{% endif %}"{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name == 'history' %} aria-current="page"{% endif %} href="{% url 'journeys:history' %}">History</a>
-        <a class="{% if request.resolver_match.namespace == 'notifications' %}is-active{% endif %}"{% if request.resolver_match.namespace == 'notifications' %} aria-current="page"{% endif %} href="{% url 'notifications:list' %}">Notifications</a>
-        {% endif %}
-      </nav>
-      <div class="app-account navbar-end">
-        <span>{{ user.username }}</span>
-        <a href="{% url 'accounts:logout' %}">Logout</a>
-      </div>
-    </div>
-  </header>
-  {% else %}
-  <header class="site-header navbar">
-    <div class="container">
-      <a class="app-brand navbar-start" href="{% url 'core:home' %}">
-        <span class="app-brand-mark" aria-hidden="true">M</span>
-        <span class="app-brand-name">Matatu254</span>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="app-brand" href="{% if user.is_authenticated and user.role == 'CONDUCTOR' %}{% url 'conductor:dashboard' %}{% elif user.is_authenticated and user.role == 'ADMIN' %}{% url 'management:dashboard' %}{% elif user.is_authenticated %}{% url 'core:dashboard' %}{% else %}{% url 'core:home' %}{% endif %}" aria-label="Matatu254 home">
+        <img src="{% static 'images/pwa-icon-192.png' %}" alt="" width="32" height="32">
+        <span>Matatu254</span>
       </a>
-      <nav class="public-nav navbar-end" aria-label="Account">
-        <a href="{% url 'accounts:login' %}">Sign in</a>
-        {% if request.resolver_match.url_name != 'home' %}
-          <a class="btn btn-primary btn-sm" href="{% url 'accounts:register' %}">Create account</a>
+      <p class="app-title">{% block app_title %}Matatu254{% endblock %}</p>
+      {% if user.is_authenticated %}
+        {% if user.role == 'ADMIN' %}
+        <nav class="top-nav" aria-label="Management">
+          <a href="{% url 'management:dashboard' %}"{% if request.resolver_match.namespace == 'management' and request.resolver_match.url_name == 'dashboard' %} aria-current="page"{% endif %}>Overview</a>
+          <a href="{% url 'management:matatu-list' %}"{% if request.resolver_match.url_name|slice:":6" == 'matatu' %} aria-current="page"{% endif %}>Matatus</a>
+          <a href="{% url 'management:route-list' %}"{% if request.resolver_match.url_name|slice:":5" == 'route' or request.resolver_match.url_name|slice:":5" == 'stage' %} aria-current="page"{% endif %}>Routes</a>
+          <a href="{% url 'management:trip-list' %}"{% if request.resolver_match.url_name|slice:":4" == 'trip' %} aria-current="page"{% endif %}>Trips</a>
+          <a href="{% url 'management:system-config' %}"{% if request.resolver_match.url_name|slice:":13" == 'system-config' %} aria-current="page"{% endif %}>Settings</a>
+        </nav>
+        {% elif user.role == 'CONDUCTOR' %}
+        <nav class="top-nav" aria-label="Crew">
+          <a href="{% url 'conductor:dashboard' %}"{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name != 'notifications' %} aria-current="page"{% endif %}>Trip</a>
+          <a href="{% url 'conductor:notifications' %}"{% if request.resolver_match.url_name == 'notifications' %} aria-current="page"{% endif %}>Alerts</a>
+        </nav>
         {% endif %}
-      </nav>
+        {% if user.role == 'PASSANGER' %}
+          <a class="header-action" href="{% url 'accounts:profile' %}">Profile</a>
+        {% else %}
+          <a class="header-action" href="{% url 'accounts:logout' %}">Sign out</a>
+        {% endif %}
+      {% else %}
+        <a class="header-action" href="{% url 'accounts:login' %}">Sign in</a>
+      {% endif %}
     </div>
   </header>
-  {% endif %}
 
   {% if messages %}
     <ul class="flash-messages" role="status" aria-live="polite" aria-atomic="true">
-      {% for message in messages %}
-        <li class="{{ message.tags }}">{{ message }}</li>
-      {% endfor %}
+      {% for message in messages %}<li class="{{ message.tags }}">{{ message }}</li>{% endfor %}
     </ul>
   {% endif %}
 
-  <main class="main" id="main-content">
-    {% block content %}{% endblock %}
-  </main>
+  <div id="offline-banner" class="offline-banner" role="status" aria-live="polite" hidden>You’re offline. Live trip updates will resume when you reconnect.</div>
+  <main class="main" id="main-content">{% block content %}{% endblock %}</main>
 
-  {% block scripts %}
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch((error) => {
-          console.error('Service worker registration failed:', error);
-        });
-      });
-    }
+  {% if user.is_authenticated and user.role == 'PASSANGER' %}
+  <nav class="bottom-tabs is-visible" aria-label="Main navigation">
+    <a href="{% url 'core:dashboard' %}"{% if request.resolver_match.namespace == 'core' %} aria-current="page"{% endif %}><span class="tab-icon" aria-hidden="true">⌂</span><span>Home</span></a>
+    <a href="{% url 'journeys:scan-qr' %}"{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name != 'history' %} aria-current="page"{% endif %}><span class="tab-icon" aria-hidden="true">⌗</span><span>Scan</span></a>
+    <a href="{% url 'journeys:history' %}"{% if request.resolver_match.url_name == 'history' %} aria-current="page"{% endif %}><span class="tab-icon" aria-hidden="true">↻</span><span>Trips</span></a>
+    <a href="{% url 'accounts:profile' %}"{% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name == 'profile' %} aria-current="page"{% endif %}><span class="tab-icon" aria-hidden="true">◉</span><span>Profile</span></a>
+  </nav>
+  {% endif %}
 
-    let deferredPrompt = null;
-    const installButton = document.getElementById('pwa-install-btn');
-
-    window.addEventListener('beforeinstallprompt', (event) => {
-      event.preventDefault();
-      deferredPrompt = event;
-      if (installButton) {
-        installButton.classList.add('is-visible');
-        installButton.hidden = false;
-      }
-    });
-
-    if (installButton) {
-      installButton.addEventListener('click', async () => {
-        if (!deferredPrompt) {
-          return;
-        }
-
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log('PWA install choice:', outcome);
-        deferredPrompt = null;
-        installButton.hidden = true;
-        installButton.classList.remove('is-visible');
-      });
-    }
-
-    window.addEventListener('appinstalled', () => {
-      if (installButton) {
-        installButton.hidden = true;
-        installButton.classList.remove('is-visible');
-      }
-      deferredPrompt = null;
-    });
-  </script>
-  {% endblock %}
-
-  <footer>
-    Matatu254 — Smart Matatu Passenger Journey & Tracking
-  </footer>
+  {% block scripts %}{% endblock %}
+  <script defer src="{% static 'js/app-shell.js' %}?v=20261019"></script>
+  <footer>Matatu254 · Nairobi journeys, stage by stage</footer>
 </body>
 </html>

@@ -46,15 +46,38 @@ def dashboard(request):
     matatu = _get_assigned_matatu(request.user)
     
     active_trip = None
+    stage_counts = []
+    total_passengers = 0
     if matatu:
         active_trip = ActiveTrip.objects.filter(
             matatu=matatu,
             status=ActiveTrip.Status.ACTIVE
         ).first()
+
+    if active_trip:
+        active_statuses = [
+            JourneySession.Status.DESTINATION_SELECTED,
+            JourneySession.Status.IN_TRANSIT,
+            JourneySession.Status.APPROACHING,
+            JourneySession.Status.ARRIVED,
+        ]
+        grouped_counts = {
+            row['destination_stage_id']: row['count']
+            for row in JourneySession.objects.filter(
+                trip=active_trip, status__in=active_statuses
+            ).values('destination_stage_id').annotate(count=Count('id'))
+        }
+        stage_counts = [
+            {'stage': stage, 'count': grouped_counts.get(stage.pk, 0)}
+            for stage in active_trip.route.stages.order_by('sequence_order')
+        ]
+        total_passengers = sum(row['count'] for row in stage_counts)
     
     context = {
         "matatu": matatu,
         "active_trip": active_trip,
+        "stage_counts": stage_counts,
+        "total_passengers": total_passengers,
     }
     return render(request, "conductor/dashboard.html", context)
 
@@ -78,9 +101,15 @@ def trip_detail(request, trip_id):
         JourneySession.Status.APPROACHING,
         JourneySession.Status.ARRIVED,
     ]
-    journeys = JourneySession.objects.filter(trip=trip).select_related(
-        'passenger', 'destination_stage'
-    ).order_by('destination_stage__sequence_order')
+    journeys = JourneySession.objects.filter(
+        trip=trip,
+        status__in=[
+            JourneySession.Status.DESTINATION_SELECTED,
+            JourneySession.Status.IN_TRANSIT,
+            JourneySession.Status.APPROACHING,
+            JourneySession.Status.ARRIVED,
+        ],
+    ).select_related('passenger', 'destination_stage').order_by('destination_stage__sequence_order')
     onboard_journeys = journeys.filter(status__in=active_statuses)
     
     # Aggregate passenger counts per destination stage

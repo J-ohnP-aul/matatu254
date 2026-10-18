@@ -1,34 +1,12 @@
-{% load static %}
-<section class="passenger-list-panel">
-  <div class="section-heading"><h2>Passengers onboard</h2><span class="badge badge-neutral">{{ journeys.count }}</span></div>
+<section class="passenger-list-panel" aria-labelledby="onboard-heading">
+  <div class="section-heading"><h2 id="onboard-heading">Passengers onboard</h2><span class="badge">{{ journeys.count }}</span></div>
   {% if journeys %}
     <div class="table-wrap">
-      <table class="table">
-        <thead>
-          <tr style="background: #f5f5f5;">
-            <th>Passenger</th>
-            <th>Destination</th>
-            <th>Status</th>
-            <th>Started</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for j in journeys %}
-            <tr>
-              <td>{{ j.passenger.username }}</td>
-              <td>{{ j.destination_stage.name }}</td>
-              <td>
-                <span class="badge badge-soft {% if j.status == 'approaching' %}badge-warning{% elif j.status == 'arrived' %}badge-success{% elif j.status == 'in_transit' %}badge-info{% else %}badge-ghost{% endif %}">
-                  {{ j.get_status_display }}
-                </span>
-              </td>
-              <td>{{ j.start_time|date:"H:i" }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
+      <table><thead><tr><th>Passenger</th><th>Destination</th><th>Status</th><th>Started</th></tr></thead>
+        <tbody>{% for journey in journeys %}
+          <tr><td>{{ journey.passenger.username }}</td><td>{{ journey.destination_stage.name }}</td><td><span class="badge{% if journey.status == 'approaching' %} badge-warning{% elif journey.status == 'arrived' %} badge-success{% endif %}">{{ journey.get_status_display }}</span></td><td>{{ journey.start_time|date:'H:i' }}</td></tr>
+        {% endfor %}</tbody>
       </table>
     </div>
-  {% else %}
-    <p class="muted">No passengers are currently onboard.</p>
-  {% endif %}
+  {% else %}<div class="empty-state"><p>No passengers are currently onboard.</p></div>{% endif %}
 </section>

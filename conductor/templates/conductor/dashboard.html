@@ -1,30 +1,42 @@
 {% extends 'base.html' %}
-{% block title %}Conductor Dashboard{% endblock %}
+{% load static %}
+{% block title %}Crew dashboard · Matatu254{% endblock %}
+{% block app_title %}Crew dashboard{% endblock %}
 {% block content %}
-  <div class="page-shell">
-    <header class="page-heading"><div><h1>Conductor dashboard</h1></div></header>
-
-    {% if not matatu %}
-      <div class="surface empty-state">
-        <h2>No Matatu Assigned</h2>
-        <p>You are not currently assigned to a matatu. Contact an administrator.</p>
-      </div>
-    {% elif not active_trip %}
-      <div class="surface empty-state">
-        <h2>{{ matatu.registration_number }}</h2>
-        <p>No active trip for this matatu.</p>
-        <p>An administrator needs to start a trip for this vehicle.</p>
-      </div>
-    {% else %}
-      <div class="surface surface-pad active-trip-summary">
-        <h2>{{ matatu.registration_number }}</h2><p>{{ active_trip.route.name }}</p>
-        <p><strong>Status:</strong> <span class="badge badge-success badge-soft">{{ active_trip.get_status_display }}</span></p>
-        <p><strong>Started:</strong> {{ active_trip.start_time|date:"M d, H:i" }}</p>
-      </div>
-
-      <a class="btn btn-primary" href="{% url 'conductor:trip-detail' active_trip.id %}">
-        Open trip dashboard
-      </a>
-    {% endif %}
-  </div>
+<section class="page-shell crew-dashboard">
+  <header class="page-heading"><div><h1>Your trip at a glance</h1><p>Passenger counts by the stage where they plan to alight.</p></div></header>
+  {% if not matatu %}
+    <div class="surface empty-state"><h2>No matatu assigned</h2><p>Ask an administrator to assign a vehicle to your crew account.</p></div>
+  {% elif not active_trip %}
+    <div class="surface empty-state"><h2>{{ matatu.registration_number }}</h2><p>There’s no active trip for this vehicle right now.</p><p>An administrator needs to start a trip before passengers can join.</p></div>
+  {% else %}
+    <div id="crew-dashboard-data" data-tracking-url="{% url 'conductor:trip-tracking-data' active_trip.pk %}">
+      <section class="surface surface-pad crew-trip-card">
+        <div><h2>{{ matatu.registration_number }}</h2><p>{{ active_trip.route.name }}</p></div>
+        <div class="crew-total"><strong id="crew-total-count" class="live-count">{{ total_passengers }}</strong><span>onboard</span></div>
+        <a class="btn btn-primary" href="{% url 'conductor:trip-detail' active_trip.pk %}">Open live trip</a>
+      </section>
+      {% if stage_counts %}
+        <section class="crew-counts" aria-labelledby="crew-count-heading">
+          <div class="section-heading"><h2 id="crew-count-heading">Alighting by stage</h2><span id="crew-refresh-status" class="muted" role="status" aria-live="polite">Live counts</span></div>
+          <div class="crew-counts-mobile">
+            {% for row in stage_counts %}
+              <article class="surface crew-count-card" data-stage-order="{{ row.stage.sequence_order }}">
+                <span>{{ row.stage.name }}</span><strong class="live-count" data-stage-count>{{ row.count }}</strong>
+              </article>
+            {% endfor %}
+          </div>
+          <div class="surface table-wrap crew-counts-desktop">
+            <table><thead><tr><th>Stage</th><th>Sequence</th><th>Passengers alighting</th></tr></thead><tbody>
+              {% for row in stage_counts %}<tr data-stage-order="{{ row.stage.sequence_order }}"><td>{{ row.stage.name }}</td><td>{{ row.stage.sequence_order }}</td><td><strong class="live-count" data-stage-count>{{ row.count }}</strong></td></tr>{% endfor %}
+            </tbody></table>
+          </div>
+        </section>
+      {% else %}
+        <div class="surface empty-state"><h2>No stages on this route</h2><p>Ask an administrator to add the route stages before boarding.</p></div>
+      {% endif %}
+    </div>
+  {% endif %}
+</section>
 {% endblock %}
+{% block scripts %}<script defer src="{% static 'js/conductor-dashboard.js' %}?v=20261019"></script>{% endblock %}

@@ -1,42 +1,13 @@
 {% extends 'base.html' %}
-{% block title %}Route Management{% endblock %}
+{% block title %}Routes · Management{% endblock %}
+{% block app_title %}Routes{% endblock %}
 {% block content %}
-  <div class="page-shell admin-list">
-    <header class="page-heading"><div><h1>Routes</h1></div>
-      <a class="btn btn-primary" href="{% url 'management:route-create' %}">Add route</a>
-    </header>
-
-    {% if routes %}
-      <div style="overflow-x: auto;">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Stages</th>
-              <th>Trips</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for r in routes %}
-              <tr>
-                <td style="padding: 0.75rem; font-weight: bold;">{{ r.name }}</td>
-                <td>{{ r.description|default:'—' }}</td>
-                <td>{{ r.stages_count }}</td>
-                <td>{{ r.trip_count }}</td>
-                <td>
-                  <a class="table-action" href="{% url 'management:route-stages' r.pk %}">Stages</a>
-                  <span style="margin: 0 0.5rem;">|</span>
-                  <a class="table-action" href="{% url 'management:route-edit' r.pk %}">Edit</a>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% else %}
-      <p style="color: #666;">No routes yet.</p>
-    {% endif %}
-  </div>
+<section class="page-shell admin-list">
+  <header class="page-heading"><div><h1>Routes</h1><p>Keep route names and stage order up to date.</p></div><a class="btn btn-primary" href="{% url 'management:route-create' %}">Add route</a></header>
+  {% if routes %}
+    <div class="surface table-wrap"><table><thead><tr><th>Name</th><th>Description</th><th>Stages</th><th>Trips</th><th>Actions</th></tr></thead><tbody>
+      {% for route in routes %}<tr><td><strong>{{ route.name }}</strong></td><td>{{ route.description|default:'No description' }}</td><td>{{ route.stages_count }}</td><td>{{ route.trip_count }}</td><td><div class="table-actions"><a class="btn btn-secondary btn-sm" href="{% url 'management:route-stages' route.pk %}">Stages</a><a class="btn btn-secondary btn-sm" href="{% url 'management:route-edit' route.pk %}">Edit</a></div></td></tr>{% endfor %}
+    </tbody></table></div>
+  {% else %}<div class="surface empty-state"><h2>No routes yet</h2><p>Create a route, then add its stages in travel order.</p><a class="btn btn-primary" href="{% url 'management:route-create' %}">Add route</a></div>{% endif %}
+</section>
 {% endblock %}

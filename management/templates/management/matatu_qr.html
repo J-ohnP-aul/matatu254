@@ -1,43 +1,18 @@
 {% extends 'base.html' %}
-{% block title %}{{ matatu.registration_number }} — QR Code{% endblock %}
+{% block title %}{{ matatu.registration_number }} QR · Management{% endblock %}
+{% block app_title %}Vehicle QR code{% endblock %}
+{% block app_back %}<a class="header-back" href="{% url 'management:matatu-list' %}" data-nav-direction="back" aria-label="Back to matatus">←</a>{% endblock %}
 {% block content %}
-  <div class="page-shell qr-page">
-    <header class="page-heading"><div><h1>{{ matatu.registration_number }}</h1><p>{{ matatu.operator }}</p></div>
-      <a class="btn btn-outline" href="{% url 'management:matatu-list' %}">Back to matatus</a>
-    </header>
-
-    <div class="surface surface-pad">
-      <h3>QR Code Value</h3>
-      <code style="font-size: 1.2rem; background: white; padding: 0.5rem 1rem; border-radius: 4px;">{{ qr.code_value }}</code>
-      <p style="margin-top: 1rem;">
-        <span style="
-          padding: 0.5rem 1rem;
-          border-radius: 4px;
-          background: {% if qr.status == 'active' %}#e8f5e9{% else %}#fce4ec{% endif %};
-          color: {% if qr.status == 'active' %}green{% else %}red{% endif %};
-        ">
-          {{ qr.get_status_display }}
-        </span>
-      </p>
+<section class="page-shell qr-page">
+  <header class="page-heading"><div><h1>{{ matatu.registration_number }}</h1><p>{{ matatu.operator }}</p></div><a class="btn btn-secondary" href="{% url 'management:matatu-list' %}">All matatus</a></header>
+  <section class="surface surface-pad qr-details">
+    <div><h2>QR code value</h2><code class="qr-code-value">{{ qr.code_value }}</code></div>
+    <span class="badge{% if qr.status == 'active' %} badge-success{% else %} badge-error{% endif %}">{{ qr.get_status_display }}</span>
+    <figure><img class="qr-image" width="300" height="300" src="data:image/png;base64,{{ qr_b64 }}" alt="QR code for {{ matatu.registration_number }}"><figcaption>Print and place this code inside the vehicle.</figcaption></figure>
+    <div class="qr-actions">
+      <form method="post" data-confirm="Replace the current QR code? Existing printed codes will stop working.">{% csrf_token %}<input type="hidden" name="action" value="regenerate"><button type="submit" class="btn btn-secondary">Regenerate QR</button></form>
+      <form method="post" data-confirm="{% if qr.status == 'active' %}Deactivate this QR code?{% else %}Activate this QR code?{% endif %}">{% csrf_token %}<input type="hidden" name="action" value="toggle"><button type="submit" class="btn{% if qr.status == 'active' %} btn-danger{% else %} btn-primary{% endif %}">{% if qr.status == 'active' %}Deactivate{% else %}Activate{% endif %}</button></form>
     </div>
-
-    <div style="margin-bottom: 2rem;">
-      <h3>QR Code Image</h3>
-      <img class="qr-image" width="300" height="300" src="data:image/png;base64,{{ qr_b64 }}" alt="QR code for {{ matatu.registration_number }}">
-      <p style="margin-top: 1rem; color: #666;">Print and place inside the vehicle</p>
-    </div>
-
-    <form method="post" style="display: inline;">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="regenerate">
-      <button type="submit" class="btn btn-warning">Regenerate QR</button>
-    </form>
-    <form method="post" style="display: inline;">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="toggle">
-      <button type="submit" class="btn {% if qr.status == 'active' %}btn-error{% else %}btn-primary{% endif %}">
-        {% if qr.status == 'active' %}Deactivate{% else %}Activate{% endif %}
-      </button>
-    </form>
-  </div>
+  </section>
+</section>
 {% endblock %}

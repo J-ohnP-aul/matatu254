@@ -2,6 +2,7 @@
 {% load static %}
 {% block title %}Scan a matatu · Matatu254{% endblock %}
 {% block app_title %}Scan a matatu{% endblock %}
+{% block app_back %}<a class="header-back" href="{% url 'core:dashboard' %}" data-nav-direction="back" aria-label="Back to home">←</a>{% endblock %}
 {% block content %}
 <section class="page-shell scan-screen">
   <header class="page-heading"><div><h1>Scan your matatu</h1><p>Scan the QR code inside the vehicle to see its active route.</p></div></header>

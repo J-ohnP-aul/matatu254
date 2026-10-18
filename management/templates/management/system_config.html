@@ -1,117 +1,29 @@
 {% extends 'base.html' %}
-{% block title %}System Configuration{% endblock %}
+{% load static %}
+{% block title %}System settings · Management{% endblock %}
+{% block app_title %}System settings{% endblock %}
 {% block content %}
-  <div class="page-shell admin-list">
-    <header class="page-heading"><div><h1>System configuration</h1></div>
-      <button id="toggle-config-form" class="btn btn-primary" type="button" aria-controls="add-config-form" aria-expanded="false">Add configuration</button>
-    </header>
-
-    <!-- Add Config Form (hidden by default) -->
-    <div id="add-config-form" class="surface surface-pad config-add" hidden>
-      <h3>Add New Configuration</h3>
-      <form method="post">
-        {% csrf_token %}
-        <div class="config-add-fields">
-          <div class="admin-field">
-            <label for="new-config-key">Key</label>
-            <input id="new-config-key" type="text" name="key" required placeholder="e.g. STAGE_ARRIVAL_RADIUS_M" autocomplete="off">
-          </div>
-          <div class="admin-field">
-            <label for="new-config-value">Value</label>
-            <input id="new-config-value" type="text" name="value" required placeholder="e.g. 100" autocomplete="off">
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Save configuration</button>
-        <button id="cancel-config-form" type="button" class="btn btn-outline">Cancel</button>
-      </form>
-    </div>
-
-    {% if configs %}
-      <div style="overflow-x: auto;">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Value</th>
-              <th>Description</th>
-              <th>Updated</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for c in configs %}
-              <tr>
-                <td style="padding: 0.75rem; font-family: monospace; font-weight: bold;">{{ c.key }}</td>
-                <td style="padding: 0.75rem; font-family: monospace;">{{ c.value }}</td>
-                <td style="padding: 0.75rem; color: #666;">{{ c.description|default:'—' }}</td>
-                <td>{{ c.updated_at|date:"M d, H:i" }}</td>
-                <td>
-                  <a href="{% url 'management:system-config-edit' c.pk %}">Edit</a>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% else %}
-      <p style="color: #666;">No configurations yet.</p>
-    {% endif %}
-
-    <!-- Common Config Keys Reference -->
-    <details class="surface surface-pad config-reference">
-      <summary style="cursor: pointer; font-weight: bold;">Common Configuration Keys</summary>
-      <div style="margin-top: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 8px; font-size: 0.9rem;">
-        <table style="width: 100%; border-collapse: collapse;">
-          <thead>
-            <tr style="border-bottom: 1px solid #ddd;">
-              <th style="padding: 0.5rem; text-align: left;">Key</th>
-              <th style="padding: 0.5rem; text-align: left;">Default</th>
-              <th style="padding: 0.5rem; text-align: left;">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="padding: 0.5rem; font-family: monospace;">STAGE_ARRIVAL_RADIUS_M</td>
-              <td style="padding: 0.5rem; font-family: monospace;">100</td>
-              <td style="padding: 0.5rem;">Meters from stage to count as "arrived" (used in routes_services.py)</td>
-            </tr>
-            <tr>
-              <td style="padding: 0.5rem; font-family: monospace;">OSRM_BASE_URL</td>
-              <td style="padding: 0.5rem; font-family: monospace;">http://127.0.0.1:5000/route/v1/driving</td>
-              <td style="padding: 0.5rem;">Local OSRM instance URL for road routing</td>
-            </tr>
-            <tr>
-              <td style="padding: 0.5rem; font-family: monospace;">GPS_STALE_THRESHOLD_S</td>
-              <td style="padding: 0.5rem; font-family: monospace;">60</td>
-              <td style="padding: 0.5rem;">Seconds before GPS position considered stale</td>
-            </tr>
-            <tr>
-              <td style="padding: 0.5rem; font-family: monospace;">FALLBACK_SPEED_KMH</td>
-              <td style="padding: 0.5rem; font-family: monospace;">25</td>
-              <td style="padding: 0.5rem;">Assumed speed for Haversine fallback ETA</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </details>
-  </div>
+<section class="page-shell admin-list">
+  <header class="page-heading"><div><h1>System settings</h1><p>Configure GPS freshness, arrival rules, and routing defaults.</p></div><button id="toggle-config-form" class="btn btn-primary" type="button" aria-controls="add-config-form" aria-expanded="false">Add setting</button></header>
+  <section id="add-config-form" class="surface surface-pad config-add" hidden>
+    <h2>Add a setting</h2><form method="post">{% csrf_token %}
+      <div class="config-add-fields"><div class="admin-field"><label for="new-config-key">Key</label><input id="new-config-key" type="text" name="key" required placeholder="STAGE_ARRIVAL_RADIUS_M" autocomplete="off"></div><div class="admin-field"><label for="new-config-value">Value</label><input id="new-config-value" type="text" name="value" required placeholder="100" autocomplete="off"></div></div>
+      <div class="btn-row"><button type="submit" class="btn btn-primary">Save setting</button><button id="cancel-config-form" type="button" class="btn btn-secondary">Cancel</button></div>
+    </form>
+  </section>
+  {% if configs %}
+    <div class="surface table-wrap"><table><thead><tr><th>Key</th><th>Value</th><th>Description</th><th>Updated</th><th>Action</th></tr></thead><tbody>
+      {% for config in configs %}<tr><td><code>{{ config.key }}</code></td><td><code>{{ config.value }}</code></td><td>{{ config.description|default:'No description' }}</td><td>{{ config.updated_at|date:'M j, H:i' }}</td><td><a class="btn btn-secondary btn-sm" href="{% url 'management:system-config-edit' config.pk %}">Edit</a></td></tr>{% endfor %}
+    </tbody></table></div>
+  {% else %}<div class="surface empty-state"><h2>No settings configured</h2><p>System defaults are active. Add a setting only when you need to override one.</p></div>{% endif %}
+  <details class="surface surface-pad config-reference"><summary>Common configuration keys</summary>
+    <div class="table-wrap"><table><thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead><tbody>
+      <tr><td><code>STAGE_ARRIVAL_RADIUS_M</code></td><td>100</td><td>Distance from a stage that counts as arrival.</td></tr>
+      <tr><td><code>OSRM_BASE_URL</code></td><td><code>http://127.0.0.1:5000/route/v1/driving</code></td><td>Local OSRM service used for road routing.</td></tr>
+      <tr><td><code>GPS_STALE_THRESHOLD_S</code></td><td>60</td><td>Seconds before the latest vehicle location is considered stale.</td></tr>
+      <tr><td><code>FALLBACK_SPEED_KMH</code></td><td>25</td><td>Estimated speed used when road routing is unavailable.</td></tr>
+    </tbody></table></div>
+  </details>
+</section>
 {% endblock %}
-{% block scripts %}
-  <script>
-    const addConfigForm = document.getElementById('add-config-form');
-    const toggleConfigForm = document.getElementById('toggle-config-form');
-    const cancelConfigForm = document.getElementById('cancel-config-form');
-
-    toggleConfigForm?.addEventListener('click', () => {
-      addConfigForm.hidden = !addConfigForm.hidden;
-      toggleConfigForm.setAttribute('aria-expanded', String(!addConfigForm.hidden));
-      if (!addConfigForm.hidden) document.getElementById('new-config-key')?.focus();
-    });
-
-    cancelConfigForm?.addEventListener('click', () => {
-      addConfigForm.hidden = true;
-      toggleConfigForm.setAttribute('aria-expanded', 'false');
-      toggleConfigForm.focus();
-    });
-  </script>
-{% endblock %}
+{% block scripts %}<script defer src="{% static 'js/system-config.js' %}?v=20261019"></script>{% endblock %}

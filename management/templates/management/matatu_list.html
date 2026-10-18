@@ -1,65 +1,19 @@
 {% extends 'base.html' %}
-{% block title %}Matatu Management{% endblock %}
+{% block title %}Matatus · Management{% endblock %}
+{% block app_title %}Matatus{% endblock %}
 {% block content %}
-  <div class="page-shell admin-list">
-    <header class="page-heading"><div><h1>Matatus</h1></div>
-      <a class="btn btn-primary" href="{% url 'management:matatu-create' %}">Add matatu</a>
-    </header>
-
-    {% if matatus %}
-      <div style="overflow-x: auto;">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Registration</th>
-              <th>Operator</th>
-              <th>Conductor</th>
-              <th>QR Status</th>
-              <th>Trips</th>
-              <th>Created</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for m in matatus %}
-              <tr>
-                <td style="padding: 0.75rem; font-weight: bold;">{{ m.registration_number }}</td>
-                <td>{{ m.operator }}</td>
-                <td>
-                  {% if m.conductor %}
-                    {{ m.conductor.username }}
-                  {% else %}
-                    —
-                  {% endif %}
-                </td>
-                <td>
-                  {% if m.qr_code %}
-                    <span style="
-                      padding: 0.2rem 0.5rem;
-                      border-radius: 3px;
-                      font-size: 0.8rem;
-                      background: {% if m.qr_code.status == 'active' %}#e8f5e9{% else %}#fce4ec{% endif %};
-                      color: {% if m.qr_code.status == 'active' %}green{% else %}red{% endif %};
-                    ">
-                      {{ m.qr_code.get_status_display }}
-                    </span>
-                  {% else %}
-                    <span class="muted">No QR</span>
-                  {% endif %}
-                </td>
-                <td>{{ m.trip_count }}</td>
-                <td>{{ m.created_at|date:"M d, Y" }}</td>
-                <td>
-                  <a class="table-action" href="{% url 'management:matatu-edit' m.pk %}">Edit</a>
-                  <a class="table-action" href="{% url 'management:matatu-qr' m.pk %}">QR Code</a>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% else %}
-      <p style="color: #666;">No matatus yet.</p>
-    {% endif %}
-  </div>
+<section class="page-shell admin-list">
+  <header class="page-heading"><div><h1>Matatus</h1><p>Vehicles, crew assignments, and QR codes.</p></div><a class="btn btn-primary" href="{% url 'management:matatu-create' %}">Add matatu</a></header>
+  {% if matatus %}
+    <div class="surface table-wrap"><table><thead><tr><th>Registration</th><th>Operator</th><th>Conductor</th><th>QR status</th><th>Trips</th><th>Created</th><th>Actions</th></tr></thead><tbody>
+      {% for matatu in matatus %}<tr>
+        <td><strong>{{ matatu.registration_number }}</strong></td><td>{{ matatu.operator }}</td>
+        <td>{{ matatu.conductor.username|default:'Not assigned' }}</td>
+        <td>{% if matatu.qr_code %}<span class="badge{% if matatu.qr_code.status == 'active' %} badge-success{% else %} badge-error{% endif %}">{{ matatu.qr_code.get_status_display }}</span>{% else %}<span class="badge">No QR</span>{% endif %}</td>
+        <td>{{ matatu.trip_count }}</td><td>{{ matatu.created_at|date:'M j, Y' }}</td>
+        <td><div class="table-actions"><a class="btn btn-secondary btn-sm" href="{% url 'management:matatu-edit' matatu.pk %}">Edit</a><a class="btn btn-secondary btn-sm" href="{% url 'management:matatu-qr' matatu.pk %}">QR code</a></div></td>
+      </tr>{% endfor %}
+    </tbody></table></div>
+  {% else %}<div class="surface empty-state"><h2>No matatus yet</h2><p>Add a vehicle to create its QR code and connect a route.</p><a class="btn btn-primary" href="{% url 'management:matatu-create' %}">Add matatu</a></div>{% endif %}
+</section>
 {% endblock %}

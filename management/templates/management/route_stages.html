@@ -1,53 +1,14 @@
 {% extends 'base.html' %}
-{% block title %}{{ route.name }} — Stages{% endblock %}
+{% block title %}{{ route.name }} stages · Management{% endblock %}
+{% block app_title %}Route stages{% endblock %}
+{% block app_back %}<a class="header-back" href="{% url 'management:route-list' %}" data-nav-direction="back" aria-label="Back to routes">←</a>{% endblock %}
 {% block content %}
-  <div class="page-shell admin-list">
-    <header class="page-heading">
-      <div>
-        <h1>{{ route.name }}</h1>
-        <p>{{ route.description|default:'No description' }}</p>
-      </div>
-      <div class="page-actions">
-        <a class="btn btn-outline" href="{% url 'management:route-list' %}">← Back to routes</a>
-        <a class="btn btn-primary" href="{% url 'management:stage-create' route.pk %}">Add stage</a>
-      </div>
-    </header>
-
-    {% if stages %}
-      <div style="overflow-x: auto;">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Order</th>
-              <th>Name</th>
-              <th>Latitude</th>
-              <th>Longitude</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for s in stages %}
-              <tr>
-                <td style="padding: 0.75rem; font-weight: bold;">{{ s.sequence_order }}</td>
-                <td>{{ s.name }}</td>
-                <td>{{ s.latitude }}</td>
-                <td>{{ s.longitude }}</td>
-                <td>
-                  <div class="table-actions">
-                    <a class="table-action" href="{% url 'management:stage-edit' s.pk %}">Edit</a>
-                    <form method="post" action="{% url 'management:stage-delete' s.pk %}" onsubmit="return confirm('Delete this stage?')">
-                      {% csrf_token %}
-                      <button class="btn btn-error btn-sm table-action" type="submit">Delete</button>
-                    </form>
-                  </div>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% else %}
-      <p style="color: #666;">No stages yet. Add the first stage.</p>
-    {% endif %}
-  </div>
+<section class="page-shell admin-list">
+  <header class="page-heading"><div><h1>{{ route.name }}</h1><p>{{ route.description|default:'No description' }}</p></div><div class="btn-row"><a class="btn btn-secondary" href="{% url 'management:route-list' %}">All routes</a><a class="btn btn-primary" href="{% url 'management:stage-create' route.pk %}">Add stage</a></div></header>
+  {% if stages %}
+    <div class="surface table-wrap"><table><thead><tr><th>Order</th><th>Stage</th><th>Latitude</th><th>Longitude</th><th>Actions</th></tr></thead><tbody>
+      {% for stage in stages %}<tr><td><span class="stage-number">{{ stage.sequence_order }}</span></td><td><strong>{{ stage.name }}</strong></td><td>{{ stage.latitude }}</td><td>{{ stage.longitude }}</td><td><div class="table-actions"><a class="btn btn-secondary btn-sm" href="{% url 'management:stage-edit' stage.pk %}">Edit</a><form method="post" action="{% url 'management:stage-delete' stage.pk %}" data-confirm="Delete this stage?">{% csrf_token %}<button class="btn btn-danger btn-sm" type="submit">Delete</button></form></div></td></tr>{% endfor %}
+    </tbody></table></div>
+  {% else %}<div class="surface empty-state"><h2>No stages yet</h2><p>Add the first stop in the order vehicles travel this route.</p><a class="btn btn-primary" href="{% url 'management:stage-create' route.pk %}">Add stage</a></div>{% endif %}
+</section>
 {% endblock %}

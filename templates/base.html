@@ -24,7 +24,7 @@
         <img src="{% static 'images/pwa-icon-192.png' %}" alt="" width="32" height="32">
         <span>Matatu254</span>
       </a>
-      <p class="app-title">{% block app_title %}Matatu254{% endblock %}</p>
+      <p class="app-title">{% block app_title %}{{ request.resolver_match.url_name|default:'Matatu254'|title }}{% endblock %}</p>
       {% if user.is_authenticated %}
         {% if user.role == 'ADMIN' %}
         <nav class="top-nav" aria-label="Management">

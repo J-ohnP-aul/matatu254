@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}End Journey{% endblock %}
+{% block app_title %}End journey{% endblock %}
+{% block app_back %}<a class="header-back" href="{% url 'journeys:journey-detail' journey.id %}" data-nav-direction="back" aria-label="Back to live journey">←</a>{% endblock %}
 {% block content %}
   <section class="auth-shell surface surface-pad">
   <h1>You've reached your stop.</h1>
@@ -10,7 +12,7 @@
     <button type="submit" class="btn btn-primary">
       End journey
     </button>
-    <a href="{% url 'journeys:journey-detail' journey.id %}" style="margin-left: 1rem;">Cancel</a>
+    <a class="btn btn-secondary" href="{% url 'journeys:journey-detail' journey.id %}">Keep tracking</a>
   </form>
   </section>
 {% endblock %}

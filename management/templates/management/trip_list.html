@@ -1,83 +1,22 @@
 {% extends 'base.html' %}
-{% block title %}Trip Management{% endblock %}
+{% block title %}Trips · Management{% endblock %}
+{% block app_title %}Trips{% endblock %}
 {% block content %}
-  <div class="page-shell admin-list">
-    <header class="page-heading"><div><h1>Trips</h1></div>
-      <a class="btn btn-primary" href="{% url 'management:trip-create' %}">Create trip</a>
-    </header>
-
-    {% if trips %}
-      <div style="overflow-x: auto;">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Matatu</th>
-              <th>Route</th>
-              <th>Status</th>
-              <th>Started</th>
-              <th>Ended</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for t in trips %}
-              <tr>
-                <td>{{ t.matatu.registration_number }}</td>
-                <td>{{ t.route.name }}</td>
-                <td>
-                  <span style="
-                    text-transform: capitalize;
-                    padding: 0.2rem 0.5rem;
-                    border-radius: 3px;
-                    font-size: 0.8rem;
-                    background: 
-                      {% if t.status == 'active' %}#e8f5e9
-                      {% elif t.status == 'completed' %}#e3f2fd
-                      {% elif t.status == 'cancelled' %}#fce4ec
-                      {% else %}#fff3e0{% endif %};
-                    color:
-                      {% if t.status == 'active' %}green
-                      {% elif t.status == 'completed' %}blue
-                      {% elif t.status == 'cancelled' %}red
-                      {% else %}orange{% endif %};
-                  ">
-                    {{ t.get_status_display }}
-                  </span>
-                </td>
-                <td>{{ t.start_time|date:"M d, H:i" }}</td>
-                <td>{{ t.end_time|date:"M d, H:i"|default:'—' }}</td>
-                <td>
-                  <div class="table-actions">
-                  {% if t.status == 'created' %}
-                    <form method="post" action="{% url 'management:trip-start' t.pk %}">
-                      {% csrf_token %}
-                      <button class="btn btn-success btn-sm table-action" type="submit">Start</button>
-                    </form>
-                    <form method="post" action="{% url 'management:trip-cancel' t.pk %}" onsubmit="return confirm('Cancel this trip?')">
-                      {% csrf_token %}
-                      <button class="btn btn-error btn-sm table-action" type="submit">Cancel</button>
-                    </form>
-                  {% elif t.status == 'active' %}
-                    <form method="post" action="{% url 'management:trip-end' t.pk %}" onsubmit="return confirm('End this trip and close its passenger journeys?')">
-                      {% csrf_token %}
-                      <button class="btn btn-primary btn-sm table-action" type="submit">End</button>
-                    </form>
-                    <form method="post" action="{% url 'management:trip-cancel' t.pk %}" onsubmit="return confirm('Cancel this trip?')">
-                      {% csrf_token %}
-                      <button class="btn btn-error btn-sm table-action" type="submit">Cancel</button>
-                    </form>
-                  {% else %}
-                    <span class="muted">—</span>
-                  {% endif %}
-                  </div>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    {% else %}
-      <p style="color: #666;">No trips yet.</p>
-    {% endif %}
-  </div>
+<section class="page-shell admin-list">
+  <header class="page-heading"><div><h1>Trips</h1><p>Start, monitor, and close vehicle trips.</p></div><a class="btn btn-primary" href="{% url 'management:trip-create' %}">Create trip</a></header>
+  {% if trips %}
+    <div class="surface table-wrap"><table><thead><tr><th>Matatu</th><th>Route</th><th>Status</th><th>Started</th><th>Ended</th><th>Actions</th></tr></thead><tbody>
+      {% for trip in trips %}<tr>
+        <td><strong>{{ trip.matatu.registration_number }}</strong></td><td>{{ trip.route.name }}</td>
+        <td><span class="badge{% if trip.status == 'active' %} badge-success{% elif trip.status == 'cancelled' %} badge-error{% elif trip.status == 'created' %} badge-warning{% endif %}">{{ trip.get_status_display }}</span></td>
+        <td>{{ trip.start_time|date:'M j, H:i'|default:'Not started' }}</td><td>{{ trip.end_time|date:'M j, H:i'|default:'Not ended' }}</td>
+        <td><div class="table-actions">
+          {% if trip.status == 'created' %}<form method="post" action="{% url 'management:trip-start' trip.pk %}">{% csrf_token %}<button class="btn btn-primary btn-sm" type="submit">Start</button></form><form method="post" action="{% url 'management:trip-cancel' trip.pk %}" data-confirm="Cancel this trip?">{% csrf_token %}<button class="btn btn-danger btn-sm" type="submit">Cancel</button></form>
+          {% elif trip.status == 'active' %}<form method="post" action="{% url 'management:trip-end' trip.pk %}" data-confirm="End this trip and close its passenger journeys?">{% csrf_token %}<button class="btn btn-secondary btn-sm" type="submit">End</button></form><form method="post" action="{% url 'management:trip-cancel' trip.pk %}" data-confirm="Cancel this trip?">{% csrf_token %}<button class="btn btn-danger btn-sm" type="submit">Cancel</button></form>
+          {% else %}<span class="muted">No actions</span>{% endif %}
+        </div></td>
+      </tr>{% endfor %}
+    </tbody></table></div>
+  {% else %}<div class="surface empty-state"><h2>No trips yet</h2><p>Create a trip after choosing a vehicle and route.</p><a class="btn btn-primary" href="{% url 'management:trip-create' %}">Create trip</a></div>{% endif %}
+</section>
 {% endblock %}

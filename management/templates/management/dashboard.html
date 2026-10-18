@@ -1,167 +1,57 @@
 {% extends 'base.html' %}
-{% block title %}Admin Dashboard · Matatu254{% endblock %}
-{% block extra_head %}
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <style>
-    .app-user .main:has(.admin-dashboard) { max-width: none; padding: 0; margin: 0; }
-    body:has(.admin-dashboard) { background: var(--color-base-200, #f3f6f4); }
-    .admin-dashboard { min-height: calc(100vh - 54px); }
-    .admin-content { max-width: 1440px; margin: 0 auto; padding: 2rem clamp(1rem, 3vw, 2.75rem); }
-    body:has(.admin-dashboard) > footer { display: none; }
-    .stat-card { min-width: 0; }
-    .trip-actions { display: flex; justify-content: flex-end; gap: .25rem; white-space: nowrap; }
-    .trip-actions form { margin: 0; }
-    @media (max-width: 640px) {
-      .admin-content { padding: 1.25rem .875rem; }
-      .trip-table { min-width: 620px; }
-    }
-  </style>
-{% endblock %}
+{% block title %}Management overview · Matatu254{% endblock %}
+{% block app_title %}Management{% endblock %}
 {% block content %}
-<div class="admin-dashboard" data-theme="emerald">
-  <div class="admin-content" id="admin-main">
-    <section class="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-      <div>
-        <p class="mb-1 text-xs font-bold uppercase tracking-[.14em] text-base-content/50">Management overview</p>
-        <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">Dashboard</h1>
-        <p class="mt-2 text-base-content/70">Your fleet and passenger network, at a glance.</p>
-      </div>
-      <div class="flex flex-wrap gap-2">
-        <a class="btn btn-outline" href="{% url 'management:matatu-create' %}">
-          <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 16V6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5V16M5 11h14M7 16v2m10-2v2M3 16h18"/><path d="M8 19h8"/></svg>
-          Add matatu
-        </a>
-        <a class="btn btn-primary" href="{% url 'management:trip-create' %}">
-          <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-          Create trip
-        </a>
-      </div>
+<section class="management-shell admin-dashboard">
+  <header class="page-heading">
+    <div><h1>Operations overview</h1><p>Your fleet and passenger network, at a glance.</p></div>
+    <div class="btn-row"><a class="btn btn-secondary" href="{% url 'management:matatu-create' %}">Add matatu</a><a class="btn btn-primary" href="{% url 'management:trip-create' %}">Create trip</a></div>
+  </header>
+
+  <section class="stats management-stats" aria-label="Network totals">
+    <article class="stat-card"><span class="stat-title">Matatus</span><strong class="stat-value">{{ stats.total_matatus }}</strong><span class="stat-desc">Vehicles in your fleet</span></article>
+    <article class="stat-card"><span class="stat-title">Active trips</span><strong class="stat-value">{{ stats.active_trips }}</strong><span class="stat-desc">Trips underway</span></article>
+    <article class="stat-card"><span class="stat-title">Routes</span><strong class="stat-value">{{ stats.total_routes }}</strong><span class="stat-desc">Configured journeys</span></article>
+    <article class="stat-card"><span class="stat-title">Stages</span><strong class="stat-value">{{ stats.total_stages }}</strong><span class="stat-desc">Stops across routes</span></article>
+    <article class="stat-card"><span class="stat-title">Passengers</span><strong class="stat-value">{{ stats.total_passengers }}</strong><span class="stat-desc">Registered journey users</span></article>
+  </section>
+
+  <div class="management-dashboard-grid">
+    <section class="surface admin-list" aria-labelledby="recent-trips-heading">
+      <header><div><h2 id="recent-trips-heading">Recent trips</h2><p class="muted">Latest activity across your routes</p></div><a href="{% url 'management:trip-list' %}">View all</a></header>
+      {% if recent_trips %}
+        <div class="table-wrap"><table class="trip-table"><thead><tr><th>Vehicle &amp; route</th><th>Status</th><th>Started</th><th>Actions</th></tr></thead><tbody>
+          {% for trip in recent_trips %}<tr>
+            <td><strong>{{ trip.matatu.registration_number }}</strong><br><span class="muted">{{ trip.route.name }}</span></td>
+            <td><span class="badge{% if trip.status == 'active' %} badge-success{% elif trip.status == 'cancelled' %} badge-error{% elif trip.status == 'created' %} badge-warning{% endif %}">{{ trip.get_status_display }}</span></td>
+            <td>{{ trip.start_time|date:'M j, H:i' }}</td>
+            <td><div class="trip-actions">
+              {% if trip.status == 'created' %}
+                <form method="post" action="{% url 'management:trip-start' trip.pk %}">{% csrf_token %}<button class="btn btn-secondary btn-sm" type="submit">Start</button></form>
+                <form method="post" action="{% url 'management:trip-cancel' trip.pk %}" data-confirm="Cancel this trip?">{% csrf_token %}<button class="btn btn-danger btn-sm" type="submit">Cancel</button></form>
+              {% elif trip.status == 'active' %}
+                <form method="post" action="{% url 'management:trip-end' trip.pk %}" data-confirm="End this trip and close its passenger journeys?">{% csrf_token %}<button class="btn btn-secondary btn-sm" type="submit">End</button></form>
+                <form method="post" action="{% url 'management:trip-cancel' trip.pk %}" data-confirm="Cancel this trip?">{% csrf_token %}<button class="btn btn-danger btn-sm" type="submit">Cancel</button></form>
+              {% else %}<span class="muted">No actions</span>{% endif %}
+            </div></td>
+          </tr>{% endfor %}
+        </tbody></table></div>
+      {% else %}
+        <div class="empty-state"><h3>No trips yet</h3><p>Create your first trip to see activity here.</p><a class="btn btn-primary" href="{% url 'management:trip-create' %}">Create trip</a></div>
+      {% endif %}
     </section>
 
-    <section class="stats stats-vertical mb-7 w-full border border-base-300 bg-base-100 shadow-sm sm:stats-horizontal" aria-label="Network totals">
-      <div class="stat stat-card">
-        <div class="stat-title">Matatus</div>
-        <div class="stat-value text-3xl">{{ stats.total_matatus }}</div>
-        <div class="stat-desc">Vehicles in your fleet</div>
-      </div>
-      <div class="stat stat-card">
-        <div class="stat-title">Active trips</div>
-        <div class="stat-value text-3xl">{{ stats.active_trips }}</div>
-        <div class="stat-desc">Trips currently underway</div>
-      </div>
-      <div class="stat stat-card">
-        <div class="stat-title">Routes</div>
-        <div class="stat-value text-3xl">{{ stats.total_routes }}</div>
-        <div class="stat-desc">Configured journeys</div>
-      </div>
-      <div class="stat stat-card">
-        <div class="stat-title">Stages</div>
-        <div class="stat-value text-3xl">{{ stats.total_stages }}</div>
-        <div class="stat-desc">Stops across routes</div>
-      </div>
-      <div class="stat stat-card">
-        <div class="stat-title">Passengers</div>
-        <div class="stat-value text-3xl">{{ stats.total_passengers }}</div>
-        <div class="stat-desc">Registered journey users</div>
-      </div>
-    </section>
-
-    <div class="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
-      <section class="card card-border bg-base-100 shadow-sm" aria-labelledby="recent-trips-heading">
-        <div class="card-body gap-0 p-0">
-          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-base-300 px-5 py-4 sm:px-6">
-            <div>
-              <h2 class="card-title text-lg" id="recent-trips-heading">Recent trips</h2>
-              <p class="mt-1 text-sm text-base-content/60">Latest activity across your routes</p>
-            </div>
-            <a class="btn btn-ghost btn-sm text-primary" href="{% url 'management:trip-list' %}">View all trips <span aria-hidden="true">→</span></a>
-          </div>
-          {% if recent_trips %}
-            <div class="overflow-x-auto">
-              <table class="table trip-table">
-                <thead>
-                  <tr><th>Vehicle &amp; route</th><th>Status</th><th>Started</th><th class="text-right">Actions</th></tr>
-                </thead>
-                <tbody>
-                  {% for trip in recent_trips %}
-                    <tr>
-                      <td>
-                        <div class="font-semibold">{{ trip.matatu.registration_number }}</div>
-                        <div class="text-sm text-base-content/60">{{ trip.route.name }}</div>
-                      </td>
-                      <td>
-                        {% if trip.status == 'active' %}<span class="badge badge-success badge-soft">{{ trip.get_status_display }}</span>
-                        {% elif trip.status == 'completed' %}<span class="badge badge-info badge-soft">{{ trip.get_status_display }}</span>
-                        {% elif trip.status == 'cancelled' %}<span class="badge badge-error badge-soft">{{ trip.get_status_display }}</span>
-                        {% else %}<span class="badge badge-warning badge-soft">{{ trip.get_status_display }}</span>{% endif %}
-                      </td>
-                      <td class="whitespace-nowrap text-sm text-base-content/70">{{ trip.start_time|date:"M d, H:i" }}</td>
-                      <td>
-                        <div class="trip-actions">
-                          {% if trip.status == 'created' %}
-                            <form method="post" action="{% url 'management:trip-start' trip.pk %}">
-                              {% csrf_token %}
-                              <button class="btn btn-ghost btn-xs" type="submit" aria-label="Start trip for {{ trip.matatu.registration_number }}">Start</button>
-                            </form>
-                            <form method="post" action="{% url 'management:trip-cancel' trip.pk %}" onsubmit="return confirm('Cancel this trip?')">
-                              {% csrf_token %}
-                              <button class="btn btn-ghost btn-xs text-error" type="submit" aria-label="Cancel trip for {{ trip.matatu.registration_number }}">Cancel</button>
-                            </form>
-                          {% elif trip.status == 'active' %}
-                            <form method="post" action="{% url 'management:trip-end' trip.pk %}" onsubmit="return confirm('End this trip and close its passenger journeys?')">
-                              {% csrf_token %}
-                              <button class="btn btn-ghost btn-xs" type="submit" aria-label="End trip for {{ trip.matatu.registration_number }}">End</button>
-                            </form>
-                            <form method="post" action="{% url 'management:trip-cancel' trip.pk %}" onsubmit="return confirm('Cancel this trip?')">
-                              {% csrf_token %}
-                              <button class="btn btn-ghost btn-xs text-error" type="submit" aria-label="Cancel trip for {{ trip.matatu.registration_number }}">Cancel</button>
-                            </form>
-                          {% else %}<span class="px-2 text-base-content/40" aria-label="No actions available">—</span>{% endif %}
-                        </div>
-                      </td>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          {% else %}
-            <div class="px-6 py-12 text-center">
-              <div class="mx-auto mb-3 grid size-12 place-items-center rounded-2xl bg-base-200 text-base-content/60" aria-hidden="true">↗</div>
-              <h3 class="font-semibold">No trips yet</h3>
-              <p class="mt-1 text-sm text-base-content/60">Create your first trip to see activity here.</p>
-              <a class="btn btn-primary btn-sm mt-4" href="{% url 'management:trip-create' %}">Create trip</a>
-            </div>
-          {% endif %}
-        </div>
+    <aside class="management-quick-links">
+      <section class="surface surface-pad"><h2>Quick links</h2><p class="muted">Jump to a management area.</p>
+        <nav aria-label="Management areas" class="journey-links">
+          <a class="journey-link" href="{% url 'management:matatu-list' %}"><span><strong>Manage matatus</strong><small>Fleet and QR codes</small></span><span aria-hidden="true">→</span></a>
+          <a class="journey-link" href="{% url 'management:route-list' %}"><span><strong>Manage routes</strong><small>Routes and stages</small></span><span aria-hidden="true">→</span></a>
+          <a class="journey-link" href="{% url 'management:trip-list' %}"><span><strong>Trip history</strong><small>Review all trips</small></span><span aria-hidden="true">→</span></a>
+          <a class="journey-link" href="{% url 'management:system-config' %}"><span><strong>System settings</strong><small>Configure the service</small></span><span aria-hidden="true">→</span></a>
+        </nav>
       </section>
-
-      <aside class="grid gap-5 sm:grid-cols-2 xl:grid-cols-1">
-        <section class="card card-border bg-base-100 shadow-sm" aria-labelledby="quick-actions-heading">
-          <div class="card-body p-5">
-            <div class="mb-1">
-              <h2 class="card-title text-lg" id="quick-actions-heading">Quick links</h2>
-              <p class="text-sm text-base-content/60">Jump to a management area</p>
-            </div>
-            <ul class="menu menu-sm -mx-2 gap-1">
-              <li><a href="{% url 'management:matatu-list' %}"><span class="grid size-8 place-items-center rounded-lg bg-base-200" aria-hidden="true">▣</span><span class="flex-1"><span class="block font-semibold">Manage matatus</span><span class="text-xs text-base-content/50">Fleet and QR codes</span></span><span aria-hidden="true">→</span></a></li>
-              <li><a href="{% url 'management:route-list' %}"><span class="grid size-8 place-items-center rounded-lg bg-base-200" aria-hidden="true">⌁</span><span class="flex-1"><span class="block font-semibold">Manage routes</span><span class="text-xs text-base-content/50">Routes and stages</span></span><span aria-hidden="true">→</span></a></li>
-              <li><a href="{% url 'management:trip-list' %}"><span class="grid size-8 place-items-center rounded-lg bg-base-200" aria-hidden="true">◷</span><span class="flex-1"><span class="block font-semibold">Trip history</span><span class="text-xs text-base-content/50">Review all trips</span></span><span aria-hidden="true">→</span></a></li>
-              <li><a href="{% url 'management:system-config' %}"><span class="grid size-8 place-items-center rounded-lg bg-base-200" aria-hidden="true">S</span><span class="flex-1"><span class="block font-semibold">System settings</span><span class="text-xs text-base-content/50">Configure the service</span></span><span aria-hidden="true">→</span></a></li>
-            </ul>
-          </div>
-        </section>
-        <section class="card border-0 bg-success/10 shadow-sm" aria-labelledby="network-card-heading">
-          <div class="card-body p-5">
-            <p class="text-xs font-bold uppercase tracking-[.12em] text-base-content/50">Network management</p>
-            <h2 class="card-title text-lg" id="network-card-heading">Keep your routes moving</h2>
-            <p class="text-sm text-base-content/70">Review your stages and route details to keep passenger journeys clear.</p>
-            <div class="card-actions mt-2">
-              <a class="btn btn-sm" href="{% url 'management:route-list' %}">View routes <span aria-hidden="true">→</span></a>
-            </div>
-          </div>
-        </section>
-      </aside>
-    </div>
+      <section class="surface surface-pad"><h2>Keep routes clear</h2><p>Review stage names and route details so passengers can choose the right stop.</p><a href="{% url 'management:route-list' %}">Review routes →</a></section>
+    </aside>
   </div>
-</div>
+</section>
 {% endblock %}

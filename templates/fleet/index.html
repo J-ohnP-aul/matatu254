@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}Fleet Management{% endblock %}
+{% block app_title %}Fleet{% endblock %}
 
 {% block content %}
   <div class="page-shell">
@@ -16,36 +17,32 @@
       <div class="surface table-wrap">
         <table class="table">
           <thead>
-            <tr style="background: #f5f5f5;">
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Registration</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Operator</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">QR Value</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Status</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Actions</th>
+            <tr>
+              <th>Registration</th><th>Operator</th><th>QR Value</th><th>Status</th><th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {% for matatu in matatus %}
-              <tr style="border-bottom: 1px solid #eee;">
-                <td style="padding: 0.75rem; font-weight: bold;">{{ matatu.registration_number }}</td>
-                <td style="padding: 0.75rem;">{{ matatu.operator }}</td>
-                <td style="padding: 0.75rem;">
+              <tr>
+                <td><strong>{{ matatu.registration_number }}</strong></td>
+                <td>{{ matatu.operator }}</td>
+                <td>
                   {% if matatu.qr_code %}
                     {{ matatu.qr_code.code_value }}
                   {% else %}
                     <span class="badge badge-ghost">No QR</span>
                   {% endif %}
                 </td>
-                <td style="padding: 0.75rem;">
+                <td>
                   {% if matatu.qr_code %}
                     <span class="badge {% if matatu.qr_code.status == 'active' %}badge-success{% else %}badge-error{% endif %} badge-soft">
                       {{ matatu.qr_code.get_status_display }}
                     </span>
                   {% else %}
-                    <span class="muted">—</span>
+                    <span class="muted">No QR</span>
                   {% endif %}
                 </td>
-                <td style="padding: 0.75rem;">
+                <td>
                   {% if matatu.qr_code %}
                     <a class="table-action" href="{% url 'management:matatu-qr' matatu.pk %}">Manage QR</a>
                   {% else %}

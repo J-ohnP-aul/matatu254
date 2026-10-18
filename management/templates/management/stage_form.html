@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}{{ action }} Stage{% endblock %}
+{% block app_title %}{{ action }} stage{% endblock %}
+{% block app_back %}<a class="header-back" href="{% url 'management:route-stages' route.pk %}" data-nav-direction="back" aria-label="Back to route stages">←</a>{% endblock %}
 {% block content %}
   <div class="page-shell admin-form">
     <header class="page-heading"><div><h1>{{ action }} stage</h1><p>{{ route.name }}</p></div>
@@ -33,42 +35,6 @@
     </form>
   </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const button = document.getElementById('use-current-location');
-      const status = document.getElementById('location-status');
-      const latitudeInput = document.querySelector('input[name="latitude"]');
-      const longitudeInput = document.querySelector('input[name="longitude"]');
-
-      if (!button || !latitudeInput || !longitudeInput) return;
-
-      button.addEventListener('click', function () {
-        if (!navigator.geolocation) {
-          status.textContent = 'Geolocation is not supported by this browser.';
-          status.style.color = '#d32f2f';
-          return;
-        }
-
-        status.textContent = 'Fetching current location…';
-        status.style.color = '#666';
-
-        navigator.geolocation.getCurrentPosition(function (position) {
-          const lat = position.coords.latitude.toFixed(6);
-          const lng = position.coords.longitude.toFixed(6);
-
-          latitudeInput.value = lat;
-          longitudeInput.value = lng;
-          status.textContent = `Location set: ${lat}, ${lng}`;
-          status.style.color = '#2e7d32';
-        }, function () {
-          status.textContent = 'Unable to access your current location.';
-          status.style.color = '#d32f2f';
-        }, {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 0,
-        });
-      });
-    });
-  </script>
 {% endblock %}
+{% load static %}
+{% block scripts %}<script defer src="{% static 'js/stage-location.js' %}?v=20261019"></script>{% endblock %}

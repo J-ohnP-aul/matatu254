@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Notifications{% endblock %}
+{% block app_title %}Crew notifications{% endblock %}
 {% block content %}
   <div class="page-shell">
     <header class="page-heading"><div><h1>Notifications</h1></div>
@@ -11,7 +12,7 @@
         {% for n in notifications %}
           <article class="notification-row">
               <div>
-                <p style="margin: 0 0 0.5rem 0;">{{ n.message }}</p>
+                <p class="notification-message">{{ n.message }}</p>
                 <small class="muted">{{ n.timestamp|date:"M d, H:i:s" }}</small>
               </div>
               <span class="badge badge-info badge-soft">

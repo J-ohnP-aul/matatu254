@@ -2,6 +2,7 @@
 {% load static %}
 {% block title %}Choose your stop · Matatu254{% endblock %}
 {% block app_title %}Choose your stop{% endblock %}
+{% block app_back %}<a class="header-back" href="{% url 'journeys:scan-qr' %}" data-nav-direction="back" aria-label="Back to scanner">←</a>{% endblock %}
 {% block content %}
 <section class="page-shell destination-screen">
   <header class="page-heading"><div><h1>Where are you getting off?</h1><p>{{ trip.route.name }} · {{ trip.matatu.registration_number }}</p></div></header>

@@ -60,6 +60,8 @@
   --page-gutter: clamp(var(--space-4), 4vw, var(--space-8));
   --content-width: 76rem;
   --reading-width: 44rem;
+  --map-min-height: 22rem;
+  --map-min-height-mobile: 15rem;
   --touch-target: 2.75rem;
   --border-width: 1px;
 

@@ -1,34 +1,45 @@
 {% extends 'base.html' %}
-
-{% block title %}Dashboard {% endblock %}
-
+{% block title %}Home · Matatu254{% endblock %}
+{% block app_title %}Home{% endblock %}
 {% block content %}
-  <div class="page-shell">
-    <header class="page-heading"><div><h1>Welcome, {{ user.username }}</h1></div></header>
-    {% if user.role == 'PASSANGER' %}
-      <section class="surface surface-pad"><h2>Make your next ride simpler.</h2>
-        <div class="journey-links">
-          <a class="journey-link journey-link-primary" href="{% url 'journeys:scan-qr' %}"><span><strong>Scan a matatu QR code</strong><small>Start a journey and choose your destination</small></span><span aria-hidden="true">→</span></a>
-          <a class="journey-link" href="{% url 'journeys:history' %}"><span><strong>Journey history</strong><small>Review your completed trips</small></span><span aria-hidden="true">→</span></a>
-          <a class="journey-link" href="{% url 'notifications:list' %}"><span><strong>Notifications</strong><small>See stop updates and arrival alerts</small></span><span aria-hidden="true">→</span></a>
-        </div></section>
-
-    {% elif user.role == 'CONDUCTOR' %}
-      <section class="surface surface-pad"><h2>Keep your trip moving.</h2>
-        <div class="journey-links">
-          <a class="journey-link journey-link-primary" href="{% url 'conductor:dashboard' %}"><span><strong>Open trip dashboard</strong><small>GPS, passenger requests, upcoming stops</small></span><span aria-hidden="true">→</span></a>
-          <a class="journey-link" href="{% url 'conductor:notifications' %}"><span><strong>Notifications</strong><small>Review trip updates and alerts</small></span><span aria-hidden="true">→</span></a>
-        </div></section>
-
-    {% elif user.role == 'ADMIN' %}
-      <section class="surface surface-pad"><h2>Operations at a glance.</h2>
-        <div class="journey-links">
-          <a class="journey-link journey-link-primary" href="{% url 'management:dashboard' %}"><span><strong>Management overview</strong><small>Manage trips, routes, stages, and vehicles</small></span><span aria-hidden="true">→</span></a>
-          <a class="journey-link" href="{% url 'fleet:index' %}"><span><strong>Fleet QR tools</strong><small>Generate and manage matatu codes</small></span><span aria-hidden="true">→</span></a>
-        </div></section>
-
+<section class="page-shell passenger-home">
+  <header class="page-heading"><div><h1>Good to see you, {{ user.first_name|default:user.username }}.</h1><p>Where are you headed today?</p></div></header>
+  {% if user.role == 'PASSANGER' %}
+    {% if active_journey %}
+      <section class="surface surface-pad active-trip-summary" aria-labelledby="active-trip-heading">
+        <div class="section-heading"><h2 id="active-trip-heading">Your trip is underway</h2><span class="badge badge-success">{{ active_journey.get_status_display }}</span></div>
+        <p>{{ active_journey.trip.route.name }} · {{ active_journey.trip.matatu.registration_number }}</p>
+        <div class="journey-stat-grid">
+          <div class="journey-stat"><small>Getting off at</small><strong>{{ active_journey.destination_stage.name }}</strong></div>
+          <div class="journey-stat"><small>Started</small><strong>{{ active_journey.start_time|date:'H:i' }}</strong></div>
+        </div>
+        <div class="btn-row"><a class="btn btn-primary" href="{% url 'journeys:journey-detail' active_journey.pk %}">Open live journey</a></div>
+      </section>
     {% else %}
-      <p>Unknown role. Contact administrator.</p>
+      <section class="surface surface-pad home-start" aria-labelledby="start-trip-heading">
+        <h2 id="start-trip-heading">Your next stop, in view.</h2>
+        <p>Scan the QR inside your matatu, choose where you’re getting off, and follow the ride.</p>
+        <a class="btn btn-primary" href="{% url 'journeys:scan-qr' %}" data-vibrate>Scan a matatu QR code <span aria-hidden="true">→</span></a>
+      </section>
     {% endif %}
-  </div>
+
+    <div class="section-heading"><h2>Recent destinations</h2><a href="{% url 'journeys:history' %}">All trips</a></div>
+    {% if recent_journeys %}
+      <div class="journey-links">
+        {% for journey in recent_journeys %}
+          <a class="journey-link surface" href="{% url 'journeys:history' %}">
+            <span><strong>{{ journey.destination_stage.name }}</strong><small>{{ journey.trip.route.name }} · {{ journey.end_time|date:'M j' }}</small></span>
+            <span aria-hidden="true">↗</span>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="surface empty-state"><h2>No saved destinations yet</h2><p>Your completed matatu journeys will appear here for a quick reminder.</p></div>
+    {% endif %}
+  {% elif user.role == 'CONDUCTOR' %}
+    <section class="surface surface-pad"><h2>Keep your trip moving.</h2><p>Check passenger counts and upcoming alighting stages.</p><a class="btn btn-primary" href="{% url 'conductor:dashboard' %}">Open crew dashboard</a></section>
+  {% elif user.role == 'ADMIN' %}
+    <section class="surface surface-pad"><h2>Operations at a glance.</h2><p>Manage matatus, routes, stages, and active trips.</p><a class="btn btn-primary" href="{% url 'management:dashboard' %}">Open management</a></section>
+  {% endif %}
+</section>
 {% endblock %}

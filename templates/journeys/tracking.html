@@ -1,429 +1,57 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}{{ journey.destination_stage.name }} — Journey Tracking{% endblock %}
-{% block extra_head %}
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script defer src="https://unpkg.com/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.js"></script>
-  <style>
-    .app-user .main:has(.journey-page) { padding-top: 1rem; }
-    .journey-page { width: 100%; max-width: 1180px; margin: 0 auto; color: #17251c; }
-    .journey-header {
-      padding: 16px;
-      margin-bottom: 14px;
-      background: #fff;
-      border: 0;
-      border-radius: 14px;
-      display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
-    }
-    .journey-header h1 { margin: 4px 0 0; font-size: 1.1rem; }
-    .route-meta { margin: 0; color: #607565; font-size: .9rem; }
-    
-    #map-container { 
-      position: relative;
-      width: 100%;
-      height: min(58vh, 620px);
-      min-height: 360px;
-      margin-bottom: 16px;
-      overflow: hidden;
-      border: 1px solid #d6e2d8;
-      border-radius: 16px;
-      background: #e8eee9;
-      box-shadow: 0 8px 24px rgba(23,37,28,0.12);
-    }
-    #map { width: 100%; height: 100%; }
-    
-    .metrics-overlay {
-      position: relative;
-      padding: 18px;
-      margin-bottom: 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 16px rgba(23,37,28,0.07);
-    }
-    .metrics-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .metric-card { background: #fff; border: 1px solid #d6e2d8; border-radius: 12px; padding: 12px; }
-    .metric-label { color: #607565; font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-    .metric-label svg { width: 15px; height: 15px; color: #087a45; }
-    .metric-value { font-size: 1rem; font-weight: 700; color: #17251c; }
-    
-    .progress-section { margin-bottom: 12px; }
-    .progress-header { display: flex; justify-content: space-between; margin-bottom: 6px; }
-    .progress-label { color: #607565; font-size: .82rem; font-weight: 700; }
-    .progress-bar { width: 100%; height: 8px; border: 0; border-radius: 99px; background: #d6e7dc; }
-    .progress-bar::-webkit-progress-bar { border-radius: 99px; background: #d6e7dc; }
-    .progress-bar::-webkit-progress-value { border-radius: 99px; background: #087a45; transition: width .35s ease; }
-    .progress-bar::-moz-progress-bar { border-radius: 99px; background: #087a45; }
-    
-    .destination-alert { 
-      background: #eaf3eb; border: 0; border-radius: 12px; padding: 12px; 
-      color: #1c3021; font-size: .88rem; line-height: 1.5; display: flex; gap: 10px;
-    }
-    .destination-alert svg { width: 18px; height: 18px; flex: none; color: #087a45; margin-top: 2px; }
-    
-    .route-stages { margin-top: 16px; }
-    .route-title { font-size: .85rem; font-weight: 700; color: #607565; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
-    .route-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
-    .route-stop { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 6px 10px; border: 1px solid transparent; border-radius: 10px; color: #53665a; background: #fff; }
-    .route-stop-icon { display: grid; width: 18px; height: 18px; place-items: center; flex: none; color: #087a45; }
-    .route-stop-icon svg { width: 17px; height: 17px; }
-    .route-stop-name { flex: 1; font-size: .82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .route-stop.is-complete .route-stop-name { color: #718076; text-decoration: line-through; }
-    .route-stop.is-current { border-color: #a8cdb5; background: #e8f1e9; color: #17251c; }
-    .route-stop.is-next { border-color: #a8cdb5; background: #e8f1e9; color: #17251c; }
-    .route-stop-badge { padding: 2px 8px; border-radius: 99px; background: #f7b51b; color: #302408; font-size: .68rem; font-weight: 700; }
-    
-    .journey-actions { display: flex; justify-content: center; margin-top: 16px; padding-bottom: env(safe-area-inset-bottom); }
-    .btn-end-journey { min-width: 160px; }
-    
-    .gps-status { text-align: center; font-size: .75rem; color: #6b7b70; margin-top: 8px; }
-    .gps-status.is-stale { color: #9a5b00; font-weight: 700; }
-    
-    .map-mode-indicator {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 1100;
-      background: rgba(255,255,255,0.95);
-      border: 1px solid #d6e2d8;
-      border-radius: 20px;
-      padding: 6px 12px;
-      font-size: .7rem;
-      font-weight: 600;
-      color: #087a45;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      transition: color 0.18s ease, background-color 0.18s ease;
-    }
-    .map-mode-indicator.free { background: #fff3e0; border-color: #ffe0b2; color: #ef6c00; }
-    
-    .recenter-btn {
-      position: absolute;
-      bottom: 14px;
-      left: 14px;
-      z-index: 1100;
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      background: #fff;
-      border: none;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      opacity: 0;
-      transform: scale(0.8);
-      transition: opacity 0.2s, transform 0.2s;
-    }
-    .recenter-btn.visible { opacity: 1; transform: scale(1); }
-    .recenter-btn[hidden] { display: none; }
-    .recenter-btn svg { width: 22px; height: 22px; color: #087a45; }
-    
-    @media (max-width: 600px) {
-      .app-user .main:has(.journey-page) { padding: 10px 10px 20px; }
-      .journey-header { padding: 12px; }
-      .journey-header h1 { font-size: 1rem; }
-      #map-container { height: 50vh; min-height: 300px; border-radius: 12px; }
-      .metrics-overlay { padding: 14px; border-radius: 12px; }
-    }
-    @media (max-width: 420px) {
-      .metrics-grid { gap: 8px; }
-      .metric-card { padding: 10px; }
-      .metric-value { font-size: .9rem; }
-    }
-  </style>
-{% endblock %}
+{% block title %}Journey to {{ destination.name }} · Matatu254{% endblock %}
+{% block app_title %}Live journey{% endblock %}
+{% block app_back %}<a class="header-back" href="{% url 'core:dashboard' %}" data-nav-direction="back" aria-label="Back to home">←</a>{% endblock %}
 {% block content %}
-  <div class="journey-page">
-    <header class="journey-header">
-      <div>
-        <p class="route-meta">{{ trip.matatu.registration_number }} · {{ trip.route.name }}</p>
-        <h1>Your journey to {{ destination.name }}</h1>
-      </div>
-      <span id="journey-status" class="badge badge-soft badge-success" style="white-space:nowrap;">{{ journey.get_status_display }}</span>
-    </header>
+<section class="journey-page" id="journey-tracking-card" data-tracking-url="{% url 'journeys:tracking-data' journey.id %}">
+  <header class="journey-header">
+    <div><p class="route-meta">{{ trip.matatu.registration_number }} · {{ trip.route.name }}</p><h1>Your stop: {{ destination.name }}</h1></div>
+    <span id="journey-status" class="trip-status badge-success">{{ journey.get_status_display }}</span>
+  </header>
 
-    <div id="map-container">
-      <div id="map" role="region" aria-label="Interactive route map"></div>
+  <section id="map-container" class="map-card" aria-labelledby="map-title">
+    <svg id="route-map-svg" class="route-map" viewBox="0 0 600 340" role="img" aria-labelledby="map-title map-description">
+      <title id="map-title">Route map from {{ trip.route.name }}</title>
+      <desc id="map-description">Schematic route connecting the stages listed below. The vehicle marker follows its latest GPS position.</desc>
+      <polyline id="route-map-path" class="route-map-path" points=""></polyline>
+      <g id="route-map-stages"></g>
+      <circle id="route-map-vehicle" class="route-map-vehicle is-moving" cx="0" cy="0" r="12" hidden></circle>
+    </svg>
+    <p class="map-caption" id="gps-freshness" aria-live="polite" data-gps-stale="{{ gps_stale|yesno:'true,false' }}" data-gps-age-seconds="{{ gps_age_seconds|default_if_none:'' }}">{% if gps_age_seconds == None %}Waiting for the vehicle’s first GPS update{% elif gps_stale %}Vehicle location delayed{% else %}Vehicle location live{% endif %}</p>
+  </section>
 
-      <div class="map-mode-indicator" id="mode-indicator">FOLLOW</div>
-
-      <button class="recenter-btn" id="recenter-btn" aria-label="Recenter on vehicle" hidden>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-        </svg>
-      </button>
-    </div>
-
-  <div class="metrics-overlay card bg-base-100 border border-base-300" id="metrics-overlay">
+  <section class="surface surface-pad metrics-overlay" aria-labelledby="progress-heading">
     <div class="progress-section">
-      <div class="progress-header">
-        <span class="progress-label">Journey progress</span>
-        <strong id="progress-percent">{{ progress_percent }}%</strong>
-      </div>
-      <progress id="journey-progress" class="progress-bar progress progress-success" value="{{ progress_percent }}" max="100" aria-label="Journey progress"></progress>
+      <div class="progress-header"><span class="progress-label" id="progress-heading">Journey progress</span><strong id="progress-percent">{{ progress_percent }}%</strong></div>
+      <div id="journey-progress" class="progress-track" role="progressbar" aria-label="Journey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progress_percent }}"><span id="journey-progress-fill" class="progress-fill"></span></div>
     </div>
-
     <div class="metrics-grid">
-      <div class="metric-card">
-        <div class="metric-label">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 11h18M7 19v2m10-2v2M7 15h.01M17 15h.01"/></svg>
-          Current stage
-        </div>
-        <div class="metric-value" id="current-stage">{{ current_stage.name|default:"Waiting for GPS" }}</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-          Next stage
-        </div>
-        <div class="metric-value" id="next-stage">{{ next_stage.name|default:"At destination" }}</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 16a8 8 0 1 1 16 0"/><path d="m12 14 4-5M5 19h14"/></svg>
-          Remaining distance
-        </div>
-        <div class="metric-value" id="remaining-distance">{% if remaining %}{% if remaining.distance_m >= 1000 %}{{ remaining.distance_km|floatformat:1 }} km{% else %}{{ remaining.distance_m|floatformat:0 }} m{% endif %}{% elif current_stage.id == destination.id %}0 m{% else %}Waiting for GPS{% endif %}</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M9 2h6m-3 0v3"/></svg>
-          Time remaining
-        </div>
-        <div class="metric-value" id="remaining-eta">{% if remaining %}{{ remaining.duration_minutes|floatformat:0 }} min{% elif current_stage.id == destination.id %}Arrived{% else %}Waiting for GPS{% endif %}</div>
-      </div>
+      <div class="metric-card"><span class="metric-label">Current stage</span><strong class="metric-value" id="current-stage">{{ current_stage.name|default:'Waiting for GPS' }}</strong></div>
+      <div class="metric-card"><span class="metric-label">Next stage</span><strong class="metric-value" id="next-stage">{{ next_stage.name|default:'At destination' }}</strong></div>
+      <div class="metric-card"><span class="metric-label">Remaining distance</span><strong class="metric-value" id="remaining-distance">{% if remaining %}{% if remaining.distance_m >= 1000 %}{{ remaining.distance_km|floatformat:1 }} km{% else %}{{ remaining.distance_m|floatformat:0 }} m{% endif %}{% elif current_stage.id == destination.id %}0 m{% else %}Waiting for GPS{% endif %}</strong></div>
+      <div class="metric-card"><span class="metric-label">Estimated time</span><strong class="metric-value" id="remaining-eta">{% if remaining %}{{ remaining.duration_minutes|floatformat:0 }} min{% elif current_stage.id == destination.id %}Arrived{% else %}Waiting for GPS{% endif %}</strong></div>
     </div>
-
-    <div id="destination-alert" role="status" class="destination-alert">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 2.8 19h18.4L12 3Z"/><path d="M12 9v4m0 3h.01"/></svg>
-      <span id="destination-alert-text" data-notification-id="{{ latest_notification.id|default:0 }}">{% if latest_notification %}{{ latest_notification.message }}{% else %}Alighting at <strong>{{ destination.name }}</strong> · We'll notify you as your stop approaches.{% endif %}</span>
+    <div id="destination-alert" role="status" class="destination-alert{% if journey.status == 'approaching' %} is-approaching{% endif %}">
+      <span aria-hidden="true">◉</span><span id="destination-alert-text" data-notification-id="{{ latest_notification.id|default:0 }}">{% if latest_notification %}{{ latest_notification.message }}{% else %}We’ll alert you when {{ destination.name }} is close.{% endif %}</span>
     </div>
-
     <section class="route-stages" aria-labelledby="route-stages-heading">
-      <h2 class="route-title" id="route-stages-heading">Route stages</h2>
+      <h2 class="route-title" id="route-stages-heading">Stages to your stop</h2>
       <ol class="route-list" id="route-stages">
         {% for stage in route_stages %}
-          <li class="route-stop{% if current_stage and stage.sequence_order < current_stage.sequence_order %} is-complete{% elif current_stage and stage.id == current_stage.id %} is-current{% elif next_stage and stage.id == next_stage.id %} is-next{% endif %}" data-stage-order="{{ stage.sequence_order }}" data-stage-name="{{ stage.name }}">
-            <span class="route-stop-icon" aria-hidden="true">
-              {% if current_stage and stage.sequence_order < current_stage.sequence_order or current_stage and stage.id == current_stage.id %}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg>
-              {% else %}
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-              {% endif %}
-            </span>
+          <li class="route-stop{% if current_stage and stage.sequence_order < current_stage.sequence_order %} is-complete{% elif current_stage and stage.id == current_stage.id %} is-current{% elif next_stage and stage.id == next_stage.id %} is-next{% endif %}" data-stage-order="{{ stage.sequence_order }}" data-stage-name="{{ stage.name }}" data-stage-lat="{{ stage.latitude }}" data-stage-lon="{{ stage.longitude }}">
+            <span class="route-stop-icon{% if current_stage and stage.sequence_order <= current_stage.sequence_order %} is-complete{% endif %}" aria-hidden="true"></span>
             <span class="route-stop-name">{{ stage.name }}</span>
-            <span class="route-stop-badge" {% if not next_stage or stage.id != next_stage.id %}hidden{% endif %}>Next stop</span>
+            <span class="route-stop-badge"{% if not next_stage or stage.id != next_stage.id %} hidden{% endif %}>Next stop</span>
           </li>
-        {% empty %}
-          <li class="route-stop">No route stages are configured.</li>
-        {% endfor %}
+        {% empty %}<li class="route-stop">No route stages are configured.</li>{% endfor %}
       </ol>
     </section>
-
-    <div class="journey-actions">
-      <form id="end-journey-form" method="post" action="{% url 'journeys:end-journey' journey.id %}"{% if journey.status != 'arrived' %} hidden{% endif %}>
-        {% csrf_token %}
-        <button type="submit" class="btn btn-success btn-end-journey">End journey</button>
-      </form>
-    </div>
-
-    <p id="gps-freshness" class="gps-status{% if gps_stale %} is-stale{% endif %}" aria-live="polite" data-gps-stale="{{ gps_stale|yesno:'true,false' }}" data-gps-age-seconds="{{ gps_age_seconds|default_if_none:'' }}">{% if gps_age_seconds == None %}Waiting for the vehicle's first GPS update{% elif gps_stale %}Vehicle location delayed{% else %}Vehicle location live{% endif %}</p>
-    <p id="tracking-refresh-note" class="gps-status"{% if journey.status == 'arrived' or journey.status == 'ended' %} hidden{% endif %}>Live location updates</p>
-  </div>
-  </div>
+    <form id="end-journey-form" class="journey-actions" method="post" action="{% url 'journeys:end-journey' journey.id %}"{% if journey.status != 'arrived' %} hidden{% endif %}>
+      {% csrf_token %}<button type="submit" class="btn btn-primary" data-vibrate>End journey</button>
+    </form>
+    <p id="tracking-refresh-note" class="gps-status"{% if journey.status == 'arrived' or journey.status == 'ended' %} hidden{% endif %}>Live trip updates refresh automatically.</p>
+  </section>
+</section>
 {% endblock %}
-{% block scripts %}
-  <script type="module">
-    import { createLiveTrackingMap } from "{% static 'js/map/index.js' %}";
-    
-    const journeyId = "{{ journey.id }}";
-    const tripId = "{{ trip.id }}";
-    const routeDataUrl = "{% url 'journeys:route-data' journey.id %}";
-    const latestPositionUrl = "{% url 'latest-position' trip.id %}";
-    
-    let liveMap = null;
-    
-    async function initMap() {
-      try {
-        liveMap = await createLiveTrackingMap('map', {
-          journeyId: journeyId,
-          tripId: tripId,
-          routeDataUrl: routeDataUrl,
-          latestPositionUrl: latestPositionUrl,
-          center: [{% if trip.route.stages.first %}{{ trip.route.stages.first.latitude }}, {{ trip.route.stages.first.longitude }}{% else %}-1.2921, 36.8219{% endif %}],
-          zoom: 14,
-          gpsFilterAlpha: 0.3,
-          interpolationDuration: 1000,
-          lowSpeedThreshold: 5,
-          recenterThreshold: 50,
-          autoRecenterDelay: 2000,
-          onETAUpdate: (eta) => updateETAUI(eta),
-          onStageChange: (stage, status) => updateStageUI(stage, status),
-          onModeChange: (mode) => updateModeIndicator(mode),
-          onError: (err) => console.error('Map error:', err)
-        });
-        
-        // Wire recenter button
-        document.getElementById('recenter-btn').addEventListener('click', () => {
-          liveMap?.recenter();
-        });
-        
-        // Show recenter button when in free mode
-        const modeIndicator = document.getElementById('mode-indicator');
-        const recenterBtn = document.getElementById('recenter-btn');
-        function updateModeIndicator(mode) {
-          modeIndicator.textContent = mode.toUpperCase();
-          modeIndicator.classList.toggle('free', mode === 'free');
-          recenterBtn.hidden = mode !== 'free';
-          if (mode === 'free') recenterBtn.classList.add('visible');
-          else recenterBtn.classList.remove('visible');
-        }
-        
-      } catch (err) {
-        console.error('Failed to initialize map:', err);
-        document.getElementById('map-container').innerHTML = `
-          <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:16px;padding:24px;text-align:center;">
-            <svg aria-hidden="true" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#9a5b00" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            <p role="status">Unable to load map. <button class="btn btn-outline" type="button" id="retry-map">Retry</button></p>
-          </div>
-        `;
-        document.getElementById('retry-map')?.addEventListener('click', () => location.reload());
-      }
-    }
-    
-    function updateETAUI(eta) {
-      document.getElementById('remaining-distance').textContent = eta.formattedDistance || 'Waiting for GPS';
-      document.getElementById('remaining-eta').textContent = eta.formattedDuration || 'Waiting for GPS';
-      document.getElementById('progress-percent').textContent = `${Math.round(eta.progress || 0)}%`;
-      document.getElementById('journey-progress').value = Math.round(eta.progress || 0);
-    }
-    
-    function updateStageUI(stage, status) {
-      document.querySelectorAll('.route-stop[data-stage-order]').forEach((stop) => {
-        const order = Number(stop.dataset.stageOrder);
-        const isCurrent = stage && order === stage.sequenceOrder;
-        const isComplete = stage && order < stage.sequenceOrder;
-        const isNext = stage && order === stage.sequenceOrder + 1;
-        stop.classList.toggle('is-complete', isComplete || isCurrent);
-        stop.classList.toggle('is-current', isCurrent);
-        stop.classList.toggle('is-next', isNext);
-        stop.querySelector('.route-stop-badge').hidden = !isNext;
-      });
-      
-      if (stage) {
-        if (status === 'current') {
-          document.getElementById('current-stage').textContent = stage.name;
-        } else if (status === 'complete') {
-          const nextStage = document.querySelector('.route-stop.is-next');
-          if (nextStage) document.getElementById('next-stage').textContent = nextStage.dataset.stageName;
-        }
-      }
-    }
-    
-    // Initialize
-    initMap();
-    
-    // Keep existing polling for status updates (non-map data)
-    const trackingCard = document.getElementById('journey-tracking-card');
-    const trackingUrl = trackingCard.dataset.trackingUrl;
-    
-    function formatMinutes(value) {
-      const minutes = Math.max(0, Math.round(value));
-      return minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60} min` : `${minutes} min`;
-    }
-    
-    function formatGpsAge(seconds) {
-      if (seconds < 60) return `${seconds}s ago`;
-      const minutes = Math.floor(seconds / 60);
-      return minutes < 60 ? `${minutes}m ago` : `${Math.floor(minutes / 60)}h ${minutes % 60}m ago`;
-    }
-    
-    function updateGpsFreshness(isStale, ageSeconds) {
-      const freshness = document.getElementById('gps-freshness');
-      freshness.classList.toggle('is-stale', isStale);
-      if (ageSeconds === null) {
-        freshness.textContent = "Waiting for the vehicle's first GPS update";
-      } else if (isStale) {
-        freshness.textContent = `Vehicle location delayed · last update ${formatGpsAge(ageSeconds)}`;
-      } else {
-        freshness.textContent = `Vehicle location live · updated ${formatGpsAge(ageSeconds)}`;
-      }
-    }
-    
-    updateGpsFreshness(
-      trackingCard.querySelector('#gps-freshness').dataset.gpsStale === 'true',
-      trackingCard.querySelector('#gps-freshness').dataset.gpsAgeSeconds === ''
-        ? null
-        : Number(trackingCard.querySelector('#gps-freshness').dataset.gpsAgeSeconds)
-    );
-    
-    async function refreshJourneyTracking() {
-      try {
-        const response = await fetch(trackingUrl, {
-          headers: { 'Accept': 'application/json' },
-          cache: 'no-store'
-        });
-        if (!response.ok) throw new Error(`Tracking request failed: ${response.status}`);
-        
-        const data = await response.json();
-        updateGpsFreshness(data.gps_stale, data.gps_age_seconds);
-        
-        const status = document.getElementById('journey-status');
-        status.textContent = data.status;
-        status.className = `badge badge-soft ${data.status === 'Arrived' ? 'badge-success' : data.status === 'Ended' ? 'badge-neutral' : data.status === 'Approaching' ? 'badge-warning' : 'badge-info'}`;
-        
-        document.getElementById('current-stage').textContent = data.current_stage || 'Waiting for GPS';
-        document.getElementById('next-stage').textContent = data.next_stage || 'At destination';
-        document.getElementById('progress-percent').textContent = `${data.progress_percent}%`;
-        document.getElementById('journey-progress').value = data.progress_percent;
-        document.getElementById('end-journey-form').hidden = data.status !== 'Arrived';
-        document.getElementById('tracking-refresh-note').hidden = data.status === 'Arrived' || data.status === 'Ended';
-        
-        if (data.latest_notification && data.latest_notification.id > Number(document.getElementById('destination-alert-text').dataset.notificationId)) {
-          const alertText = document.getElementById('destination-alert-text');
-          alertText.textContent = data.latest_notification.message;
-          alertText.dataset.notificationId = data.latest_notification.id;
-        }
-        
-        const currentOrder = data.current_stage_order;
-        const nextOrder = data.next_stage_order;
-        document.querySelectorAll('.route-stop[data-stage-order]').forEach((stop) => {
-          const order = Number(stop.dataset.stageOrder);
-          const isCurrent = currentOrder !== null && order === currentOrder;
-          const isComplete = currentOrder !== null && order < currentOrder;
-          const isNext = nextOrder !== null && order === nextOrder;
-          stop.classList.toggle('is-complete', isComplete || isCurrent);
-          stop.classList.toggle('is-current', isCurrent);
-          stop.classList.toggle('is-next', isNext);
-          stop.querySelector('.route-stop-badge').hidden = !isNext;
-          stop.querySelector('.route-stop-icon').innerHTML = isComplete || isCurrent
-            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg>'
-            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>';
-        });
-        
-        if (data.distance_m === null) {
-          document.getElementById('remaining-distance').textContent = data.at_destination ? '0 m' : 'Waiting for GPS';
-          document.getElementById('remaining-eta').textContent = data.at_destination ? 'Arrived' : 'Waiting for GPS';
-        } else {
-          document.getElementById('remaining-distance').textContent = data.distance_m >= 1000
-            ? `${data.distance_km.toFixed(1)} km`
-            : `${Math.round(data.distance_m)} m`;
-          document.getElementById('remaining-eta').textContent = formatMinutes(data.duration_minutes);
-        }
-      } catch (error) {
-        console.warn('Unable to refresh journey tracking', error);
-        const freshness = document.getElementById('gps-freshness');
-        freshness.textContent = 'Tracking connection unavailable · showing last received location';
-        freshness.classList.add('is-stale');
-      }
-    }
-    
-    refreshJourneyTracking();
-    window.setInterval(refreshJourneyTracking, 5000);
-    
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
-      liveMap?.destroy();
-    });
-  </script>
-{% endblock %}
+{% block scripts %}<script defer src="{% static 'js/journey-live.js' %}?v=20261019"></script>{% endblock %}

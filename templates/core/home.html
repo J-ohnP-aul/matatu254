@@ -1,82 +1,74 @@
 {% extends 'base.html' %}
-{% block title %}Welcome | Matatu254{% endblock %}
-
+{% load static %}
+{% block title %}Matatu254 · Know when your stop is near{% endblock %}
+{% block app_title %}Matatu journeys{% endblock %}
 {% block content %}
-  <div class="ticket-page">
-    <section class="ticket-object" aria-label="Matatu254 route ticket">
-      <div class="ticket-layout{% if not user.is_authenticated %} ticket-layout-public{% endif %}">
+{% if user.is_authenticated %}
+  <section class="ticket-page">
+    <div class="ticket-object">
+      <div class="ticket-layout">
         <div>
           <h1>Every stop.<br>In view.</h1>
-          <p class="ticket-intro">Live route progress and timely stop notifications for every leg of your matatu journey.</p>
-          {% if not user.is_authenticated %}
-            <div class="page-actions">
-              <a class="btn btn-primary" href="{% url 'accounts:register' %}">Create passenger account</a>
-              <button type="button" id="pwa-install-btn" class="btn btn-primary pwa-install-btn" hidden>Install App</button>
-              <a href="{% url 'accounts:login' %}">Already have an account? Sign in</a>
-            </div>
-          {% endif %}
+          <p class="ticket-intro">Follow your route and get a heads-up as your stage gets close.</p>
         </div>
-        {% if user.is_authenticated %}
-        <aside class="ticket-side" aria-label="Available journey actions">
-        <h2 class="ticket-side-title">Journey actions</h2>
-        {% if user.role == 'PASSANGER' %}
-          <a href="{% if active_journey %}{% url 'journeys:journey-detail' active_journey.id %}{% else %}{% url 'journeys:scan-qr' %}{% endif %}">
-            <span><strong>{% if active_journey %}Continue journey{% else %}Scan a matatu QR{% endif %}</strong><small>{% if active_journey %}To {{ active_journey.destination_stage.name }}{% else %}Choose your destination{% endif %}</small></span><span aria-hidden="true">→</span>
-          </a>
-          <a href="{% url 'notifications:list' %}">
-            <span><strong>Journey notifications</strong><small>Stage updates and arrival alerts</small></span><span aria-hidden="true">→</span>
-          </a>
-          <a href="{% url 'journeys:history' %}">
-            <span><strong>Journey history</strong><small>Your completed rides</small></span><span aria-hidden="true">→</span>
-          </a>
-        {% elif user.role == 'CONDUCTOR' %}
-          <a href="{% url 'conductor:dashboard' %}">
-            <span><strong>Trip dashboard</strong><small>Passengers and upcoming stops</small></span><span aria-hidden="true">→</span>
-          </a>
-          <a href="{% url 'conductor:notifications' %}">
-            <span><strong>Notifications</strong><small>Requests and trip alerts</small></span><span aria-hidden="true">→</span>
-          </a>
-        {% elif user.role == 'ADMIN' %}
-          <a href="{% url 'management:dashboard' %}">
-            <span><strong>Management overview</strong><small>Fleet, routes, and trips</small></span><span aria-hidden="true">→</span>
-          </a>
-          <a href="{% url 'fleet:index' %}">
-            <span><strong>Fleet QR tools</strong><small>Generate and manage codes</small></span><span aria-hidden="true">→</span>
-          </a>
-        {% endif %}
+        <aside class="ticket-side" aria-label="Journey actions">
+          {% if user.role == 'PASSANGER' %}
+            {% if active_journey %}
+              <a href="{% url 'journeys:journey-detail' active_journey.pk %}"><span><strong>Continue your journey</strong><small>To {{ active_journey.destination_stage.name }}</small></span><span aria-hidden="true">→</span></a>
+            {% else %}
+              <a href="{% url 'journeys:scan-qr' %}"><span><strong>Scan a matatu QR</strong><small>Choose your destination</small></span><span aria-hidden="true">→</span></a>
+            {% endif %}
+            <a href="{% url 'journeys:history' %}"><span><strong>Recent trips</strong><small>Review your completed rides</small></span><span aria-hidden="true">→</span></a>
+          {% elif user.role == 'CONDUCTOR' %}
+            <a href="{% url 'conductor:dashboard' %}"><span><strong>Open crew dashboard</strong><small>Passenger counts and next stops</small></span><span aria-hidden="true">→</span></a>
+          {% elif user.role == 'ADMIN' %}
+            <a href="{% url 'management:dashboard' %}"><span><strong>Open operations</strong><small>Vehicles, routes, and trips</small></span><span aria-hidden="true">→</span></a>
+          {% endif %}
         </aside>
-        {% endif %}
       </div>
-      <div class="ticket-rule"></div>
-      <div class="ticket-foot">
-        <span>MATATU254 · SCAN · SELECT · RIDE</span><span>Built around your route and destination</span>
+      <div class="ticket-foot"><span>SCAN · CHOOSE · RIDE</span><span>Made for Nairobi matatu journeys</span></div>
+    </div>
+  </section>
+{% else %}
+  <section class="landing-hero page-shell">
+    <div class="landing-copy">
+      <h1>Your stop is never a guess.</h1>
+      <p>Scan the matatu, choose your stage, and know when it’s getting close.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="{% url 'accounts:register' %}">Create your account</a>
+        <a class="btn btn-secondary" href="{% url 'accounts:login' %}">Sign in</a>
+        <button type="button" class="btn btn-secondary" data-install-app hidden>Install app</button>
       </div>
+    </div>
+
+    <section class="route-demo" data-ui aria-labelledby="route-demo-title">
+      <header><div><h2 id="route-demo-title">CBD to Kawangware</h2><p>Preview your ride before you get on.</p></div><span class="badge badge-success">Route preview</span></header>
+      <div class="route-demo-track" aria-label="Route stages">
+        <span class="demo-stop is-past">CBD</span><span class="route-line"></span>
+        <span class="demo-stop is-past">Yaya</span><span class="route-line"></span>
+        <span class="demo-stop is-current" id="demo-current-stage">Adams</span><span class="route-line"></span>
+        <span class="demo-stop" id="demo-destination">Kawangware</span>
+      </div>
+      <fieldset class="route-demo-options">
+        <legend>Choose your stage</legend>
+        <label><input type="radio" name="demo-destination" value="Adams" checked><span>Adams Arcade</span></label>
+        <label><input type="radio" name="demo-destination" value="Kawangware"><span>Kawangware</span></label>
+      </fieldset>
+      <div class="route-demo-fare"><span>Example fare</span><strong>KES 60</strong><small>Sample only · confirm with your conductor</small></div>
     </section>
-  </div>
-  {% if not user.is_authenticated %}
-    <section class="page-shell home-how" aria-labelledby="home-how-heading">
-      <header>
-        <p class="home-kicker">A clearer matatu journey</p>
-        <h2 id="home-how-heading">From the first scan to your stop.</h2>
-        <p>Choose your destination before the ride gets underway, then keep your route and stop progress in view.</p>
-      </header>
-      <ol class="home-steps">
-        <li>
-          <span class="home-step-number">01</span>
-          <h3>Scan the matatu code</h3>
-          <p>Identify the vehicle and its route with the QR code inside the matatu.</p>
-        </li>
-        <li>
-          <span class="home-step-number">02</span>
-          <h3>Choose your stop</h3>
-          <p>Select the stage where you plan to get off from the route’s stop list.</p>
-        </li>
-        <li>
-          <span class="home-step-number">03</span>
-          <h3>Follow your journey</h3>
-          <p>See trip progress and receive an alert as your selected stop approaches.</p>
-        </li>
-      </ol>
-    </section>
-  {% endif %}
+  </section>
+
+  <section class="home-how page-shell" aria-labelledby="how-title">
+    <header><h2 id="how-title">From the first scan to your stop.</h2><p>One clear sequence for the ride ahead.</p></header>
+    <ol class="home-steps">
+      <li><h3>Scan the vehicle code</h3><p>Use your camera or type the matatu code inside the vehicle.</p></li>
+      <li><h3>Pick where you’re getting off</h3><p>Choose a stage from the active route before the trip starts.</p></li>
+      <li><h3>Follow your journey</h3><p>Watch stage progress and get an alert as your stop approaches.</p></li>
+    </ol>
+    <p class="landing-final"><a href="{% url 'accounts:register' %}">Start with your next ride <span aria-hidden="true">→</span></a></p>
+  </section>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+{% if not user.is_authenticated %}<script defer src="{% static 'js/landing-demo.js' %}?v=20261019"></script>{% endif %}
 {% endblock %}

@@ -19,6 +19,7 @@
   <a class="skip-link" href="#main-content">Skip to content</a>
   <header class="site-header">
     <div class="site-header-inner">
+      {% block app_back %}{% endblock %}
       <a class="app-brand" href="{% if user.is_authenticated and user.role == 'CONDUCTOR' %}{% url 'conductor:dashboard' %}{% elif user.is_authenticated and user.role == 'ADMIN' %}{% url 'management:dashboard' %}{% elif user.is_authenticated %}{% url 'core:dashboard' %}{% else %}{% url 'core:home' %}{% endif %}" aria-label="Matatu254 home">
         <img src="{% static 'images/pwa-icon-192.png' %}" alt="" width="32" height="32">
         <span>Matatu254</span>

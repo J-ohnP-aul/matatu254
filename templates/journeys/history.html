@@ -1,22 +1,22 @@
 {% extends 'base.html' %}
-{% block title %}Journey History{% endblock %}
+{% block title %}Your trips · Matatu254{% endblock %}
+{% block app_title %}Trips{% endblock %}
+{% block app_back %}<a class="header-back" href="{% url 'core:dashboard' %}" data-nav-direction="back" aria-label="Back to home">←</a>{% endblock %}
 {% block content %}
-  <section class="page-shell">
-  <header class="page-heading"><div><h1>Journey history</h1></div><a class="btn btn-primary" href="{% url 'journeys:scan-qr' %}">Start a journey</a></header>
-  
+<section class="page-shell history-screen">
+  <header class="page-heading"><div><h1>Your trips</h1><p>Completed journeys and the stages you chose.</p></div><a class="btn btn-primary" href="{% url 'journeys:scan-qr' %}">Start a journey</a></header>
   {% if journeys %}
     <ul class="surface surface-pad history-list">
-      {% for j in journeys %}
+      {% for journey in journeys %}
         <li class="history-row">
-          <div><strong>{{ j.trip.matatu.registration_number }}</strong><span class="muted"> · {{ j.trip.route.name }}</span></div>
-          <p>Destination: <strong>{{ j.destination_stage.name }}</strong></p>
-          <small>Started {{ j.start_time|date:"M d, H:i" }} · Ended {{ j.end_time|date:"M d, H:i" }} · {{ j.end_time|timeuntil:j.start_time }}</small>
+          <div class="history-route"><strong>{{ journey.trip.route.name }}</strong><span class="badge">{{ journey.trip.matatu.registration_number }}</span></div>
+          <p><span class="muted">Alighted at</span> <strong>{{ journey.destination_stage.name }}</strong></p>
+          <small>{% if journey.start_time %}{{ journey.start_time|date:'M j, Y · H:i' }}{% endif %}{% if journey.end_time %} · Finished {{ journey.end_time|date:'H:i' }}{% endif %}</small>
         </li>
       {% endfor %}
     </ul>
   {% else %}
-    <div class="surface empty-state"><p>No completed journeys yet.</p><a class="btn btn-primary" href="{% url 'journeys:scan-qr' %}">Scan a matatu QR</a></div>
+    <div class="surface empty-state"><h2>No completed trips yet</h2><p>Your route and destination will be saved here after your first Matatu254 journey.</p><a class="btn btn-primary" href="{% url 'journeys:scan-qr' %}">Scan a matatu QR</a></div>
   {% endif %}
-  
-  </section>
+</section>
 {% endblock %}

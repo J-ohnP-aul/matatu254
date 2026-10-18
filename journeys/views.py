@@ -139,6 +139,8 @@ def journey_tracking_data(request, journey_id):
         "duration_minutes": remaining.duration_minutes if remaining else None,
         "gps_stale": journey.trip.is_stale,
         "gps_age_seconds": journey.trip.gps_age_seconds,
+        "vehicle_latitude": float(journey.trip.current_latitude) if journey.trip.current_latitude is not None else None,
+        "vehicle_longitude": float(journey.trip.current_longitude) if journey.trip.current_longitude is not None else None,
         "last_ping_at": journey.trip.last_ping_at.isoformat() if journey.trip.last_ping_at else None,
         "latest_notification": {
             "id": latest_notification.pk,

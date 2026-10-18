@@ -1,113 +1,30 @@
 {% extends 'base.html' %}
-{% block title %}Scan QR Code{% endblock %}
+{% load static %}
+{% block title %}Scan a matatu · Matatu254{% endblock %}
+{% block app_title %}Scan a matatu{% endblock %}
 {% block content %}
-  <section class="page-shell">
-  <header class="page-heading"><div><h1>Scan the vehicle code.</h1><p>Point your camera at the QR code inside the matatu.</p></div></header>
-  <div class="surface surface-pad scan-panel">
-  <video id="scanner" class="scanner-video" playsinline muted hidden aria-label="Matatu QR code camera view"></video>
-  <button id="start-scan" type="button" class="btn btn-primary">Start camera</button>
-  <p id="scan-status" role="status" aria-live="polite"></p>
-
-  <div id="manual-entry" class="manual-entry" style="display:none;">
-    <h3>Enter code manually</h3>
-    <p>Camera not available. Enter the QR code value manually:</p>
-    <label for="manual-code">QR code value</label>
-    <input type="text" id="manual-code" class="field-input" placeholder="e.g. MAT-0001" autocomplete="off">
-    <br><br>
-    <button type="button" id="submit-manual" class="btn btn-primary">Use this code</button>
+<section class="page-shell scan-screen">
+  <header class="page-heading"><div><h1>Scan your matatu</h1><p>Scan the QR code inside the vehicle to see its active route.</p></div></header>
+  <div class="scan-layout">
+    <section class="surface surface-pad scan-panel" aria-label="QR code scanner">
+      <div class="scanner-frame">
+        <video id="scanner" class="scanner-video" playsinline muted hidden aria-label="Camera view for scanning the matatu QR code"></video>
+        <div class="scan-viewfinder" aria-hidden="true"></div>
+      </div>
+      <p id="scan-status" class="scan-status" role="status" aria-live="polite">Camera access is used only to read the vehicle QR code.</p>
+      <button id="start-scan" type="button" class="btn btn-primary" data-vibrate>Open camera</button>
+      <form id="scan-form" method="post" action="{% url 'journeys:scan-result' %}" hidden>
+        {% csrf_token %}<input type="hidden" name="code_value" id="code-value">
+      </form>
+    </section>
+    <section id="manual-entry" class="surface manual-entry" aria-labelledby="manual-entry-title">
+      <h2 id="manual-entry-title">Enter the code instead</h2>
+      <p>Type the code printed below the QR, for example <strong>MAT-0001</strong>.</p>
+      <label for="manual-code">Matatu code</label>
+      <input type="text" id="manual-code" class="field-input" placeholder="MAT-0001" autocomplete="off" autocapitalize="characters">
+      <button id="submit-manual" type="button" class="btn btn-secondary">Continue with code</button>
+    </section>
   </div>
-
-  <form id="scan-form" method="post" action="{% url 'journeys:scan-result' %}" style="display:none;">
-    {% csrf_token %}
-    <input type="hidden" name="code_value" id="code-value">
-  </form>
-
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
-  <script>
-    const video = document.getElementById('scanner');
-    const status = document.getElementById('scan-status');
-    const form = document.getElementById('scan-form');
-    const codeInput = document.getElementById('code-value');
-    const manualEntry = document.getElementById('manual-entry');
-    const manualCode = document.getElementById('manual-code');
-    const submitManual = document.getElementById('submit-manual');
-    const startBtn = document.getElementById('start-scan');
-    let codeReader;
-
-    function isSecureContext() {
-      return window.isSecureContext || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    }
-
-    function showManualEntry(message) {
-      manualEntry.style.display = 'grid';
-      startBtn.style.display = 'none';
-      video.hidden = true;
-      status.textContent = message;
-      status.style.color = 'orange';
-      manualCode.focus();
-    }
-
-    submitManual.addEventListener('click', () => {
-      const value = manualCode.value.trim();
-      if (value) {
-        codeInput.value = value;
-        form.submit();
-      }
-    });
-
-    manualCode.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') submitManual.click();
-    });
-
-    document.getElementById('start-scan').addEventListener('click', async () => {
-      if (!isSecureContext()) {
-        showManualEntry('Camera requires HTTPS. Please use manual entry or access via HTTPS/localhost.');
-        return;
-      }
-
-      if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-        showManualEntry('Camera not supported in this browser. Please use manual entry.');
-        return;
-      }
-
-      try {
-        codeReader = new ZXing.BrowserMultiFormatReader();
-        status.textContent = "Scanning...";
-        status.style.color = "blue";
-        video.hidden = false;
-
-        const devices = await codeReader.listVideoInputDevices();
-        if (!devices.length) {
-          showManualEntry('No camera found. Please use manual entry.');
-          return;
-        }
-
-        const backCam = devices.find(d => d.label.toLowerCase().includes('back')) || devices[0];
-
-        codeReader.decodeFromVideoDevice(backCam.deviceId, video, (result, err) => {
-          if (result) {
-            status.textContent = "QR code found: " + result.getText();
-            status.style.color = "green";
-            codeReader.reset();
-            codeInput.value = result.getText();
-            form.submit();
-          }
-          if (err && err.name !== "NotFoundException") {
-            console.warn(err);
-          }
-        });
-      } catch (e) {
-        console.error('Camera error:', e);
-        if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
-          showManualEntry('Camera permission denied. Please allow camera access or use manual entry.');
-        } else if (e.message.includes('enumerateDevices') || e.message.includes('method not supported')) {
-          showManualEntry('Camera not available in this environment. Please use manual entry.');
-        } else {
-          showManualEntry('Camera error: ' + e.message + '. Please use manual entry.');
-        }
-      }
-    });
-  </script>
-  </div>
-  </section>
+</section>
 {% endblock %}
+{% block scripts %}<script defer src="{% static 'js/journey-scan.js' %}?v=20261019"></script>{% endblock %}

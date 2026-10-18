@@ -1,23 +1,34 @@
 {% extends 'base.html' %}
-{% block title %}Select Destination{% endblock %}
+{% load static %}
+{% block title %}Choose your stop · Matatu254{% endblock %}
+{% block app_title %}Choose your stop{% endblock %}
 {% block content %}
-  <section class="page-shell">
-  <header class="page-heading"><div><h1>{{ trip.matatu.registration_number }}</h1><p>{{ trip.route.name }} · Select the stage where you plan to get off.</p></div></header>
-
-  <ol class="surface surface-pad stage-list">
-    {% for stage in stages %}
-      <li class="journey-stage">
-        <span class="stage-number">{{ stage.sequence_order }}</span>
-        <strong>{{ stage.name }}</strong>
-        <form method="post" action="{% url 'journeys:select-destination' trip.id %}">
-          {% csrf_token %}
-          <input type="hidden" name="destination_stage_id" value="{{ stage.id }}">
-          <button type="submit" class="btn btn-primary btn-sm">Choose stop</button>
-        </form>
-      </li>
-    {% empty %}
-      <li>No stages on this route</li>
-    {% endfor %}
-  </ol>
-  </section>
+<section class="page-shell destination-screen">
+  <header class="page-heading"><div><h1>Where are you getting off?</h1><p>{{ trip.route.name }} · {{ trip.matatu.registration_number }}</p></div></header>
+  {% if stages %}
+    <form method="post" action="{% url 'journeys:select-destination' trip.pk %}" class="destination-form">
+      {% csrf_token %}
+      <label class="stage-search" for="stage-search"><span>Find a stage</span><input id="stage-search" type="search" placeholder="Search the route" autocomplete="off"></label>
+      <section class="route-stage-group" aria-labelledby="route-stage-heading">
+        <h2 id="route-stage-heading">{{ trip.route.name }}</h2>
+        <ol class="surface surface-pad stage-list route-stage-list">
+          {% for stage in stages %}
+            <li class="journey-stage" data-stage-name="{{ stage.name|lower }}">
+              <span class="stage-number" aria-hidden="true">{{ stage.sequence_order }}</span>
+              <label class="stage-choice">
+                <input type="radio" name="destination_stage_id" value="{{ stage.id }}"{% if forloop.first %} checked{% endif %}>
+                <span><strong>{{ stage.name }}</strong><small>Stage {{ stage.sequence_order }}</small></span>
+              </label>
+              <span class="stage-map-marker" aria-hidden="true">●</span>
+            </li>
+          {% endfor %}
+        </ol>
+      </section>
+      <div class="stage-confirm"><p id="selected-stage-copy" role="status" aria-live="polite">Selected: {{ stages.0.name }}</p><button type="submit" class="btn btn-primary" data-vibrate>Confirm destination</button></div>
+    </form>
+  {% else %}
+    <div class="surface empty-state"><h2>This route has no stages yet</h2><p>Ask the matatu crew to confirm your stop before you travel.</p><a class="btn btn-secondary" href="{% url 'journeys:scan-qr' %}">Scan another vehicle</a></div>
+  {% endif %}
+</section>
 {% endblock %}
+{% block scripts %}<script defer src="{% static 'js/destination-select.js' %}?v=20261019"></script>{% endblock %}

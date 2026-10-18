@@ -10,29 +10,29 @@
       <div style="overflow-x: auto;">
         <table class="table">
           <thead>
-            <tr style="background: #f5f5f5;">
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Registration</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Operator</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Conductor</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">QR Status</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Trips</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Created</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Actions</th>
+            <tr>
+              <th>Registration</th>
+              <th>Operator</th>
+              <th>Conductor</th>
+              <th>QR Status</th>
+              <th>Trips</th>
+              <th>Created</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {% for m in matatus %}
-              <tr style="border-bottom: 1px solid #eee;">
+              <tr>
                 <td style="padding: 0.75rem; font-weight: bold;">{{ m.registration_number }}</td>
-                <td style="padding: 0.75rem;">{{ m.operator }}</td>
-                <td style="padding: 0.75rem;">
+                <td>{{ m.operator }}</td>
+                <td>
                   {% if m.conductor %}
                     {{ m.conductor.username }}
                   {% else %}
                     —
                   {% endif %}
                 </td>
-                <td style="padding: 0.75rem;">
+                <td>
                   {% if m.qr_code %}
                     <span style="
                       padding: 0.2rem 0.5rem;
@@ -44,14 +44,14 @@
                       {{ m.qr_code.get_status_display }}
                     </span>
                   {% else %}
-                    <span style="color: #999;">No QR</span>
+                    <span class="muted">No QR</span>
                   {% endif %}
                 </td>
-                <td style="padding: 0.75rem;">{{ m.trip_count }}</td>
-                <td style="padding: 0.75rem;">{{ m.created_at|date:"M d, Y" }}</td>
-                <td style="padding: 0.75rem;">
-                  <a href="{% url 'management:matatu-edit' m.pk %}" style="margin-right: 0.5rem;">Edit</a>
-                  <a href="{% url 'management:matatu-qr' m.pk %}">QR Code</a>
+                <td>{{ m.trip_count }}</td>
+                <td>{{ m.created_at|date:"M d, Y" }}</td>
+                <td>
+                  <a class="table-action" href="{% url 'management:matatu-edit' m.pk %}">Edit</a>
+                  <a class="table-action" href="{% url 'management:matatu-qr' m.pk %}">QR Code</a>
                 </td>
               </tr>
             {% endfor %}

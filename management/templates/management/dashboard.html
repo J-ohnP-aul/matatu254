@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Admin Dashboard · Matatu254{% endblock %}
 {% block extra_head %}
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style>
     .app-user .main:has(.admin-dashboard) { max-width: none; padding: 0; margin: 0; }
@@ -12,6 +10,7 @@
     body:has(.admin-dashboard) > footer { display: none; }
     .stat-card { min-width: 0; }
     .trip-actions { display: flex; justify-content: flex-end; gap: .25rem; white-space: nowrap; }
+    .trip-actions form { margin: 0; }
     @media (max-width: 640px) {
       .admin-content { padding: 1.25rem .875rem; }
       .trip-table { min-width: 620px; }
@@ -100,11 +99,23 @@
                       <td>
                         <div class="trip-actions">
                           {% if trip.status == 'created' %}
-                            <a class="btn btn-ghost btn-xs" href="{% url 'management:trip-start' trip.pk %}" aria-label="Start trip for {{ trip.matatu.registration_number }}">Start</a>
-                            <a class="btn btn-ghost btn-xs text-error" href="{% url 'management:trip-cancel' trip.pk %}" aria-label="Cancel trip for {{ trip.matatu.registration_number }}">Cancel</a>
+                            <form method="post" action="{% url 'management:trip-start' trip.pk %}">
+                              {% csrf_token %}
+                              <button class="btn btn-ghost btn-xs" type="submit" aria-label="Start trip for {{ trip.matatu.registration_number }}">Start</button>
+                            </form>
+                            <form method="post" action="{% url 'management:trip-cancel' trip.pk %}" onsubmit="return confirm('Cancel this trip?')">
+                              {% csrf_token %}
+                              <button class="btn btn-ghost btn-xs text-error" type="submit" aria-label="Cancel trip for {{ trip.matatu.registration_number }}">Cancel</button>
+                            </form>
                           {% elif trip.status == 'active' %}
-                            <a class="btn btn-ghost btn-xs" href="{% url 'management:trip-end' trip.pk %}" aria-label="End trip for {{ trip.matatu.registration_number }}">End</a>
-                            <a class="btn btn-ghost btn-xs text-error" href="{% url 'management:trip-cancel' trip.pk %}" aria-label="Cancel trip for {{ trip.matatu.registration_number }}">Cancel</a>
+                            <form method="post" action="{% url 'management:trip-end' trip.pk %}" onsubmit="return confirm('End this trip and close its passenger journeys?')">
+                              {% csrf_token %}
+                              <button class="btn btn-ghost btn-xs" type="submit" aria-label="End trip for {{ trip.matatu.registration_number }}">End</button>
+                            </form>
+                            <form method="post" action="{% url 'management:trip-cancel' trip.pk %}" onsubmit="return confirm('Cancel this trip?')">
+                              {% csrf_token %}
+                              <button class="btn btn-ghost btn-xs text-error" type="submit" aria-label="Cancel trip for {{ trip.matatu.registration_number }}">Cancel</button>
+                            </form>
                           {% else %}<span class="px-2 text-base-content/40" aria-label="No actions available">—</span>{% endif %}
                         </div>
                       </td>

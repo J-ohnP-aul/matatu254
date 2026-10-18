@@ -35,6 +35,19 @@ class RegistrationTests(TestCase):
 		self.assertIsNone(user.phone_number)
 		self.assertTrue(user.check_password("Secure-Travel-92!"))
 
+	def test_logout_logs_user_out(self):
+		user = User.objects.create_user(
+			username="loggedoutuser",
+			email="logout@example.com",
+			password="Secure-Travel-92!",
+		)
+		self.client.force_login(user)
+
+		response = self.client.get(reverse("accounts:logout"), follow=True)
+
+		self.assertRedirects(response, reverse("core:home"))
+		self.assertFalse(response.context["user"].is_authenticated)
+
 	def test_registration_rejects_password_mismatch(self):
 		response = self.client.post(
 			reverse("accounts:register"),

@@ -10,21 +10,21 @@
       <div style="overflow-x: auto;">
         <table class="table">
           <thead>
-            <tr style="background: #f5f5f5;">
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Matatu</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Route</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Status</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Started</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Ended</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Actions</th>
+            <tr>
+              <th>Matatu</th>
+              <th>Route</th>
+              <th>Status</th>
+              <th>Started</th>
+              <th>Ended</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {% for t in trips %}
-              <tr style="border-bottom: 1px solid #eee;">
-                <td style="padding: 0.75rem;">{{ t.matatu.registration_number }}</td>
-                <td style="padding: 0.75rem;">{{ t.route.name }}</td>
-                <td style="padding: 0.75rem;">
+              <tr>
+                <td>{{ t.matatu.registration_number }}</td>
+                <td>{{ t.route.name }}</td>
+                <td>
                   <span style="
                     text-transform: capitalize;
                     padding: 0.2rem 0.5rem;
@@ -44,18 +44,32 @@
                     {{ t.get_status_display }}
                   </span>
                 </td>
-                <td style="padding: 0.75rem;">{{ t.start_time|date:"M d, H:i" }}</td>
-                <td style="padding: 0.75rem;">{{ t.end_time|date:"M d, H:i"|default:'—' }}</td>
-                <td style="padding: 0.75rem;">
+                <td>{{ t.start_time|date:"M d, H:i" }}</td>
+                <td>{{ t.end_time|date:"M d, H:i"|default:'—' }}</td>
+                <td>
+                  <div class="table-actions">
                   {% if t.status == 'created' %}
-                    <a href="{% url 'management:trip-start' t.pk %}" style="margin-right: 0.5rem; padding: 0.25rem 0.5rem; background: #4caf50; color: white; text-decoration: none; border-radius: 3px; font-size: 0.8rem;">Start</a>
-                    <a href="{% url 'management:trip-cancel' t.pk %}" style="padding: 0.25rem 0.5rem; background: #f44336; color: white; text-decoration: none; border-radius: 3px; font-size: 0.8rem;">Cancel</a>
+                    <form method="post" action="{% url 'management:trip-start' t.pk %}">
+                      {% csrf_token %}
+                      <button class="btn btn-success btn-sm table-action" type="submit">Start</button>
+                    </form>
+                    <form method="post" action="{% url 'management:trip-cancel' t.pk %}" onsubmit="return confirm('Cancel this trip?')">
+                      {% csrf_token %}
+                      <button class="btn btn-error btn-sm table-action" type="submit">Cancel</button>
+                    </form>
                   {% elif t.status == 'active' %}
-                    <a href="{% url 'management:trip-end' t.pk %}" style="margin-right: 0.5rem; padding: 0.25rem 0.5rem; background: #2196f3; color: white; text-decoration: none; border-radius: 3px; font-size: 0.8rem;">End</a>
-                    <a href="{% url 'management:trip-cancel' t.pk %}" style="padding: 0.25rem 0.5rem; background: #f44336; color: white; text-decoration: none; border-radius: 3px; font-size: 0.8rem;">Cancel</a>
+                    <form method="post" action="{% url 'management:trip-end' t.pk %}" onsubmit="return confirm('End this trip and close its passenger journeys?')">
+                      {% csrf_token %}
+                      <button class="btn btn-primary btn-sm table-action" type="submit">End</button>
+                    </form>
+                    <form method="post" action="{% url 'management:trip-cancel' t.pk %}" onsubmit="return confirm('Cancel this trip?')">
+                      {% csrf_token %}
+                      <button class="btn btn-error btn-sm table-action" type="submit">Cancel</button>
+                    </form>
                   {% else %}
-                    <span style="color: #999;">—</span>
+                    <span class="muted">—</span>
                   {% endif %}
+                  </div>
                 </td>
               </tr>
             {% endfor %}

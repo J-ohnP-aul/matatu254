@@ -3,26 +3,26 @@
 {% block content %}
   <div class="page-shell admin-list">
     <header class="page-heading"><div><h1>System configuration</h1></div>
-      <button class="btn btn-primary" onclick="document.getElementById('add-config-form').style.display='block'">Add configuration</button>
+      <button id="toggle-config-form" class="btn btn-primary" type="button" aria-controls="add-config-form" aria-expanded="false">Add configuration</button>
     </header>
 
     <!-- Add Config Form (hidden by default) -->
-    <div id="add-config-form" class="surface surface-pad config-add" style="display: none; margin-bottom: 1rem;">
+    <div id="add-config-form" class="surface surface-pad config-add" hidden>
       <h3>Add New Configuration</h3>
       <form method="post">
         {% csrf_token %}
-        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
-          <div style="flex: 1;">
-            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Key</label>
-            <input type="text" name="key" required placeholder="e.g., STAGE_ARRIVAL_RADIUS_M" style="width: 100%; padding: 0.5rem;">
+        <div class="config-add-fields">
+          <div class="admin-field">
+            <label for="new-config-key">Key</label>
+            <input id="new-config-key" type="text" name="key" required placeholder="e.g. STAGE_ARRIVAL_RADIUS_M" autocomplete="off">
           </div>
-          <div style="flex: 2;">
-            <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Value</label>
-            <input type="text" name="value" required placeholder="e.g., 100" style="width: 100%; padding: 0.5rem;">
+          <div class="admin-field">
+            <label for="new-config-value">Value</label>
+            <input id="new-config-value" type="text" name="value" required placeholder="e.g. 100" autocomplete="off">
           </div>
         </div>
         <button type="submit" class="btn btn-primary">Save configuration</button>
-        <button type="button" class="btn btn-outline" onclick="document.getElementById('add-config-form').style.display='none'">Cancel</button>
+        <button id="cancel-config-form" type="button" class="btn btn-outline">Cancel</button>
       </form>
     </div>
 
@@ -30,22 +30,22 @@
       <div style="overflow-x: auto;">
         <table class="table">
           <thead>
-            <tr style="background: #f5f5f5;">
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Key</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Value</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Description</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Updated</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Actions</th>
+            <tr>
+              <th>Key</th>
+              <th>Value</th>
+              <th>Description</th>
+              <th>Updated</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {% for c in configs %}
-              <tr style="border-bottom: 1px solid #eee;">
+              <tr>
                 <td style="padding: 0.75rem; font-family: monospace; font-weight: bold;">{{ c.key }}</td>
                 <td style="padding: 0.75rem; font-family: monospace;">{{ c.value }}</td>
                 <td style="padding: 0.75rem; color: #666;">{{ c.description|default:'—' }}</td>
-                <td style="padding: 0.75rem;">{{ c.updated_at|date:"M d, H:i" }}</td>
-                <td style="padding: 0.75rem;">
+                <td>{{ c.updated_at|date:"M d, H:i" }}</td>
+                <td>
                   <a href="{% url 'management:system-config-edit' c.pk %}">Edit</a>
                 </td>
               </tr>
@@ -70,17 +70,17 @@
             </tr>
           </thead>
           <tbody>
-            <tr style="border-bottom: 1px solid #eee;">
+            <tr>
               <td style="padding: 0.5rem; font-family: monospace;">STAGE_ARRIVAL_RADIUS_M</td>
               <td style="padding: 0.5rem; font-family: monospace;">100</td>
               <td style="padding: 0.5rem;">Meters from stage to count as "arrived" (used in routes_services.py)</td>
             </tr>
-            <tr style="border-bottom: 1px solid #eee;">
+            <tr>
               <td style="padding: 0.5rem; font-family: monospace;">OSRM_BASE_URL</td>
               <td style="padding: 0.5rem; font-family: monospace;">http://127.0.0.1:5000/route/v1/driving</td>
               <td style="padding: 0.5rem;">Local OSRM instance URL for road routing</td>
             </tr>
-            <tr style="border-bottom: 1px solid #eee;">
+            <tr>
               <td style="padding: 0.5rem; font-family: monospace;">GPS_STALE_THRESHOLD_S</td>
               <td style="padding: 0.5rem; font-family: monospace;">60</td>
               <td style="padding: 0.5rem;">Seconds before GPS position considered stale</td>
@@ -95,4 +95,23 @@
       </div>
     </details>
   </div>
+{% endblock %}
+{% block scripts %}
+  <script>
+    const addConfigForm = document.getElementById('add-config-form');
+    const toggleConfigForm = document.getElementById('toggle-config-form');
+    const cancelConfigForm = document.getElementById('cancel-config-form');
+
+    toggleConfigForm?.addEventListener('click', () => {
+      addConfigForm.hidden = !addConfigForm.hidden;
+      toggleConfigForm.setAttribute('aria-expanded', String(!addConfigForm.hidden));
+      if (!addConfigForm.hidden) document.getElementById('new-config-key')?.focus();
+    });
+
+    cancelConfigForm?.addEventListener('click', () => {
+      addConfigForm.hidden = true;
+      toggleConfigForm.setAttribute('aria-expanded', 'false');
+      toggleConfigForm.focus();
+    });
+  </script>
 {% endblock %}

@@ -5,27 +5,27 @@
     <header class="page-heading"><div><h1>{{ action }} trip</h1></div></header>
     <form method="post">
       {% csrf_token %}
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Matatu</label>
-        <select name="matatu" required style="width: 100%; padding: 0.5rem;">
+      <div class="admin-field">
+        <label for="trip-matatu">Matatu</label>
+        <select id="trip-matatu" name="matatu" required>
           <option value="">— Select Matatu —</option>
           {% for m in matatus %}
             <option value="{{ m.id }}">{{ m.registration_number }} ({{ m.operator }})</option>
           {% endfor %}
         </select>
       </div>
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Route</label>
-        <select name="route" required style="width: 100%; padding: 0.5rem;">
+      <div class="admin-field">
+        <label for="trip-route">Route</label>
+        <select id="trip-route" name="route" required>
           <option value="">— Select Route —</option>
           {% for r in routes %}
             <option value="{{ r.id }}">{{ r.name }}</option>
           {% endfor %}
         </select>
       </div>
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Initial Status</label>
-        <select name="status" style="width: 100%; padding: 0.5rem;">
+      <div class="admin-field">
+        <label for="trip-status">Initial Status</label>
+        <select id="trip-status" name="status">
           {% for value, label in status_choices %}
             <option value="{{ value }}" {% if value == 'created' %}selected{% endif %}>{{ label }}</option>
           {% endfor %}

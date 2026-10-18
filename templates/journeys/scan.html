@@ -4,14 +4,15 @@
   <section class="page-shell">
   <header class="page-heading"><div><h1>Scan the vehicle code.</h1><p>Point your camera at the QR code inside the matatu.</p></div></header>
   <div class="surface surface-pad scan-panel">
-  <video id="scanner" width="100%" style="max-width: 400px; display:none;" aria-label="Matatu QR code camera view"></video>
+  <video id="scanner" class="scanner-video" playsinline muted hidden aria-label="Matatu QR code camera view"></video>
   <button id="start-scan" type="button" class="btn btn-primary">Start camera</button>
   <p id="scan-status" role="status" aria-live="polite"></p>
 
   <div id="manual-entry" class="manual-entry" style="display:none;">
     <h3>Enter code manually</h3>
     <p>Camera not available. Enter the QR code value manually:</p>
-    <input type="text" id="manual-code" class="field-input" placeholder="QR code value" autocomplete="off">
+    <label for="manual-code">QR code value</label>
+    <input type="text" id="manual-code" class="field-input" placeholder="e.g. MAT-0001" autocomplete="off">
     <br><br>
     <button type="button" id="submit-manual" class="btn btn-primary">Use this code</button>
   </div>
@@ -40,7 +41,7 @@
     function showManualEntry(message) {
       manualEntry.style.display = 'grid';
       startBtn.style.display = 'none';
-      video.style.display = 'none';
+      video.hidden = true;
       status.textContent = message;
       status.style.color = 'orange';
       manualCode.focus();
@@ -73,7 +74,7 @@
         codeReader = new ZXing.BrowserMultiFormatReader();
         status.textContent = "Scanning...";
         status.style.color = "blue";
-        video.style.display = 'block';
+        video.hidden = false;
 
         const devices = await codeReader.listVideoInputDevices();
         if (!devices.length) {

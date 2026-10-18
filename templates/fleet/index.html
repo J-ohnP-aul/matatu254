@@ -42,14 +42,14 @@
                       {{ matatu.qr_code.get_status_display }}
                     </span>
                   {% else %}
-                    <span style="color: #999;">—</span>
+                    <span class="muted">—</span>
                   {% endif %}
                 </td>
                 <td style="padding: 0.75rem;">
                   {% if matatu.qr_code %}
-                    <a href="{% url 'management:matatu-qr' matatu.pk %}">Manage QR</a>
+                    <a class="table-action" href="{% url 'management:matatu-qr' matatu.pk %}">Manage QR</a>
                   {% else %}
-                    <a href="{% url 'management:matatu-qr' matatu.pk %}">Create QR</a>
+                    <a class="table-action" href="{% url 'management:matatu-qr' matatu.pk %}">Create QR</a>
                   {% endif %}
                 </td>
               </tr>

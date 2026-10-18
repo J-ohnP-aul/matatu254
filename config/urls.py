@@ -14,11 +14,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from pathlib import Path
+
 from django.contrib import admin
 from django.urls import path, include
+from django.views.static import serve
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('manifest.json', serve, {'document_root': str(BASE_DIR), 'path': 'manifest.json'}),
+    path('sw.js', serve, {'document_root': str(BASE_DIR), 'path': 'sw.js'}),
     path('', include('core.urls')),
     path('accounts/', include('accounts.urls')),
     path('trips/', include('trips.urls')),

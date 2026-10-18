@@ -2,6 +2,9 @@
 {% load static %}
 {% block title %}{{ trip.matatu.registration_number }} — Conductor Dashboard{% endblock %}
 {% block extra_head %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script defer src="https://unpkg.com/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.js"></script>
   <style>
     .app-user .main:has(.conductor-page) { padding-top: 1rem; }
     .conductor-page { width: 100%; max-width: 1180px; margin: 0 auto; color: #17251c; }
@@ -118,7 +121,7 @@
       </header>
 
       <div id="map-container">
-        <div id="map"></div>
+        <div id="map" role="region" aria-label="Interactive route map"></div>
         <div class="map-mode-indicator" id="mode-indicator">FOLLOW</div>
         <button class="recenter-btn" id="recenter-btn" aria-label="Recenter on vehicle" hidden>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -413,10 +416,11 @@
         console.error('Failed to initialize conductor map:', err);
         document.getElementById('map-container').innerHTML = `
           <div style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:16px;padding:24px;text-align:center;">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#9a5b00" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-            <p>Unable to load map. <a href="#" onclick="location.reload()">Retry</a></p>
+            <svg aria-hidden="true" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#9a5b00" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <p role="status">Unable to load map. <button class="btn btn-outline" type="button" id="retry-map">Retry</button></p>
           </div>
         `;
+        document.getElementById('retry-map')?.addEventListener('click', () => location.reload());
       }
     }
 
@@ -460,7 +464,11 @@
     document.getElementById('recenter-btn').addEventListener('click', () => conductorMap?.recenter());
 
     // Initialize map
-    initConductorMap();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initConductorMap, { once: true });
+    } else {
+      initConductorMap();
+    }
 
     // Cleanup
     window.addEventListener('beforeunload', () => conductorMap?.destroy());

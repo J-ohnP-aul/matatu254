@@ -8,13 +8,13 @@
 
     <form method="post">
       {% csrf_token %}
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Key</label>
-        <input type="text" value="{{ config.key }}" readonly style="width: 100%; padding: 0.5rem; background: #f5f5f5;">
+      <div class="admin-field">
+        <label for="config-key">Key</label>
+        <input id="config-key" type="text" value="{{ config.key }}" readonly>
       </div>
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Value</label>
-        <input type="text" name="value" value="{{ config.value }}" required style="width: 100%; padding: 0.5rem;">
+      <div class="admin-field">
+        <label for="config-value">Value</label>
+        <input id="config-value" type="text" name="value" value="{{ config.value }}" required>
       </div>
       <button type="submit" class="btn btn-primary">Save changes</button>
       <a class="btn btn-outline" href="{% url 'management:system-config' %}">Cancel</a>

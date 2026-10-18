@@ -5,17 +5,17 @@
     <header class="page-heading"><div><h1>{{ action }} matatu</h1></div></header>
     <form method="post">
       {% csrf_token %}
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Registration Number</label>
-        <input type="text" name="registration_number" value="{{ matatu.registration_number|default:'' }}" required style="width: 100%; padding: 0.5rem;">
+      <div class="admin-field">
+        <label for="matatu-registration">Registration Number</label>
+        <input id="matatu-registration" type="text" name="registration_number" value="{{ matatu.registration_number|default:'' }}" required autocomplete="off">
       </div>
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Operator</label>
-        <input type="text" name="operator" value="{{ matatu.operator|default:'' }}" required style="width: 100%; padding: 0.5rem;">
+      <div class="admin-field">
+        <label for="matatu-operator">Operator</label>
+        <input id="matatu-operator" type="text" name="operator" value="{{ matatu.operator|default:'' }}" required autocomplete="organization">
       </div>
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Assign Conductor (Owner)</label>
-        <select name="owner" style="width: 100%; padding: 0.5rem;">
+      <div class="admin-field">
+        <label for="matatu-owner">Assign Conductor (Owner)</label>
+        <select id="matatu-owner" name="owner">
           <option value="">— None —</option>
           {% for c in conductors %}
             <option value="{{ c.id }}" {% if matatu and matatu.owner_id == c.id %}selected{% endif %}>

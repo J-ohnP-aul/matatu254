@@ -10,25 +10,25 @@
       <div style="overflow-x: auto;">
         <table class="table">
           <thead>
-            <tr style="background: #f5f5f5;">
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Name</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Description</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Stages</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Trips</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Actions</th>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Stages</th>
+              <th>Trips</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {% for r in routes %}
-              <tr style="border-bottom: 1px solid #eee;">
+              <tr>
                 <td style="padding: 0.75rem; font-weight: bold;">{{ r.name }}</td>
-                <td style="padding: 0.75rem;">{{ r.description|default:'—' }}</td>
-                <td style="padding: 0.75rem;">{{ r.stages_count }}</td>
-                <td style="padding: 0.75rem;">{{ r.trip_count }}</td>
-                <td style="padding: 0.75rem;">
-                  <a href="{% url 'management:route-stages' r.pk %}">Stages</a>
+                <td>{{ r.description|default:'—' }}</td>
+                <td>{{ r.stages_count }}</td>
+                <td>{{ r.trip_count }}</td>
+                <td>
+                  <a class="table-action" href="{% url 'management:route-stages' r.pk %}">Stages</a>
                   <span style="margin: 0 0.5rem;">|</span>
-                  <a href="{% url 'management:route-edit' r.pk %}">Edit</a>
+                  <a class="table-action" href="{% url 'management:route-edit' r.pk %}">Edit</a>
                 </td>
               </tr>
             {% endfor %}

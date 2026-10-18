@@ -8,26 +8,26 @@
 
     <form method="post">
       {% csrf_token %}
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Name</label>
-        <input type="text" name="name" value="{{ stage.name|default:'' }}" required style="width: 100%; padding: 0.5rem;">
+      <div class="admin-field">
+        <label for="stage-name">Name</label>
+        <input id="stage-name" type="text" name="name" value="{{ stage.name|default:'' }}" required>
       </div>
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Sequence Order</label>
-        <input type="number" name="sequence_order" value="{{ stage.sequence_order|default:next_order }}" required min="1" style="width: 100%; padding: 0.5rem;">
+      <div class="admin-field">
+        <label for="stage-sequence-order">Sequence Order</label>
+        <input id="stage-sequence-order" type="number" name="sequence_order" value="{{ stage.sequence_order|default:next_order }}" required min="1">
       </div>
-      <div style="margin-bottom: 1rem;">
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.5rem;">
-          <label style="display: block; font-weight: bold; margin: 0;">Latitude</label>
+      <div class="admin-field">
+        <div class="admin-field-heading">
+          <label for="stage-latitude">Latitude</label>
           <button type="button" id="use-current-location" class="btn btn-outline btn-sm">Use current location</button>
         </div>
-        <input type="text" name="latitude" value="{{ stage.latitude|default:'' }}" required placeholder="-1.2921" style="width: 100%; padding: 0.5rem;">
+        <input id="stage-latitude" type="text" name="latitude" value="{{ stage.latitude|default:'' }}" required placeholder="-1.2921" inputmode="decimal">
       </div>
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Longitude</label>
-        <input type="text" name="longitude" value="{{ stage.longitude|default:'' }}" required placeholder="36.8219" style="width: 100%; padding: 0.5rem;">
+      <div class="admin-field">
+        <label for="stage-longitude">Longitude</label>
+        <input id="stage-longitude" type="text" name="longitude" value="{{ stage.longitude|default:'' }}" required placeholder="36.8219" inputmode="decimal">
       </div>
-      <div id="location-status" style="margin-bottom: 1rem; min-height: 1.2rem; color: #666; font-size: 0.9rem;"></div>
+      <div id="location-status" role="status" aria-live="polite" class="location-status"></div>
       <button type="submit" class="btn btn-primary">{{ action }}</button>
       <a class="btn btn-outline" href="{% url 'management:route-stages' route.pk %}">Cancel</a>
     </form>
@@ -49,7 +49,7 @@
           return;
         }
 
-        status.textContent = 'Fetching current location...';
+        status.textContent = 'Fetching current location…';
         status.style.color = '#666';
 
         navigator.geolocation.getCurrentPosition(function (position) {

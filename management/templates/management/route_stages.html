@@ -8,7 +8,7 @@
         <p>{{ route.description|default:'No description' }}</p>
       </div>
       <div class="page-actions">
-        <a class="btn btn-outline" href="{% url 'management:route-list' %}">All routes</a>
+        <a class="btn btn-outline" href="{% url 'management:route-list' %}">← Back to routes</a>
         <a class="btn btn-primary" href="{% url 'management:stage-create' route.pk %}">Add stage</a>
       </div>
     </header>
@@ -17,25 +17,29 @@
       <div style="overflow-x: auto;">
         <table class="table">
           <thead>
-            <tr style="background: #f5f5f5;">
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Order</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Name</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Latitude</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Longitude</th>
-              <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid #ddd;">Actions</th>
+            <tr>
+              <th>Order</th>
+              <th>Name</th>
+              <th>Latitude</th>
+              <th>Longitude</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {% for s in stages %}
-              <tr style="border-bottom: 1px solid #eee;">
+              <tr>
                 <td style="padding: 0.75rem; font-weight: bold;">{{ s.sequence_order }}</td>
-                <td style="padding: 0.75rem;">{{ s.name }}</td>
-                <td style="padding: 0.75rem;">{{ s.latitude }}</td>
-                <td style="padding: 0.75rem;">{{ s.longitude }}</td>
-                <td style="padding: 0.75rem;">
-                  <a href="{% url 'management:stage-edit' s.pk %}">Edit</a>
-                  <span style="margin: 0 0.5rem;">|</span>
-                  <a href="{% url 'management:stage-delete' s.pk %}" style="color: #f44336;">Delete</a>
+                <td>{{ s.name }}</td>
+                <td>{{ s.latitude }}</td>
+                <td>{{ s.longitude }}</td>
+                <td>
+                  <div class="table-actions">
+                    <a class="table-action" href="{% url 'management:stage-edit' s.pk %}">Edit</a>
+                    <form method="post" action="{% url 'management:stage-delete' s.pk %}" onsubmit="return confirm('Delete this stage?')">
+                      {% csrf_token %}
+                      <button class="btn btn-error btn-sm table-action" type="submit">Delete</button>
+                    </form>
+                  </div>
                 </td>
               </tr>
             {% endfor %}

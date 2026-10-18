@@ -5,13 +5,13 @@
     <header class="page-heading"><div><h1>{{ action }} route</h1></div></header>
     <form method="post">
       {% csrf_token %}
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Name</label>
-        <input type="text" name="name" value="{{ route.name|default:'' }}" required style="width: 100%; padding: 0.5rem;">
+      <div class="admin-field">
+        <label for="route-name">Name</label>
+        <input id="route-name" type="text" name="name" value="{{ route.name|default:'' }}" required>
       </div>
-      <div style="margin-bottom: 1rem;">
-        <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Description</label>
-        <textarea name="description" style="width: 100%; padding: 0.5rem; min-height: 100px;">{{ route.description|default:'' }}</textarea>
+      <div class="admin-field">
+        <label for="route-description">Description</label>
+        <textarea id="route-description" name="description">{{ route.description|default:'' }}</textarea>
       </div>
       <button type="submit" class="btn btn-primary">{{ action }}</button>
       <a class="btn btn-outline" href="{% url 'management:route-list' %}">Cancel</a>

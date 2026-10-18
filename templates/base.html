@@ -5,13 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Matatu254{% endblock %}</title>
   {% load static %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap">
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+  <meta name="theme-color" content="#17643a">
+  <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   {% block extra_head %}{% endblock %}
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="https://unpkg.com/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.js"></script>
 </head>
 <body data-theme="emerald"{% if user.is_authenticated %} class="app-user"{% endif %}>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -66,14 +68,16 @@
       </a>
       <nav class="public-nav navbar-end" aria-label="Account">
         <a href="{% url 'accounts:login' %}">Sign in</a>
-        <a class="btn btn-primary btn-sm" href="{% url 'accounts:register' %}">Create account</a>
+        {% if request.resolver_match.url_name != 'home' %}
+          <a class="btn btn-primary btn-sm" href="{% url 'accounts:register' %}">Create account</a>
+        {% endif %}
       </nav>
     </div>
   </header>
   {% endif %}
 
   {% if messages %}
-    <ul class="flash-messages">
+    <ul class="flash-messages" role="status" aria-live="polite" aria-atomic="true">
       {% for message in messages %}
         <li class="{{ message.tags }}">{{ message }}</li>
       {% endfor %}
@@ -84,7 +88,52 @@
     {% block content %}{% endblock %}
   </main>
 
-  {% block scripts %}{% endblock %}
+  {% block scripts %}
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch((error) => {
+          console.error('Service worker registration failed:', error);
+        });
+      });
+    }
+
+    let deferredPrompt = null;
+    const installButton = document.getElementById('pwa-install-btn');
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredPrompt = event;
+      if (installButton) {
+        installButton.classList.add('is-visible');
+        installButton.hidden = false;
+      }
+    });
+
+    if (installButton) {
+      installButton.addEventListener('click', async () => {
+        if (!deferredPrompt) {
+          return;
+        }
+
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log('PWA install choice:', outcome);
+        deferredPrompt = null;
+        installButton.hidden = true;
+        installButton.classList.remove('is-visible');
+      });
+    }
+
+    window.addEventListener('appinstalled', () => {
+      if (installButton) {
+        installButton.hidden = true;
+        installButton.classList.remove('is-visible');
+      }
+      deferredPrompt = null;
+    });
+  </script>
+  {% endblock %}
 
   <footer>
     Matatu254 — Smart Matatu Passenger Journey & Tracking

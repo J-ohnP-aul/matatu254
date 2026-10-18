@@ -4,19 +4,20 @@
 {% block content %}
   <div class="ticket-page">
     <section class="ticket-object" aria-label="Matatu254 route ticket">
-      <div class="ticket-layout">
+      <div class="ticket-layout{% if not user.is_authenticated %} ticket-layout-public{% endif %}">
         <div>
           <h1>Every stop.<br>In view.</h1>
           <p class="ticket-intro">Live route progress and timely stop notifications for every leg of your matatu journey.</p>
           {% if not user.is_authenticated %}
             <div class="page-actions">
-              <a class="btn btn-primary" href="{% url 'accounts:login' %}">Sign in to start</a>
-              <a class="btn btn-outline" href="{% url 'accounts:register' %}">Create passenger account</a>
+              <a class="btn btn-primary" href="{% url 'accounts:register' %}">Create passenger account</a>
+              <button type="button" id="pwa-install-btn" class="btn btn-primary pwa-install-btn" hidden>Install App</button>
+              <a href="{% url 'accounts:login' %}">Already have an account? Sign in</a>
             </div>
           {% endif %}
         </div>
+        {% if user.is_authenticated %}
         <aside class="ticket-side" aria-label="Available journey actions">
-          {% if user.is_authenticated %}
         <h2 class="ticket-side-title">Journey actions</h2>
         {% if user.role == 'PASSANGER' %}
           <a href="{% if active_journey %}{% url 'journeys:journey-detail' active_journey.id %}{% else %}{% url 'journeys:scan-qr' %}{% endif %}">
@@ -43,15 +44,8 @@
             <span><strong>Fleet QR tools</strong><small>Generate and manage codes</small></span><span aria-hidden="true">→</span>
           </a>
         {% endif %}
-        {% else %}
-          <h2 class="ticket-side-title">Your ride, step by step</h2>
-          <ol class="ticket-steps">
-            <li><span>1</span><div><strong>Scan the matatu code</strong><small>Identify your vehicle and route.</small></div></li>
-            <li><span>2</span><div><strong>Choose your stop</strong><small>Select a stage along the route.</small></div></li>
-            <li><span>3</span><div><strong>Follow your journey</strong><small>See progress and get a stop alert.</small></div></li>
-          </ol>
-        {% endif %}
         </aside>
+        {% endif %}
       </div>
       <div class="ticket-rule"></div>
       <div class="ticket-foot">
@@ -59,4 +53,30 @@
       </div>
     </section>
   </div>
+  {% if not user.is_authenticated %}
+    <section class="page-shell home-how" aria-labelledby="home-how-heading">
+      <header>
+        <p class="home-kicker">A clearer matatu journey</p>
+        <h2 id="home-how-heading">From the first scan to your stop.</h2>
+        <p>Choose your destination before the ride gets underway, then keep your route and stop progress in view.</p>
+      </header>
+      <ol class="home-steps">
+        <li>
+          <span class="home-step-number">01</span>
+          <h3>Scan the matatu code</h3>
+          <p>Identify the vehicle and its route with the QR code inside the matatu.</p>
+        </li>
+        <li>
+          <span class="home-step-number">02</span>
+          <h3>Choose your stop</h3>
+          <p>Select the stage where you plan to get off from the route’s stop list.</p>
+        </li>
+        <li>
+          <span class="home-step-number">03</span>
+          <h3>Follow your journey</h3>
+          <p>See trip progress and receive an alert as your selected stop approaches.</p>
+        </li>
+      </ol>
+    </section>
+  {% endif %}
 {% endblock %}

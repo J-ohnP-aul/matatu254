@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db.models import Count
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 from fleet.models import Matatu, QRCode
 from r_outes.models import Route, Stage
@@ -240,6 +241,7 @@ def stage_edit(request, pk):
 
 @login_required
 @user_passes_test(is_admin)
+@require_POST
 def stage_delete(request, pk):
     stage = get_object_or_404(Stage, pk=pk)
     route_pk = stage.route.pk
@@ -289,6 +291,7 @@ def trip_create(request):
 
 @login_required
 @user_passes_test(is_admin)
+@require_POST
 def trip_start(request, pk):
     trip = get_object_or_404(ActiveTrip, pk=pk)
     if trip.status == ActiveTrip.Status.CREATED:
@@ -303,6 +306,7 @@ def trip_start(request, pk):
 
 @login_required
 @user_passes_test(is_admin)
+@require_POST
 def trip_end(request, pk):
     trip = get_object_or_404(ActiveTrip, pk=pk)
     if trip.status == ActiveTrip.Status.ACTIVE:
@@ -321,6 +325,7 @@ def trip_end(request, pk):
 
 @login_required
 @user_passes_test(is_admin)
+@require_POST
 def trip_cancel(request, pk):
     trip = get_object_or_404(ActiveTrip, pk=pk)
     if trip.status in [ActiveTrip.Status.CREATED, ActiveTrip.Status.ACTIVE]:

@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
-
 :root {
   color-scheme: light;
   --matatu-ink: #19271e;
@@ -77,6 +75,16 @@ footer { padding: 1.2rem; text-align: center; color: var(--matatu-muted); font-s
 .btn-primary { background: var(--matatu-green); border-color: var(--matatu-green); color: #fff; }
 .btn-sm { font-size: .875rem; }
 .btn-primary:hover { background: var(--matatu-green-deep); border-color: var(--matatu-green-deep); }
+.pwa-install-btn {
+  display: none;
+  background: var(--matatu-green) !important;
+  border-color: var(--matatu-green) !important;
+  color: #fff !important;
+  font-weight: 700;
+}
+.pwa-install-btn.is-visible {
+  display: inline-flex;
+}
 .table-wrap { overflow-x: auto; border-radius: .85rem; background: white; }
 .table th { color: var(--matatu-muted); font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
 .table td, .table th { padding: .9rem 1rem; }
@@ -96,11 +104,7 @@ footer { padding: 1.2rem; text-align: center; color: var(--matatu-muted); font-s
 .ticket-layout { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(250px, .8fr); align-items: center; gap: clamp(1.5rem, 5vw, 4.5rem); }
 .ticket-intro { max-width: 38ch; margin-top: 1.15rem; color: #4e5d52; font-size: clamp(1.05rem, 1.7vw, 1.25rem); line-height: 1.5; }
 .ticket-side-title { margin: 0 0 .3rem; font: 700 1rem 'DM Sans',sans-serif; letter-spacing: 0; }
-.ticket-steps { display: grid; gap: .55rem; margin: 0; padding: 0; list-style: none; }
-.ticket-steps li { display: grid; grid-template-columns: 2rem minmax(0, 1fr); align-items: start; gap: .65rem; padding: .55rem; border-radius: .65rem; background: white; }
-.ticket-steps li > span { display: grid; width: 1.8rem; height: 1.8rem; place-items: center; border-radius: 50%; background: var(--matatu-green); color: white; font-weight: 800; }
-.ticket-steps strong, .ticket-steps small { display: block; }
-.ticket-steps small { margin-top: .15rem; color: #58665b; font-size: .83rem; }
+.ticket-layout-public { grid-template-columns: minmax(0, 1fr); }
 .ticket-rule { height: 3px; width: 4rem; margin: 1.5rem 0; background: var(--matatu-green); }
 .ticket-side { padding: 1.25rem; background: var(--matatu-green-wash); }
 .ticket-side { display: grid; gap: .3rem; }
@@ -109,6 +113,16 @@ footer { padding: 1.2rem; text-align: center; color: var(--matatu-muted); font-s
 .ticket-side small { display: block; margin-top: .22rem; color: #58665b; font-size: .83rem; }
 .page-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
 .ticket-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .75rem; color: var(--matatu-muted); font-size: .875rem; letter-spacing: .04em; }
+.home-how { padding: clamp(3rem, 7vw, 6rem) clamp(1rem, 4vw, 3rem); }
+.home-how > header { max-width: 42rem; }
+.home-kicker { margin: 0 0 .7rem; color: var(--matatu-green); font-size: .9rem; font-weight: 700; }
+.home-how h2 { max-width: 18ch; margin: 0; font-size: clamp(2rem, 4vw, 3rem); }
+.home-how > header > p:last-child { margin: .9rem 0 0; color: var(--matatu-muted); font-size: 1.1rem; }
+.home-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem 2.5rem; margin: 2.5rem 0 0; padding: 0; list-style: none; }
+.home-steps li { min-width: 0; padding-top: 1rem; border-top: 2px solid var(--matatu-green); }
+.home-step-number { color: var(--matatu-green); font-weight: 800; font-variant-numeric: tabular-nums; }
+.home-steps h3 { margin: .8rem 0 .35rem; }
+.home-steps p { margin: 0; color: var(--matatu-muted); }
 .journey-links { display: grid; gap: .55rem; margin-top: 1.4rem; }
 .journey-link { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.1rem; border-radius: .8rem; color: var(--matatu-ink); text-decoration: none; transition: background-color .16s ease, transform .16s ease; }
 .journey-link:hover { background: var(--matatu-green-wash); transform: translateX(3px); }
@@ -126,6 +140,8 @@ footer { padding: 1.2rem; text-align: center; color: var(--matatu-muted); font-s
 .history-row small { color: var(--matatu-muted); }
 .scan-panel { width: min(100%, 680px); margin-left: auto; }
 .scan-panel video { display: block; width: 100%; margin: .8rem 0; border-radius: .9rem; background: #18231c; }
+.scan-panel video[hidden] { display: none; }
+.scan-panel .scanner-video { max-width: 400px; height: auto; aspect-ratio: 4 / 3; }
 .manual-entry { display: grid; gap: .8rem; margin-top: 1rem; padding: 1.1rem; border-radius: .9rem; background: var(--matatu-paper); }
 .manual-entry h3, .manual-entry p { margin: 0; }
 .app-user .main > div[style*="max-width"] { width: min(100%, 1160px); max-width: 1160px !important; margin: 0 auto !important; padding: 0 !important; }
@@ -139,20 +155,30 @@ footer { padding: 1.2rem; text-align: center; color: var(--matatu-muted); font-s
 .app-user .main > div[style*="max-width"] > p { color: var(--matatu-muted); }
 .admin-form { max-width: 720px; }
 .admin-form > form { padding: clamp(1.2rem, 4vw, 2rem); border-radius: var(--matatu-radius); background: white; }
-.admin-form form > div { margin-bottom: 1.15rem !important; }
+.admin-form form > div, .admin-form .admin-field { margin-bottom: 1.15rem; }
 .admin-form form label { display: block !important; margin-bottom: .4rem !important; color: #435248; font-size: .85rem; font-weight: 700 !important; }
 .admin-form form input, .admin-form form select, .admin-form form textarea { width: 100% !important; min-height: 2.75rem; padding: .65rem .8rem !important; border: 1px solid var(--matatu-line); border-radius: .65rem; background: white; }
 .admin-form form textarea { min-height: 7rem; }
+.admin-field-heading { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: .5rem; }
+.admin-field-heading label { margin: 0 !important; }
+.location-status { min-height: 1.5rem; margin-bottom: 1rem; color: var(--matatu-muted); }
 .admin-list > header { margin-bottom: 1.35rem !important; }
 .admin-list > header h1 { margin: 0; }
 .admin-list:has(table) { padding: 1.4rem; border-radius: var(--matatu-radius); background: white; }
 .admin-list table { min-width: 680px; }
+.admin-list .table th { background: var(--matatu-paper); color: var(--matatu-muted); font-size: .8125rem; }
+.admin-list .table td, .admin-list .table th { padding: .75rem; border-bottom: 1px solid var(--matatu-line); text-align: left; }
+.admin-list .table tbody tr + tr td { border-top: 1px solid var(--matatu-line); }
+.admin-list .table-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.table-action { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; padding: .5rem; }
+.admin-list .config-add-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 1rem; margin-bottom: 1rem; }
+.admin-list .admin-field { min-width: 0; }
+.admin-list .admin-field label { display: block; margin-bottom: .4rem; color: #435248; font-weight: 700; }
+.admin-list .admin-field input { width: 100%; min-height: 2.75rem; padding: .65rem .8rem; border: 1px solid var(--matatu-line); border-radius: .65rem; background: white; color: var(--matatu-ink); font: inherit; }
 .admin-list > p { padding: 2.5rem 1rem; text-align: center; color: var(--matatu-muted) !important; }
 .admin-list details { margin-top: 1.5rem; }
 .admin-list summary { cursor: pointer; color: var(--matatu-green-deep); font-weight: 700; }
 .admin-list .config-reference { margin-top: 1.5rem !important; padding: 1.2rem !important; background: var(--matatu-green-wash) !important; }
-.admin-list #add-config-form { display: none; }
-.admin-list #add-config-form[style*="display: block"] { display: block !important; }
 .qr-page { max-width: 720px; }
 .qr-page .surface { display: grid; justify-items: center; gap: .65rem; text-align: center; }
 .qr-page code { padding: .55rem .8rem; border-radius: .5rem; background: var(--matatu-paper); color: var(--matatu-green-deep); overflow-wrap: anywhere; }
@@ -185,6 +211,7 @@ footer { padding: 1.2rem; text-align: center; color: var(--matatu-muted); font-s
   .main, .app-user .main { padding: 1.25rem .9rem; }
   .page-heading { align-items: flex-start; flex-direction: column; }
   .ticket-layout { grid-template-columns: 1fr; }
+  .home-steps { grid-template-columns: 1fr; gap: 1.25rem; margin-top: 1.75rem; }
   .ticket-side { margin-left: .6rem; }
   .ticket-page { min-height: 0; margin-top: -1.25rem; padding-block: 2rem; }
   .ticket-foot { align-items: flex-start; flex-direction: column; }
@@ -192,6 +219,8 @@ footer { padding: 1.2rem; text-align: center; color: var(--matatu-muted); font-s
   .journey-stage form { grid-column: 2; justify-self: start; }
   .app-user .main table { min-width: 650px; }
   .admin-list:has(table) { padding: .85rem; }
+  .admin-list .config-add-fields { grid-template-columns: 1fr; gap: .25rem; }
+  .btn-sm, .btn-xs { min-height: 44px; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .ticket-layout > div { animation: ticket-arrive .38s ease-out .04s both; }

@@ -39,6 +39,34 @@ if RENDER_EXTERNAL_HOSTNAME:
 else:
     ALLOWED_HOSTS = ['*']
 
+# Trust the proxy header Render sends for HTTPS, and allow the deployed host
+# to pass CSRF checks even when the app is behind a reverse proxy.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+csrf_trusted_origins = os.environ.get('CSRF_TRUSTED_ORIGINS', '')
+trusted_origins = []
+if csrf_trusted_origins:
+    trusted_origins.extend(origin.strip() for origin in csrf_trusted_origins.split(',') if origin.strip())
+
+if RENDER_EXTERNAL_HOSTNAME:
+    trusted_origins.extend([
+        f'https://{RENDER_EXTERNAL_HOSTNAME}',
+        f'https://www.{RENDER_EXTERNAL_HOSTNAME}',
+    ])
+
+trusted_origins.extend([
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'https://localhost:8000',
+    'https://127.0.0.1:8000',
+])
+CSRF_TRUSTED_ORIGINS = list(dict.fromkeys(trusted_origins))
+
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+
 
 # Application definition
 
@@ -187,8 +215,6 @@ OSRM_BASE_URL = os.environ.get('OSRM_BASE_URL', 'https://router.project-osrm.org
 # Security settings for production
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SECURE_HSTS_SECONDS = 31536000

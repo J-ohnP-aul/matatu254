@@ -66,6 +66,7 @@ export class LiveTrackingMap {
     this.lastGPSFix = null;
     this.animationId = null;
     this.pollingInterval = null;
+    this.lastPositionTimestamp = null;
     this.sseConnection = null;
     this.running = false;
     
@@ -292,8 +293,13 @@ export class LiveTrackingMap {
     }
     
     if (this.pollingInterval) {
-      clearInterval(this.pollingInterval);
+      clearTimeout(this.pollingInterval);
       this.pollingInterval = null;
+    }
+    if (this._pollResume) {
+      window.removeEventListener('online', this._pollResume);
+      document.removeEventListener('visibilitychange', this._pollResume);
+      this._pollResume = null;
     }
     
     if (this.sseConnection) {
@@ -505,21 +511,33 @@ export class LiveTrackingMap {
   }
 
   _startPolling() {
-    // Poll every 2 seconds for GPS updates
-    this.pollingInterval = setInterval(async () => {
-      if (!this.options.tripId) return;
-      
+    if (this.pollingInterval || !this.options.tripId) return;
+    const poll = async () => {
+      this.pollingInterval = null;
+      if (!this.running || document.hidden || !navigator.onLine) return;
       try {
         const url = this.options.latestPositionUrl || `${this.options.apiBase}/trips/${this.options.tripId}/latest-position/`;
-        const response = await fetch(url);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
+        const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+        clearTimeout(timeout);
         if (response.ok) {
           const data = await response.json();
-          this.processGPSFix(data);
+          if (data.timestamp && data.timestamp !== this.lastPositionTimestamp) {
+            this.lastPositionTimestamp = data.timestamp;
+            this.processGPSFix(data);
+          }
         }
-      } catch (e) {
-        console.warn('GPS polling failed:', e);
-      }
-    }, 2000);
+      } catch (e) { /* Keep the last good position visible and retry. */ }
+      if (this.running && !document.hidden) this.pollingInterval = setTimeout(poll, 3000);
+    };
+    const resume = () => {
+      if (this.running && !document.hidden && navigator.onLine && !this.pollingInterval) poll();
+    };
+    this._pollResume = resume;
+    window.addEventListener('online', resume);
+    document.addEventListener('visibilitychange', resume);
+    resume();
   }
 
   /**

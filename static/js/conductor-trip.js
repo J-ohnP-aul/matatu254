@@ -17,11 +17,55 @@
   const vehicle = document.getElementById('crew-map-vehicle');
   const svgNs = 'http://www.w3.org/2000/svg';
   let watchId = null;
+  let trackingRequested = false;
+  let watchRetryTimer = null;
+  let uploadRetryTimer = null;
+  let uploadRunning = false;
+  const queueKey = `matatu254-trip-${root.dataset.tripId}-gps-queue`;
+  const readQueue = () => {
+    try { return JSON.parse(localStorage.getItem(queueKey) || '[]'); } catch (_) { return []; }
+  };
+  const writeQueue = (queue) => {
+    try { localStorage.setItem(queueKey, JSON.stringify(queue.slice(-120))); } catch (_) {}
+  };
+  function queueFix(position) {
+    const queue = readQueue();
+    queue.push({ latitude: position.coords.latitude, longitude: position.coords.longitude,
+      recorded_at: new Date(position.timestamp).toISOString() });
+    writeQueue(queue);
+    flushQueue();
+  }
+  async function flushQueue() {
+    if (uploadRunning || !navigator.onLine) return;
+    uploadRunning = true;
+    try {
+      let queue = readQueue();
+      while (queue.length && navigator.onLine && trackingRequested) {
+        const response = await fetch(pingUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(queue[0]) });
+        if (!response.ok) break;
+        queue.shift();
+        writeQueue(queue);
+      }
+      if (!queue.length) refreshTrip();
+    } catch (_) {
+      setGpsState(true, 'Connection interrupted · location will sync automatically');
+    } finally {
+      uploadRunning = false;
+      if (trackingRequested && readQueue().length && uploadRetryTimer === null) {
+        uploadRetryTimer = window.setTimeout(() => {
+          uploadRetryTimer = null;
+          flushQueue();
+        }, 5000);
+      }
+    }
+  }
 
   function mapCoords(latitude, longitude) {
     if (!stages.length) return null;
-    const points = [...stages];
-    if (Number.isFinite(latitude) && Number.isFinite(longitude)) points.push({ lat: latitude, lon: longitude });
+    // Use stable route bounds; adding each new GPS fix to the bounds made the
+    // whole route shift and rescale on every refresh.
+    const points = stages;
     const minLat = Math.min(...points.map((item) => item.lat));
     const maxLat = Math.max(...points.map((item) => item.lat));
     const minLon = Math.min(...points.map((item) => item.lon));
@@ -160,44 +204,81 @@
     setText('tracking-status', message);
   }
   function stopTracking() {
+    trackingRequested = false;
+    try { sessionStorage.removeItem(`matatu254-trip-${root.dataset.tripId}-tracking`); } catch (_) {}
     if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+    if (watchRetryTimer !== null) window.clearTimeout(watchRetryTimer);
+    if (uploadRetryTimer !== null) window.clearTimeout(uploadRetryTimer);
+    watchRetryTimer = null;
+    uploadRetryTimer = null;
     watchId = null;
     setGpsState(false, 'Location sharing stopped');
   }
-  document.getElementById('start-tracking-btn').addEventListener('click', () => {
+  function startTracking() {
     if (!navigator.geolocation) return setGpsState(false, 'GPS is unavailable in this browser.');
     if (!window.isSecureContext && !['localhost', '127.0.0.1'].includes(location.hostname)) return setGpsState(false, 'GPS needs HTTPS or localhost.');
+    if (watchId !== null) return;
+    trackingRequested = true;
+    try { sessionStorage.setItem(`matatu254-trip-${root.dataset.tripId}-tracking`, 'true'); } catch (_) {}
     setGpsState(true, 'Requesting GPS permission…');
     watchId = navigator.geolocation.watchPosition(async (position) => {
-      setGpsState(true, 'Location shared · updated just now');
-      try {
-        const response = await fetch(pingUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            recorded_at: new Date(position.timestamp).toISOString(),
-          }),
-        });
-        if (!response.ok) throw new Error('GPS update rejected');
-        refreshTrip();
-      } catch (_) { setGpsState(true, 'Could not send location update. Retrying…'); }
+      setGpsState(true, navigator.onLine ? 'Location shared · updated just now' : 'Offline · saving location to sync');
+      queueFix(position);
     }, (error) => {
-      stopTracking();
-      setGpsState(false, error.code === error.PERMISSION_DENIED ? 'Location permission was denied.' : 'Could not get a GPS fix.');
+      if (error.code === error.PERMISSION_DENIED) {
+        trackingRequested = false;
+        try { sessionStorage.removeItem(`matatu254-trip-${root.dataset.tripId}-tracking`); } catch (_) {}
+        if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+        setGpsState(false, 'Location permission was denied.');
+        return;
+      }
+      watchId = null;
+      setGpsState(true, 'GPS signal interrupted · reconnecting automatically');
+      if (trackingRequested && watchRetryTimer === null) {
+        watchRetryTimer = window.setTimeout(() => { watchRetryTimer = null; if (trackingRequested) startTracking(); }, 5000);
+      }
     }, { enableHighAccuracy: true, maximumAge: 3000, timeout: 15000 });
-  });
+  }
+  document.getElementById('start-tracking-btn').addEventListener('click', startTracking);
   document.getElementById('stop-tracking-btn').addEventListener('click', stopTracking);
+  window.addEventListener('online', flushQueue);
 
   drawMap();
   refreshTrip();
   refreshPassengers();
-  const trackingTimer = window.setInterval(refreshTrip, 5000);
-  const passengerTimer = window.setInterval(refreshPassengers, 10000);
+  let trackingTimer = null;
+  let passengerTimer = null;
+  let trackingPollBusy = false;
+  let passengerPollBusy = false;
+  async function pollTracking() {
+    if (trackingPollBusy || document.hidden || !navigator.onLine) return;
+    trackingPollBusy = true;
+    try { await refreshTrip(); } finally { trackingPollBusy = false; }
+    if (!document.hidden) trackingTimer = window.setTimeout(pollTracking, 5000);
+  }
+  async function pollPassengers() {
+    if (passengerPollBusy || document.hidden || !navigator.onLine) return;
+    passengerPollBusy = true;
+    try { await refreshPassengers(); } finally { passengerPollBusy = false; }
+    if (!document.hidden) passengerTimer = window.setTimeout(pollPassengers, 10000);
+  }
+  pollTracking();
+  pollPassengers();
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { clearTimeout(trackingTimer); clearTimeout(passengerTimer); }
+    else { pollTracking(); pollPassengers(); flushQueue(); }
+  });
+  window.addEventListener('online', () => { pollTracking(); pollPassengers(); });
   window.addEventListener('pagehide', () => {
-    window.clearInterval(trackingTimer);
-    window.clearInterval(passengerTimer);
-    stopTracking();
+    window.clearTimeout(trackingTimer);
+    window.clearTimeout(passengerTimer);
+    if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+    watchId = null;
   }, { once: true });
+  function resumeTracking() {
+    try { if (sessionStorage.getItem(`matatu254-trip-${root.dataset.tripId}-tracking`) === 'true') startTracking(); } catch (_) {}
+  }
+  resumeTracking();
+  window.addEventListener('pageshow', resumeTracking);
 })();

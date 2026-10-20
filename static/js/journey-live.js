@@ -19,8 +19,9 @@
   })).filter((point) => Number.isFinite(point.lat) && Number.isFinite(point.lon));
 
   function coordinatesFor(vehicleLat, vehicleLon) {
-    const points = [...stagePoints];
-    if (Number.isFinite(vehicleLat) && Number.isFinite(vehicleLon)) points.push({ lat: vehicleLat, lon: vehicleLon });
+    // Keep the route projection fixed so the map does not zoom/jump as the
+    // vehicle moves beyond the stage bounds.
+    const points = stagePoints;
     const minLat = Math.min(...points.map((point) => point.lat));
     const maxLat = Math.max(...points.map((point) => point.lat));
     const minLon = Math.min(...points.map((point) => point.lon));
@@ -143,7 +144,19 @@
     }
   }
 
-  refreshJourney();
-  const timer = window.setInterval(refreshJourney, 5000);
-  window.addEventListener('pagehide', () => window.clearInterval(timer), { once: true });
+  let timer = null;
+  let refreshing = false;
+  async function pollJourney() {
+    if (refreshing || document.hidden || !navigator.onLine) return;
+    refreshing = true;
+    try { await refreshJourney(); } finally { refreshing = false; }
+    if (!document.hidden) timer = window.setTimeout(pollJourney, 5000);
+  }
+  pollJourney();
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) window.clearTimeout(timer);
+    else pollJourney();
+  });
+  window.addEventListener('online', pollJourney);
+  window.addEventListener('pagehide', () => window.clearTimeout(timer), { once: true });
 })();

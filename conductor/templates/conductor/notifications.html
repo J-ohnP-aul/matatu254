@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Notifications{% endblock %}
 {% block app_title %}Crew notifications{% endblock %}
 {% block content %}
@@ -6,6 +7,13 @@
     <header class="page-heading"><div><h1>Notifications</h1></div>
       <a class="btn btn-outline" href="{% url 'conductor:dashboard' %}">Back to dashboard</a>
     </header>
+
+    <section class="surface surface-pad" data-push-controls data-subscription-url="{% url 'notifications:push-subscription' %}" data-public-key="{{ webpush_public_key }}">
+      <div><h2>Phone notifications</h2><p class="muted" data-push-status>Get journey updates even when Matatu254 is closed.</p></div>
+      <button type="button" class="btn btn-primary" data-push-enable>Enable notifications</button>
+      <button type="button" class="btn btn-outline" data-push-disable hidden>Turn off on this device</button>
+      <form hidden>{% csrf_token %}</form>
+    </section>
 
     {% if notifications %}
       <div class="surface surface-pad">
@@ -31,3 +39,4 @@
     {% endif %}
   </div>
 {% endblock %}
+{% block scripts %}<script defer src="{% static 'js/push-notifications.js' %}?v=20261020"></script>{% endblock %}

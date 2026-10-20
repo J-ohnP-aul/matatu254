@@ -99,6 +99,10 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = 'accounts.User'
 
+WEBPUSH_VAPID_PUBLIC_KEY = os.environ.get('WEBPUSH_VAPID_PUBLIC_KEY', '').strip()
+WEBPUSH_VAPID_PRIVATE_KEY = os.environ.get('WEBPUSH_VAPID_PRIVATE_KEY', '').strip()
+WEBPUSH_VAPID_SUBJECT = os.environ.get('WEBPUSH_VAPID_SUBJECT', 'mailto:admin@example.com').strip()
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
 ]

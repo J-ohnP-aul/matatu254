@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 from journeys.models import JourneySession
 
@@ -38,4 +39,17 @@ class Notification(models.Model):
 	def mark_read(self):
 		self.status = self.Status.READ
 		self.save(update_fields=["status"])
+
+
+class PushSubscription(models.Model):
+	"""A browser installation that can receive web push for one account."""
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="push_subscriptions")
+	endpoint = models.URLField(max_length=2048, unique=True)
+	p256dh = models.CharField(max_length=255)
+	auth = models.CharField(max_length=255)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	class Meta:
+		ordering = ["-updated_at"]
 

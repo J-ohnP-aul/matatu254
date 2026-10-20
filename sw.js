@@ -1,4 +1,4 @@
-const CACHE_NAME = 'matatu254-pwa-v3';
+const CACHE_NAME = 'matatu254-pwa-v4';
 const OFFLINE_URL = '/offline/';
 
 async function findShellAssets() {
@@ -83,4 +83,34 @@ self.addEventListener('fetch', (event) => {
     }
     return response;
   })));
+});
+
+self.addEventListener('push', (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch (_) {
+    data = { body: event.data ? event.data.text() : '' };
+  }
+  event.waitUntil(self.registration.showNotification(data.title || 'Matatu254', {
+    body: data.body || 'You have a new journey update.',
+    icon: '/static/images/pwa-icon-192.png',
+    badge: '/static/images/pwa-icon-192.png',
+    tag: data.tag || 'matatu254-update',
+    data: { url: data.url || '/notifications/' },
+  }));
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || '/notifications/', self.location.origin).href;
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+    for (const client of clients) {
+      if (client.url.startsWith(self.location.origin) && 'focus' in client) {
+        client.navigate(target);
+        return client.focus();
+      }
+    }
+    return self.clients.openWindow(target);
+  }));
 });

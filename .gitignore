@@ -92,3 +92,5 @@ tmp/
 # Ignore any app-local generated map data or analysis capture folders
 # (kept above; do not add generic app folders like agent/, map/, or chat/ here)
 .taste-skill/
+.agent/
+.agents/

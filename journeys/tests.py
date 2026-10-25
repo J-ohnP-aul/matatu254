@@ -6,10 +6,53 @@ from datetime import timedelta
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from fleet.models import Matatu
+from fleet.models import Matatu, QRCode
 from journeys.models import JourneySession
 from r_outes.models import Route, Stage
 from trips.models import ActiveTrip
+
+
+class JourneyQRScanTests(TestCase):
+	def test_unknown_qr_shows_simple_error_and_returns_to_scanner(self):
+		response = self.client.post(
+			reverse("journeys:scan-result"),
+			{"code_value": "NOT-A-REAL-CODE"},
+		)
+
+		self.assertRedirects(
+			response,
+			reverse("journeys:scan-qr"),
+			fetch_redirect_response=False,
+		)
+		followed_response = self.client.get(response.url)
+		self.assertContains(
+			followed_response,
+			"QR code not found or inactive. Please check it and try again.",
+		)
+
+	def test_inactive_qr_shows_simple_error_and_returns_to_scanner(self):
+		matatu = Matatu.objects.create(registration_number="KAA 002A", operator="Test")
+		QRCode.objects.create(
+			matatu=matatu,
+			code_value="MAT-INACTIVE",
+			status=QRCode.Status.INACTIVE,
+		)
+
+		response = self.client.post(
+			reverse("journeys:scan-result"),
+			{"code_value": "MAT-INACTIVE"},
+		)
+
+		self.assertRedirects(
+			response,
+			reverse("journeys:scan-qr"),
+			fetch_redirect_response=False,
+		)
+		followed_response = self.client.get(response.url)
+		self.assertContains(
+			followed_response,
+			"QR code not found or inactive. Please check it and try again.",
+		)
 
 
 class JourneyTrackingDataTests(TestCase):

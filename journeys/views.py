@@ -42,7 +42,14 @@ def scan_result(request):
         messages.error(request, "No QR code data received")
         return redirect("journeys:scan-qr")
 
-    qr = get_object_or_404(QRCode, code_value=code_value, status=QRCode.Status.ACTIVE)
+    qr = QRCode.objects.filter(
+        code_value=code_value,
+        status=QRCode.Status.ACTIVE,
+    ).first()
+    if not qr:
+        messages.error(request, "QR code not found or inactive. Please check it and try again.")
+        return redirect("journeys:scan-qr")
+
     matatu = qr.matatu
     trip = ActiveTrip.objects.filter(
         matatu=matatu,

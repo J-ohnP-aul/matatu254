@@ -2,22 +2,24 @@
 {% load static %}
 {% block title %}Journey to {{ destination.name }} · Matatu254{% endblock %}
 {% block app_title %}Live journey{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+{% endblock %}
 {% block app_back %}<a class="header-back" href="{% url 'core:dashboard' %}" data-nav-direction="back" aria-label="Back to home">←</a>{% endblock %}
 {% block content %}
-<section class="journey-page" id="journey-tracking-card" data-tracking-url="{% url 'journeys:tracking-data' journey.id %}">
+<section class="journey-page" id="journey-tracking-card"
+  data-tracking-url="{% url 'journeys:tracking-data' journey.id %}"
+  data-route-data-url="{% url 'journeys:route-data' journey.id %}"
+  data-latest-position-url="{% url 'latest-position' trip.id %}"
+  data-trip-id="{{ trip.id }}"
+  data-journey-id="{{ journey.id }}">
   <header class="journey-header">
     <div><p class="route-meta">{{ trip.matatu.registration_number }} · {{ trip.route.name }}</p><h1>Your stop: {{ destination.name }}</h1></div>
     <span id="journey-status" class="trip-status badge-success">{{ journey.get_status_display }}</span>
   </header>
 
   <section id="map-container" class="map-card" aria-labelledby="map-title">
-    <svg id="route-map-svg" class="route-map" viewBox="0 0 600 340" role="img" aria-labelledby="map-title map-description">
-      <title id="map-title">Route map from {{ trip.route.name }}</title>
-      <desc id="map-description">Schematic route connecting the stages listed below. The vehicle marker follows its latest GPS position.</desc>
-      <polyline id="route-map-path" class="route-map-path" points=""></polyline>
-      <g id="route-map-stages"></g>
-      <circle id="route-map-vehicle" class="route-map-vehicle is-moving" cx="0" cy="0" r="12" hidden></circle>
-    </svg>
+    <div id="map" class="live-map" role="region" aria-label="Live navigation map"></div>
     <p class="map-caption" id="gps-freshness" aria-live="polite" data-gps-stale="{{ gps_stale|yesno:'true,false' }}" data-gps-age-seconds="{{ gps_age_seconds|default_if_none:'' }}">{% if gps_age_seconds == None %}Waiting for the vehicle’s first GPS update{% elif gps_stale %}Vehicle location delayed{% else %}Vehicle location live{% endif %}</p>
   </section>
 
@@ -36,7 +38,7 @@
       <span aria-hidden="true">◉</span><span id="destination-alert-text" data-notification-id="{{ latest_notification.id|default:0 }}">{% if latest_notification %}{{ latest_notification.message }}{% else %}We’ll alert you when {{ destination.name }} is close.{% endif %}</span>
     </div>
     <section class="route-stages" aria-labelledby="route-stages-heading">
-      <h2 class="route-title" id="route-stages-heading">Stages to your stop</h2>
+      <h2 class="route-title" id="route-stages-heading">Route stages to your stop</h2>
       <ol class="route-list" id="route-stages">
         {% for stage in route_stages %}
           <li class="route-stop{% if current_stage and stage.sequence_order < current_stage.sequence_order %} is-complete{% elif current_stage and stage.id == current_stage.id %} is-current{% elif next_stage and stage.id == next_stage.id %} is-next{% endif %}" data-stage-order="{{ stage.sequence_order }}" data-stage-name="{{ stage.name }}" data-stage-lat="{{ stage.latitude }}" data-stage-lon="{{ stage.longitude }}">
@@ -54,4 +56,8 @@
   </section>
 </section>
 {% endblock %}
-{% block scripts %}<script defer src="{% static 'js/journey-live.js' %}?v=20261020"></script>{% endblock %}
+{% block scripts %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.js"></script>
+  <script type="module" src="{% static 'js/journey-live.js' %}?v=20261102"></script>
+{% endblock %}

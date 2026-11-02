@@ -235,28 +235,14 @@ export class CameraController {
         this.map.setBearing(this.targetBearing, { animate: false });
       }
     } else {
-      // Smooth pan
-      this.map.panTo(markerLatLng, {
-        animate: this.followOptions.smoothPan,
-        duration: this.followOptions.panDuration / 1000,
-        easeLinearity: 0.25,
-        noMoveStart: true
-      });
+      // In follow mode driven by 60fps rAF interpolation, setView keeps the camera
+      // locked to the vehicle smoothly without queuing fighting pan animations.
+      const currentZoom = this.map.getZoom();
+      const zoom = this.targetZoom ?? currentZoom;
+      this.map.setView(markerLatLng, zoom, { animate: false });
       
-      // Smooth zoom
-      if (Math.abs(this.map.getZoom() - this.targetZoom) > 0.1) {
-        this.map.animateZoom(this.targetZoom, {
-          center: markerLatLng,
-          duration: this.followOptions.zoomDuration / 1000
-        });
-      }
-      
-      // Smooth bearing rotation
-      if (this.followOptions.headingUp && this.map.setBearing) {
-        this.map.setBearing(this.targetBearing, {
-          animate: true,
-          duration: this.followOptions.panDuration / 1000
-        });
+      if (this.followOptions.headingUp && this.map.setBearing && Number.isFinite(this.targetBearing)) {
+        this.map.setBearing(this.targetBearing, { animate: false });
       }
     }
   }

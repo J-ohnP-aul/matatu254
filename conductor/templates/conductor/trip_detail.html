@@ -2,15 +2,21 @@
 {% load static %}
 {% block title %}{{ trip.matatu.registration_number }} · Crew trip{% endblock %}
 {% block app_title %}Crew trip{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+{% endblock %}
 {% block app_back %}<a class="header-back" href="{% url 'conductor:dashboard' %}" data-nav-direction="back" aria-label="Back to crew dashboard">←</a>{% endblock %}
 {% block content %}
-<section class="page-shell conductor-page" id="trip-dashboard" data-tracking-url="{% url 'conductor:trip-tracking-data' trip.pk %}" data-passengers-url="{% url 'conductor:trip-passengers' trip.pk %}" data-ping-url="{% url 'trip-ping' trip.pk %}" data-trip-id="{{ trip.pk }}">
+<section class="page-shell conductor-page" id="trip-dashboard"
+  data-tracking-url="{% url 'conductor:trip-tracking-data' trip.pk %}"
+  data-route-url="{% url 'conductor:trip-route-data' trip.pk %}"
+  data-latest-position-url="{% url 'latest-position' trip.pk %}"
+  data-passengers-url="{% url 'conductor:trip-passengers' trip.pk %}"
+  data-ping-url="{% url 'trip-ping' trip.pk %}"
+  data-trip-id="{{ trip.pk }}">
   <header class="page-heading"><div><h1>{{ trip.matatu.registration_number }}</h1><p>{{ trip.route.name }} · {{ trip.get_status_display }}</p></div></header>
-  <section class="map-card crew-map-card" aria-labelledby="crew-map-title">
-    <svg id="crew-route-map" class="route-map" viewBox="0 0 600 340" role="img" aria-labelledby="crew-map-title crew-map-description">
-      <title id="crew-map-title">{{ trip.route.name }} route</title><desc id="crew-map-description">Schematic route with the latest vehicle location and route stages.</desc>
-      <polyline id="crew-map-path" class="route-map-path" points=""></polyline><g id="crew-map-stages"></g><circle id="crew-map-vehicle" class="route-map-vehicle is-moving" cx="0" cy="0" r="12" hidden></circle>
-    </svg>
+  <section class="map-card crew-map-card" id="map-container" aria-labelledby="crew-map-title">
+    <div id="crew-map" class="live-map" role="region" aria-label="Live crew route map"></div>
     <p id="gps-freshness" class="map-caption gps-freshness{% if gps_stale %} is-stale{% endif %}" role="status" aria-live="polite" data-gps-stale="{{ gps_stale|yesno:'true,false' }}" data-gps-age-seconds="{{ gps_age_seconds|default_if_none:'' }}">{% if gps_age_seconds == None %}Waiting for the first vehicle GPS update{% elif gps_stale %}Vehicle location is delayed{% else %}Vehicle location is live{% endif %}</p>
   </section>
 
@@ -55,4 +61,8 @@
   <section class="surface surface-pad passenger-card" id="passenger-list">{% include "conductor/partials/passenger_list.html" with journeys=journeys %}</section>
 </section>
 {% endblock %}
-{% block scripts %}<script defer src="{% static 'js/conductor-trip.js' %}?v=20261020"></script>{% endblock %}
+{% block scripts %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.js"></script>
+  <script type="module" src="{% static 'js/conductor-trip.js' %}?v=20261102"></script>
+{% endblock %}

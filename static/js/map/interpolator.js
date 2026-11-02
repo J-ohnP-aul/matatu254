@@ -46,18 +46,15 @@ export class PositionInterpolator {
     }
 
     // Get current interpolated position as new start
-    const now = performance.now();
-    const elapsed = now - this.startTime;
-    const progress = Math.min(elapsed / this.duration, 1);
-    const easedProgress = this.easing(progress);
-    
-    const currentLat = this.startPos.lat + (this.endPos.lat - this.startPos.lat) * easedProgress;
-    const currentLon = this.startPos.lon + (this.endPos.lon - this.startPos.lon) * easedProgress;
-
-    this.startPos = { lat: currentLat, lon: currentLon };
+    const current = this.getCurrentPosition();
+    this.startPos = current ? { lat: current.lat, lon: current.lon } : { ...this.endPos };
     this.endPos = { ...newEndPos };
     this.duration = newDuration ?? this.duration;
-    this.startTime = now;
+    this.startTime = performance.now();
+    if (!this.running) {
+      this.running = true;
+      this._animate();
+    }
   }
 
   _animate() {
@@ -65,19 +62,31 @@ export class PositionInterpolator {
 
     const now = performance.now();
     const elapsed = now - this.startTime;
-    const progress = Math.min(elapsed / this.duration, 1);
-    const easedProgress = this.easing(progress);
+    const deadReckonLimit = this.duration * 1.8;
 
-    const lat = this.startPos.lat + (this.endPos.lat - this.startPos.lat) * easedProgress;
-    const lon = this.startPos.lon + (this.endPos.lon - this.startPos.lon) * easedProgress;
+    if (elapsed <= this.duration) {
+      const progress = Math.min(elapsed / this.duration, 1);
+      const easedProgress = this.easing(progress);
 
-    this.onUpdate({ lat, lon, progress: easedProgress, rawProgress: progress });
+      const lat = this.startPos.lat + (this.endPos.lat - this.startPos.lat) * easedProgress;
+      const lon = this.startPos.lon + (this.endPos.lon - this.startPos.lon) * easedProgress;
 
-    if (progress >= 1) {
+      this.onUpdate({ lat, lon, progress: easedProgress, rawProgress: progress });
+      this.animationId = requestAnimationFrame(() => this._animate());
+    } else if (elapsed <= deadReckonLimit) {
+      // Dead reckoning: gently coast forward along the current velocity vector with decay
+      const extraRatio = (elapsed - this.duration) / (deadReckonLimit - this.duration);
+      const decay = 1 - extraRatio * 0.6; // smoothly slow down
+      const deltaLat = (this.endPos.lat - this.startPos.lat) * ((elapsed - this.duration) / this.duration) * decay;
+      const deltaLon = (this.endPos.lon - this.startPos.lon) * ((elapsed - this.duration) / this.duration) * decay;
+      const lat = this.endPos.lat + deltaLat;
+      const lon = this.endPos.lon + deltaLon;
+
+      this.onUpdate({ lat, lon, progress: 1 + extraRatio, rawProgress: 1 + extraRatio, isDeadReckoning: true });
+      this.animationId = requestAnimationFrame(() => this._animate());
+    } else {
       this.running = false;
       this.onComplete({ lat: this.endPos.lat, lon: this.endPos.lon });
-    } else {
-      this.animationId = requestAnimationFrame(() => this._animate());
     }
   }
 
@@ -89,14 +98,28 @@ export class PositionInterpolator {
     
     const now = performance.now();
     const elapsed = now - this.startTime;
-    const progress = Math.min(elapsed / this.duration, 1);
-    const easedProgress = this.easing(progress);
+    const deadReckonLimit = this.duration * 1.8;
 
-    return {
-      lat: this.startPos.lat + (this.endPos.lat - this.startPos.lat) * easedProgress,
-      lon: this.startPos.lon + (this.endPos.lon - this.startPos.lon) * easedProgress,
-      progress: easedProgress
-    };
+    if (elapsed <= this.duration) {
+      const progress = Math.min(elapsed / this.duration, 1);
+      const easedProgress = this.easing(progress);
+      return {
+        lat: this.startPos.lat + (this.endPos.lat - this.startPos.lat) * easedProgress,
+        lon: this.startPos.lon + (this.endPos.lon - this.startPos.lon) * easedProgress,
+        progress: easedProgress
+      };
+    } else if (elapsed <= deadReckonLimit) {
+      const extraRatio = (elapsed - this.duration) / (deadReckonLimit - this.duration);
+      const decay = 1 - extraRatio * 0.6;
+      const deltaLat = (this.endPos.lat - this.startPos.lat) * ((elapsed - this.duration) / this.duration) * decay;
+      const deltaLon = (this.endPos.lon - this.startPos.lon) * ((elapsed - this.duration) / this.duration) * decay;
+      return {
+        lat: this.endPos.lat + deltaLat,
+        lon: this.endPos.lon + deltaLon,
+        progress: 1 + extraRatio
+      };
+    }
+    return { lat: this.endPos.lat, lon: this.endPos.lon, progress: 1 };
   }
 
   stop() {

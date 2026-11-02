@@ -35,7 +35,7 @@ export class LiveTrackingMap {
       
       // Behavior options
       gpsFilterAlpha: options.gpsFilterAlpha ?? 0.3,
-      interpolationDuration: options.interpolationDuration ?? 1000,
+      interpolationDuration: options.interpolationDuration ?? 3000,
       lowSpeedThreshold: options.lowSpeedThreshold ?? 5,
       recenterThreshold: options.recenterThreshold ?? 50,
       autoRecenterDelay: options.autoRecenterDelay ?? 2000,
@@ -79,16 +79,26 @@ export class LiveTrackingMap {
    * Initialize the map and all components
    */
   async init() {
+    const containerEl = typeof this.containerId === 'string'
+      ? document.getElementById(this.containerId)
+      : this.containerId;
+    if (!containerEl) {
+      console.warn('Map container element not found:', this.containerId);
+      return this;
+    }
+    if (containerEl._leaflet_id) {
+      containerEl._leaflet_id = null;
+    }
+
     // Enable map rotation support
     enableMapRotation(L.Map.prototype);
     
     // Create map
-    this.map = L.map(this.containerId, {
+    this.map = L.map(containerEl, {
       center: this.options.center,
       zoom: this.options.zoom,
       zoomControl: true,
-      attributionControl: true,
-      rotate: true // Enable rotation
+      attributionControl: true
     });
     
     // Add tile layer
@@ -211,16 +221,18 @@ export class LiveTrackingMap {
     if (!data) return;
     
     const hasPolyline = typeof data.polyline === 'string' && data.polyline.length > 0;
-    const polylineCoords = hasPolyline ? decodePolyline(data.polyline) : [];
+    const stageCoords = (Array.isArray(data.stages) ? data.stages : [])
+      .filter(s => Number.isFinite(Number(s.latitude)) && Number.isFinite(Number(s.longitude)))
+      .map(s => [Number(s.latitude), Number(s.longitude)]);
+    const polylineCoords = hasPolyline ? decodePolyline(data.polyline) : stageCoords;
     
     // Set route on ETA calculator
     this.etaCalculator.setRoute(polylineCoords, data.stages || [], data.destinationStage);
     
-    // Set route on camera for zoom calculations
     // Draw route polyline
-    if (hasPolyline && polylineCoords.length >= 2) {
+    if (polylineCoords.length >= 2) {
       this.routePolyline = new RoutePolyline(this.map);
-      this.routePolyline.setPolyline(data.polyline);
+      this.routePolyline.setPolyline(hasPolyline ? data.polyline : polylineCoords);
     }
     
     // Add stage markers
@@ -404,18 +416,27 @@ export class LiveTrackingMap {
     this.lastGPSFix = { ...filtered, timestamp: fixTime, speed: calculatedSpeed, bearing: calculatedBearing };
     
     // 3. Map match to route
-    if (this.routeData && this.routeData.polyline) {
-      const polylineCoords = decodePolyline(this.routeData.polyline);
-      const projected = projectToPolyline(filtered.lat, filtered.lon, polylineCoords);
-      
-      // 4. Update bearing smoother
+    let targetPos = { lat: filtered.lat, lon: filtered.lon };
+    let projected = null;
+    const hasPolyline = typeof this.routeData?.polyline === 'string' && this.routeData.polyline.length > 0;
+    const polylineCoords = hasPolyline
+      ? decodePolyline(this.routeData.polyline)
+      : (Array.isArray(this.routeData?.stages)
+          ? this.routeData.stages.filter(s => Number.isFinite(Number(s.latitude)) && Number.isFinite(Number(s.longitude))).map(s => [Number(s.latitude), Number(s.longitude)])
+          : []);
+
+    if (polylineCoords.length >= 2) {
+      projected = projectToPolyline(filtered.lat, filtered.lon, polylineCoords);
+      // Snap to polyline if within 80m; otherwise respect vehicle's real position (e.g. detour)
+      if (projected && (projected.distance == null || projected.distance <= 80)) {
+        targetPos = { lat: projected.lat, lon: projected.lon };
+      }
+
+      // Update turn anticipation if bearing is known
       if (calculatedBearing != null) {
         const bearingResult = this.bearingSmoother.update(calculatedBearing, calculatedSpeed || 0);
-        
-        // 5. Check for upcoming turns
         const polylineBearing = getPolylineBearing(polylineCoords, projected);
         if (Math.abs(bearingResult.bearing - polylineBearing) > 30) {
-          // Potential turn ahead
           this.turnAnticipation.setManeuver({
             bearing: polylineBearing,
             distance: 50,
@@ -425,40 +446,50 @@ export class LiveTrackingMap {
           this.turnAnticipation.clearManeuver();
         }
       }
-      
-      // 6. Start interpolation to map-matched position
-      const currentPos = this.vehicleMarker.getPosition();
-      if (currentPos) {
-        this.interpolator.updateTarget(
-          { lat: projected.lat, lon: projected.lon },
-          this.options.interpolationDuration
-        );
-      } else {
-        // First position
-        this.interpolator.interpolateTo(
-          { lat: projected.lat, lon: projected.lon },
-          { lat: projected.lat, lon: projected.lon },
-          0
-        );
+    } else if (calculatedBearing != null) {
+      this.bearingSmoother.update(calculatedBearing, calculatedSpeed || 0);
+    }
+
+    // 4. Adapt interpolation duration to the time elapsed since last GPS fix
+    let duration = this.options.interpolationDuration;
+    const now = Date.now();
+    if (this.lastFixReceivedAt) {
+      const elapsed = now - this.lastFixReceivedAt;
+      if (elapsed >= 1000 && elapsed <= 10000) {
+        duration = elapsed;
       }
-      
-      // 7. Update ETA
+    }
+    this.lastFixReceivedAt = now;
+
+    // 5. Start or update smooth interpolation to target position
+    const currentPos = this.vehicleMarker.getPosition();
+    if (currentPos) {
+      this.interpolator.updateTarget(targetPos, duration);
+    } else {
+      this.interpolator.interpolateTo(targetPos, targetPos, 0);
+      if (this.vehicleMarker) {
+        this.vehicleMarker.setPosition(targetPos.lat, targetPos.lon, calculatedBearing);
+      }
+    }
+
+    // 6. Update ETA
+    if (projected) {
       this.etaCalculator.update(
-        { lat: projected.lat, lon: projected.lon, speed: calculatedSpeed },
+        { lat: targetPos.lat, lon: targetPos.lon, speed: calculatedSpeed },
         projected
       );
-      
-      // 8. Check stage proximity
-      if (this.routeData.stages) {
-        const nearestStage = findNearestStage(projected.lat, projected.lon, this.routeData.stages);
-        if (nearestStage && nearestStage.distance < 20) {
-          this._onStageReached(nearestStage);
-        }
-      }
-      
-      // Notify mode controller
-      this.modeController.onVehicleUpdate();
     }
+
+    // 7. Check stage proximity
+    if (this.routeData && this.routeData.stages) {
+      const nearestStage = findNearestStage(targetPos.lat, targetPos.lon, this.routeData.stages);
+      if (nearestStage && nearestStage.distance < 40) {
+        this._onStageReached(nearestStage);
+      }
+    }
+
+    // Notify mode controller
+    this.modeController.onVehicleUpdate();
   }
 
   _distanceToNextManeuver() {

@@ -65,6 +65,18 @@ export class VehicleMarker {
   }
 
   /**
+   * Set immediate position
+   */
+  setPosition(lat, lon, bearing = null) {
+    if (!this._isValidPosition(lat, lon)) return;
+    this.currentPos = { lat, lon };
+    if (bearing !== null && Number.isFinite(Number(bearing))) {
+      this.currentBearing = Number(bearing);
+    }
+    this._updateMarker();
+  }
+
+  /**
    * Set target position for smooth interpolation
    */
   setTargetPosition(lat, lon, bearing = null, speed = 0) {
@@ -318,12 +330,18 @@ export class RoutePolyline {
   setPolyline(encodedPolyline) {
     if (this.polyline) {
       this.polyline.remove();
+      this.polyline = null;
     }
     
-    const coords = decodePolyline(encodedPolyline);
+    if (!encodedPolyline) return null;
+    const coords = typeof encodedPolyline === 'string'
+      ? decodePolyline(encodedPolyline)
+      : (Array.isArray(encodedPolyline) ? encodedPolyline : []);
     const latLngs = coords.map(([lat, lon]) => L.latLng(lat, lon));
     
-    this.polyline = L.polyline(latLngs, this.options).addTo(this.map);
+    if (latLngs.length >= 2) {
+      this.polyline = L.polyline(latLngs, this.options).addTo(this.map);
+    }
     return this.polyline;
   }
 

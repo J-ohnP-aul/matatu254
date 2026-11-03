@@ -1,18 +1,35 @@
 /**
  * Matatu254 Live Vehicle Tracking Map
  * Main entry point - integrates all map components
- * 
+ *
  * Google Maps-like navigation feel using Leaflet
  */
 
-import { GPSFilter, KalmanFilter2D } from './gps-filter.js';
-import { PositionInterpolator, smoothstep } from './interpolator.js';
-import { BearingSmoother, TurnAnticipation, calculateBearing, calculateSpeed } from './bearing.js';
-import { projectToPolyline, decodePolyline, distanceAlongPolyline, remainingDistanceAlongPolyline, getPolylineBearing, findNearestStage } from './map-matcher.js';
-import { CameraController, enableMapRotation } from './camera.js';
-import { ETACalculator, formatDuration, formatDistance } from './eta.js';
-import { ModeController, CameraMode } from './modes.js';
-import { VehicleMarker, DestinationMarker, StageMarkers, RoutePolyline } from './markers.js';
+import { GPSFilter, KalmanFilter2D } from "./gps-filter.js";
+import { PositionInterpolator, smoothstep } from "./interpolator.js";
+import {
+  BearingSmoother,
+  TurnAnticipation,
+  calculateBearing,
+  calculateSpeed,
+} from "./bearing.js";
+import {
+  projectToPolyline,
+  decodePolyline,
+  distanceAlongPolyline,
+  remainingDistanceAlongPolyline,
+  getPolylineBearing,
+  findNearestStage,
+} from "./map-matcher.js";
+import { CameraController, enableMapRotation } from "./camera.js";
+import { ETACalculator, formatDuration, formatDistance } from "./eta.js";
+import { ModeController, CameraMode } from "./modes.js";
+import {
+  VehicleMarker,
+  DestinationMarker,
+  StageMarkers,
+  RoutePolyline,
+} from "./markers.js";
 
 export class LiveTrackingMap {
   constructor(containerId, options = {}) {
@@ -22,31 +39,34 @@ export class LiveTrackingMap {
       center: options.center || [-1.2921, 36.8219], // Nairobi default
       zoom: options.zoom || 13,
       // OSMF's tile policy requires the canonical, non-subdomain endpoint.
-      tileLayer: options.tileLayer || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-      attribution: options.attribution || '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      
+      tileLayer:
+        options.tileLayer || "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      attribution:
+        options.attribution ||
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+
       // Tracking options
       journeyId: options.journeyId || null,
       tripId: options.tripId || null,
-      apiBase: options.apiBase || '',
+      apiBase: options.apiBase || "",
       routeDataUrl: options.routeDataUrl || null,
       latestPositionUrl: options.latestPositionUrl || null,
       locationStreamUrl: options.locationStreamUrl || null,
-      
+
       // Behavior options
       gpsFilterAlpha: options.gpsFilterAlpha ?? 0.3,
       interpolationDuration: options.interpolationDuration ?? 3000,
       lowSpeedThreshold: options.lowSpeedThreshold ?? 5,
       recenterThreshold: options.recenterThreshold ?? 50,
       autoRecenterDelay: options.autoRecenterDelay ?? 2000,
-      
+
       // Callbacks
       onError: options.onError || (() => {}),
       onETAUpdate: options.onETAUpdate || (() => {}),
       onStageChange: options.onStageChange || (() => {}),
-      onModeChange: options.onModeChange || (() => {})
+      onModeChange: options.onModeChange || (() => {}),
     };
-    
+
     // Core components
     this.map = null;
     this.gpsFilter = null;
@@ -60,7 +80,7 @@ export class LiveTrackingMap {
     this.destinationMarker = null;
     this.stageMarkers = null;
     this.routePolyline = null;
-    
+
     // State
     this.routeData = null;
     this.lastGPSFix = null;
@@ -69,7 +89,7 @@ export class LiveTrackingMap {
     this.lastPositionTimestamp = null;
     this.sseConnection = null;
     this.running = false;
-    
+
     // Performance
     this.lastFrameTime = 0;
     this.frameCount = 0;
@@ -79,74 +99,94 @@ export class LiveTrackingMap {
    * Initialize the map and all components
    */
   async init() {
-    const containerEl = typeof this.containerId === 'string'
-      ? document.getElementById(this.containerId)
-      : this.containerId;
+    const containerEl =
+      typeof this.containerId === "string"
+        ? document.getElementById(this.containerId)
+        : this.containerId;
     if (!containerEl) {
-      console.warn('Map container element not found:', this.containerId);
+      console.warn("Map container element not found:", this.containerId);
       return this;
     }
+    if (!window.L) {
+      throw new Error(
+        "Leaflet did not load before the live map was initialized",
+      );
+    }
     if (containerEl._leaflet_id) {
-      containerEl._leaflet_id = null;
+      console.warn("Map container is already initialized:", this.containerId);
+      return this;
     }
 
     // Enable map rotation support
     enableMapRotation(L.Map.prototype);
-    
+
     // Create map
     this.map = L.map(containerEl, {
       center: this.options.center,
       zoom: this.options.zoom,
       zoomControl: true,
-      attributionControl: true
+      attributionControl: true,
     });
-    
+
     // Add tile layer
     L.tileLayer(this.options.tileLayer, {
       attribution: this.options.attribution,
-      maxZoom: 19
+      maxZoom: 19,
     }).addTo(this.map);
-    
+    this.resizeHandler = () => this.map?.invalidateSize({ animate: false });
+    requestAnimationFrame(this.resizeHandler);
+    window.setTimeout(this.resizeHandler, 250);
+    window.addEventListener("resize", this.resizeHandler, { passive: true });
+    window.visualViewport?.addEventListener("resize", this.resizeHandler, {
+      passive: true,
+    });
+    requestAnimationFrame(() => this.map?.invalidateSize({ animate: false }));
+    window.addEventListener(
+      "pageshow",
+      () => this.map?.invalidateSize({ animate: false }),
+      { once: true },
+    );
+
     // Initialize components
     this._initComponents();
-    
+
     // Load route data
     await this._loadRouteData();
-    
+
     // Start tracking
     this.start();
-    
+
     return this;
   }
 
   _initComponents() {
     // GPS Filter
     this.gpsFilter = new GPSFilter({ alpha: this.options.gpsFilterAlpha });
-    
+
     // Position Interpolator
     this.interpolator = new PositionInterpolator({
       duration: this.options.interpolationDuration,
       easing: smoothstep,
       onUpdate: (pos) => this._onInterpolatedPosition(pos),
-      onComplete: (pos) => this._onInterpolationComplete(pos)
+      onComplete: (pos) => this._onInterpolationComplete(pos),
     });
-    
+
     // Bearing Smoother
     this.bearingSmoother = new BearingSmoother({
       lowSpeedThreshold: this.options.lowSpeedThreshold,
-      lowSpeedHysteresis: this.options.lowSpeedThreshold + 2
+      lowSpeedHysteresis: this.options.lowSpeedThreshold + 2,
     });
-    
+
     // Turn Anticipation
     this.turnAnticipation = new TurnAnticipation({
       anticipationDistance: 50,
-      blendDuration: 2000
+      blendDuration: 2000,
     });
-    
+
     // Markers
     this.vehicleMarker = new VehicleMarker(this.map);
     this.stageMarkers = new StageMarkers(this.map);
-    
+
     // Camera Controller
     this.camera = new CameraController(this.map, {
       marker: this.vehicleMarker.marker,
@@ -157,16 +197,16 @@ export class LiveTrackingMap {
       baseZoom: 17,
       smoothPan: true,
       panDuration: 500,
-      recenterThreshold: this.options.recenterThreshold
+      recenterThreshold: this.options.recenterThreshold,
     });
-    
+
     // ETA Calculator
     this.etaCalculator = new ETACalculator({
       calculationInterval: 5000,
       fullRecalcInterval: 30000,
-      onUpdate: (eta) => this._onETAUpdate(eta)
+      onUpdate: (eta) => this._onETAUpdate(eta),
     });
-    
+
     // Mode Controller
     this.modeController = new ModeController({
       dragThreshold: this.options.recenterThreshold,
@@ -177,34 +217,38 @@ export class LiveTrackingMap {
       getVehiclePosition: () => this.vehicleMarker.getPosition(),
       getMapCenter: () => this.map.getCenter(),
       getMapZoom: () => this.map.getZoom(),
-      panTo: (latlng, zoom) => this.map.flyTo(latlng, zoom)
+      panTo: (latlng, zoom) => this.map.flyTo(latlng, zoom),
     });
-    
+
     // Wire camera mode to mode controller
     this.camera.onModeChange = (mode) => this.modeController.setMode(mode);
-    
+
     // Set up map event listeners for mode controller
-    this.map.on('dragstart', () => this.modeController.onUserDrag());
-    this.map.on('zoomstart', () => this.modeController.onUserZoom());
+    this.map.on("dragstart", () => this.modeController.onUserDrag());
+    this.map.on("zoomstart", () => this.modeController.onUserZoom());
   }
 
   async _loadRouteData() {
-    const url = this.options.routeDataUrl || (this.options.journeyId
-      ? `${this.options.apiBase}/journeys/session/${this.options.journeyId}/route-data/`
-      : null);
+    const url =
+      this.options.routeDataUrl ||
+      (this.options.journeyId
+        ? `${this.options.apiBase}/journeys/session/${this.options.journeyId}/route-data/`
+        : null);
     if (!url) {
-      console.warn('No route data URL configured; showing the base map without a route');
+      console.warn(
+        "No route data URL configured; showing the base map without a route",
+      );
       return;
     }
-    
+
     try {
       const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to load route');
-      
+      if (!response.ok) throw new Error("Failed to load route");
+
       this.routeData = await response.json();
       this._applyRouteData(this.routeData);
     } catch (error) {
-      console.error('Route load failed:', error);
+      console.error("Route load failed:", error);
       // The map and tile layer are already initialized. A route failure should
       // leave them visible rather than trying to decode fabricated geometry.
     }
@@ -219,39 +263,52 @@ export class LiveTrackingMap {
 
   _applyRouteData(data) {
     if (!data) return;
-    
-    const hasPolyline = typeof data.polyline === 'string' && data.polyline.length > 0;
+
+    const hasPolyline =
+      typeof data.polyline === "string" && data.polyline.length > 0;
     const stageCoords = (Array.isArray(data.stages) ? data.stages : [])
-      .filter(s => Number.isFinite(Number(s.latitude)) && Number.isFinite(Number(s.longitude)))
-      .map(s => [Number(s.latitude), Number(s.longitude)]);
-    const polylineCoords = hasPolyline ? decodePolyline(data.polyline) : stageCoords;
-    
+      .filter(
+        (s) =>
+          Number.isFinite(Number(s.latitude)) &&
+          Number.isFinite(Number(s.longitude)),
+      )
+      .map((s) => [Number(s.latitude), Number(s.longitude)]);
+    const polylineCoords = hasPolyline
+      ? decodePolyline(data.polyline)
+      : stageCoords;
+
     // Set route on ETA calculator
-    this.etaCalculator.setRoute(polylineCoords, data.stages || [], data.destinationStage);
-    
+    this.etaCalculator.setRoute(
+      polylineCoords,
+      data.stages || [],
+      data.destinationStage,
+    );
+
     // Draw route polyline
     if (polylineCoords.length >= 2) {
       this.routePolyline = new RoutePolyline(this.map);
-      this.routePolyline.setPolyline(hasPolyline ? data.polyline : polylineCoords);
+      this.routePolyline.setPolyline(
+        hasPolyline ? data.polyline : polylineCoords,
+      );
     }
-    
+
     // Add stage markers
     if (Array.isArray(data.stages)) {
-      data.stages.forEach(stage => {
-        this.stageMarkers.addStage(stage, 'upcoming');
+      data.stages.forEach((stage) => {
+        this.stageMarkers.addStage(stage, "upcoming");
       });
     }
-    
+
     // Add destination marker
     if (data.destinationStage) {
       this.destinationMarker = new DestinationMarker(this.map);
       this.destinationMarker.setPosition(
         data.destinationStage.latitude,
         data.destinationStage.longitude,
-        data.destinationStage.name
+        data.destinationStage.name,
       );
     }
-    
+
     // Keep the route and its named stages in view after the first GPS fix.
     // Without a route line (for example, when OSRM is unavailable), stage
     // coordinates still provide a useful overview for both dashboards.
@@ -261,10 +318,14 @@ export class LiveTrackingMap {
       hasRouteOverview = true;
     } else {
       const stageBounds = (data.stages || [])
-        .filter(stage => Number.isFinite(Number(stage.latitude)) &&
-          Number.isFinite(Number(stage.longitude)) &&
-          stage.latitude !== null && stage.longitude !== null)
-        .map(stage => [Number(stage.latitude), Number(stage.longitude)]);
+        .filter(
+          (stage) =>
+            Number.isFinite(Number(stage.latitude)) &&
+            Number.isFinite(Number(stage.longitude)) &&
+            stage.latitude !== null &&
+            stage.longitude !== null,
+        )
+        .map((stage) => [Number(stage.latitude), Number(stage.longitude)]);
       if (stageBounds.length >= 2) {
         this.map.fitBounds(stageBounds, { padding: [32, 32], maxZoom: 15 });
         hasRouteOverview = true;
@@ -273,7 +334,8 @@ export class LiveTrackingMap {
 
     // Start with route context. The recenter button switches back to live
     // vehicle follow when the user wants a navigation close-up.
-    if (hasRouteOverview) this.modeController.setMode('free');
+    if (hasRouteOverview) this.modeController.setMode("free");
+    this.map.invalidateSize({ animate: false });
   }
 
   /**
@@ -282,13 +344,13 @@ export class LiveTrackingMap {
   start() {
     if (this.running) return;
     this.running = true;
-    
+
     // Start animation loop
     this._animate();
-    
+
     // Start GPS updates (SSE or polling)
     this._startGPSUpdates();
-    
+
     // Start mode controller tick
     this.modeTickInterval = setInterval(() => this.modeController.tick(), 1000);
   }
@@ -298,27 +360,27 @@ export class LiveTrackingMap {
    */
   stop() {
     this.running = false;
-    
+
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
       this.animationId = null;
     }
-    
+
     if (this.pollingInterval) {
       clearTimeout(this.pollingInterval);
       this.pollingInterval = null;
     }
     if (this._pollResume) {
-      window.removeEventListener('online', this._pollResume);
-      document.removeEventListener('visibilitychange', this._pollResume);
+      window.removeEventListener("online", this._pollResume);
+      document.removeEventListener("visibilitychange", this._pollResume);
       this._pollResume = null;
     }
-    
+
     if (this.sseConnection) {
       this.sseConnection.close();
       this.sseConnection = null;
     }
-    
+
     if (this.modeTickInterval) {
       clearInterval(this.modeTickInterval);
     }
@@ -326,7 +388,7 @@ export class LiveTrackingMap {
 
   _animate() {
     if (!this.running) return;
-    
+
     this.animationId = requestAnimationFrame(() => this._animate());
   }
 
@@ -334,13 +396,15 @@ export class LiveTrackingMap {
     // Update vehicle marker
     const bearingResult = this.bearingSmoother.getBearing();
     const anticipated = this.turnAnticipation.getAnticipatedBearing(
-      bearingResult, 
-      this._distanceToNextManeuver()
+      bearingResult,
+      this._distanceToNextManeuver(),
     );
-    
+
     this.vehicleMarker.updatePosition(pos, anticipated.bearing);
-    this.vehicleMarker.setBearingSuppressed(this.bearingSmoother.isSuppressed());
-    
+    this.vehicleMarker.setBearingSuppressed(
+      this.bearingSmoother.isSuppressed(),
+    );
+
     // Update camera (if following)
     if (this.modeController.isFollowing()) {
       this.vehicleMarker.marker.speed = this.bearingSmoother.lastSpeed;
@@ -373,74 +437,119 @@ export class LiveTrackingMap {
    * Process incoming GPS fix
    */
   processGPSFix(gpsData) {
-    if (gpsData?.latitude == null || gpsData?.longitude == null ||
-        gpsData.latitude === '' || gpsData.longitude === '') return;
+    if (
+      gpsData?.latitude == null ||
+      gpsData?.longitude == null ||
+      gpsData.latitude === "" ||
+      gpsData.longitude === ""
+    )
+      return;
     const latitude = Number(gpsData.latitude);
     const longitude = Number(gpsData.longitude);
     const { bearing, speed, accuracy, timestamp } = gpsData || {};
-    if (!Number.isFinite(latitude) || !Number.isFinite(longitude) ||
-        latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
-      console.warn('Ignoring invalid GPS coordinates', gpsData?.latitude, gpsData?.longitude);
+    if (
+      !Number.isFinite(latitude) ||
+      !Number.isFinite(longitude) ||
+      latitude < -90 ||
+      latitude > 90 ||
+      longitude < -180 ||
+      longitude > 180
+    ) {
+      console.warn(
+        "Ignoring invalid GPS coordinates",
+        gpsData?.latitude,
+        gpsData?.longitude,
+      );
       return;
     }
 
-    const parsedFixTime = timestamp ? new Date(timestamp).getTime() : Date.now();
+    const parsedFixTime = timestamp
+      ? new Date(timestamp).getTime()
+      : Date.now();
     const fixTime = Number.isFinite(parsedFixTime) ? parsedFixTime : Date.now();
-    
+
     // 1. Filter GPS noise
     const filtered = this.gpsFilter.update(latitude, longitude, fixTime);
-    if (!Number.isFinite(filtered.lat) || !Number.isFinite(filtered.lon)) return;
-    
+    if (!Number.isFinite(filtered.lat) || !Number.isFinite(filtered.lon))
+      return;
+
     // 2. Calculate speed/bearing if not provided
     let calculatedSpeed = speed;
     let calculatedBearing = bearing;
-    
-    if (this.lastGPSFix && (calculatedSpeed == null || calculatedBearing == null)) {
+
+    if (
+      this.lastGPSFix &&
+      (calculatedSpeed == null || calculatedBearing == null)
+    ) {
       const dt = fixTime - this.lastGPSFix.timestamp;
       if (dt > 0) {
         if (calculatedSpeed == null) {
           calculatedSpeed = calculateSpeed(
-            this.lastGPSFix.lat, this.lastGPSFix.lon,
-            filtered.lat, filtered.lon, dt
+            this.lastGPSFix.lat,
+            this.lastGPSFix.lon,
+            filtered.lat,
+            filtered.lon,
+            dt,
           );
         }
         if (calculatedBearing == null) {
           calculatedBearing = calculateBearing(
-            this.lastGPSFix.lat, this.lastGPSFix.lon,
-            filtered.lat, filtered.lon
+            this.lastGPSFix.lat,
+            this.lastGPSFix.lon,
+            filtered.lat,
+            filtered.lon,
           );
         }
       }
     }
-    
-    this.lastGPSFix = { ...filtered, timestamp: fixTime, speed: calculatedSpeed, bearing: calculatedBearing };
-    
+
+    this.lastGPSFix = {
+      ...filtered,
+      timestamp: fixTime,
+      speed: calculatedSpeed,
+      bearing: calculatedBearing,
+    };
+
     // 3. Map match to route
     let targetPos = { lat: filtered.lat, lon: filtered.lon };
     let projected = null;
-    const hasPolyline = typeof this.routeData?.polyline === 'string' && this.routeData.polyline.length > 0;
+    const hasPolyline =
+      typeof this.routeData?.polyline === "string" &&
+      this.routeData.polyline.length > 0;
     const polylineCoords = hasPolyline
       ? decodePolyline(this.routeData.polyline)
-      : (Array.isArray(this.routeData?.stages)
-          ? this.routeData.stages.filter(s => Number.isFinite(Number(s.latitude)) && Number.isFinite(Number(s.longitude))).map(s => [Number(s.latitude), Number(s.longitude)])
-          : []);
+      : Array.isArray(this.routeData?.stages)
+        ? this.routeData.stages
+            .filter(
+              (s) =>
+                Number.isFinite(Number(s.latitude)) &&
+                Number.isFinite(Number(s.longitude)),
+            )
+            .map((s) => [Number(s.latitude), Number(s.longitude)])
+        : [];
 
     if (polylineCoords.length >= 2) {
       projected = projectToPolyline(filtered.lat, filtered.lon, polylineCoords);
       // Snap to polyline if within 80m; otherwise respect vehicle's real position (e.g. detour)
-      if (projected && (projected.distance == null || projected.distance <= 80)) {
+      if (
+        projected &&
+        (projected.distance == null || projected.distance <= 80)
+      ) {
         targetPos = { lat: projected.lat, lon: projected.lon };
       }
 
       // Update turn anticipation if bearing is known
       if (calculatedBearing != null) {
-        const bearingResult = this.bearingSmoother.update(calculatedBearing, calculatedSpeed || 0);
+        const bearingResult = this.bearingSmoother.update(
+          calculatedBearing,
+          calculatedSpeed || 0,
+        );
         const polylineBearing = getPolylineBearing(polylineCoords, projected);
         if (Math.abs(bearingResult.bearing - polylineBearing) > 30) {
           this.turnAnticipation.setManeuver({
             bearing: polylineBearing,
             distance: 50,
-            type: 'turn'
+            type: "turn",
           });
         } else {
           this.turnAnticipation.clearManeuver();
@@ -468,7 +577,11 @@ export class LiveTrackingMap {
     } else {
       this.interpolator.interpolateTo(targetPos, targetPos, 0);
       if (this.vehicleMarker) {
-        this.vehicleMarker.setPosition(targetPos.lat, targetPos.lon, calculatedBearing);
+        this.vehicleMarker.setPosition(
+          targetPos.lat,
+          targetPos.lon,
+          calculatedBearing,
+        );
       }
     }
 
@@ -476,13 +589,17 @@ export class LiveTrackingMap {
     if (projected) {
       this.etaCalculator.update(
         { lat: targetPos.lat, lon: targetPos.lon, speed: calculatedSpeed },
-        projected
+        projected,
       );
     }
 
     // 7. Check stage proximity
     if (this.routeData && this.routeData.stages) {
-      const nearestStage = findNearestStage(targetPos.lat, targetPos.lon, this.routeData.stages);
+      const nearestStage = findNearestStage(
+        targetPos.lat,
+        targetPos.lon,
+        this.routeData.stages,
+      );
       if (nearestStage && nearestStage.distance < 40) {
         this._onStageReached(nearestStage);
       }
@@ -498,16 +615,16 @@ export class LiveTrackingMap {
   }
 
   _onStageReached(stage) {
-    this.stageMarkers.updateStageStatus(stage.id, 'complete');
-    this.options.onStageChange(stage, 'complete');
-    
+    this.stageMarkers.updateStageStatus(stage.id, "complete");
+    this.options.onStageChange(stage, "complete");
+
     // Update next stage
-    const nextStage = this.routeData.stages.find(s => 
-      s.sequenceOrder === stage.sequenceOrder + 1
+    const nextStage = this.routeData.stages.find(
+      (s) => s.sequenceOrder === stage.sequenceOrder + 1,
     );
     if (nextStage) {
-      this.stageMarkers.updateStageStatus(nextStage.id, 'current');
-      this.options.onStageChange(nextStage, 'current');
+      this.stageMarkers.updateStageStatus(nextStage.id, "current");
+      this.options.onStageChange(nextStage, "current");
     }
   }
 
@@ -519,20 +636,22 @@ export class LiveTrackingMap {
   }
 
   _startSSE() {
-    const url = this.options.locationStreamUrl || `${this.options.apiBase}/trips/${this.options.tripId}/location-stream/`;
-    
+    const url =
+      this.options.locationStreamUrl ||
+      `${this.options.apiBase}/trips/${this.options.tripId}/location-stream/`;
+
     try {
       this.sseConnection = new EventSource(url);
-      
+
       this.sseConnection.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if (data.type === 'ping') {
+        if (data.type === "ping") {
           this.processGPSFix(data);
         }
       };
-      
+
       this.sseConnection.onerror = () => {
-        console.warn('SSE failed, falling back to polling');
+        console.warn("SSE failed, falling back to polling");
         this.sseConnection.close();
         this._startPolling();
       };
@@ -547,10 +666,15 @@ export class LiveTrackingMap {
       this.pollingInterval = null;
       if (!this.running || document.hidden || !navigator.onLine) return;
       try {
-        const url = this.options.latestPositionUrl || `${this.options.apiBase}/trips/${this.options.tripId}/latest-position/`;
+        const url =
+          this.options.latestPositionUrl ||
+          `${this.options.apiBase}/trips/${this.options.tripId}/latest-position/`;
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 10000);
-        const response = await fetch(url, { cache: 'no-store', signal: controller.signal });
+        const response = await fetch(url, {
+          cache: "no-store",
+          signal: controller.signal,
+        });
         clearTimeout(timeout);
         if (response.ok) {
           const data = await response.json();
@@ -559,15 +683,24 @@ export class LiveTrackingMap {
             this.processGPSFix(data);
           }
         }
-      } catch (e) { /* Keep the last good position visible and retry. */ }
-      if (this.running && !document.hidden) this.pollingInterval = setTimeout(poll, 3000);
+      } catch (e) {
+        /* Keep the last good position visible and retry. */
+      }
+      if (this.running && !document.hidden)
+        this.pollingInterval = setTimeout(poll, 3000);
     };
     const resume = () => {
-      if (this.running && !document.hidden && navigator.onLine && !this.pollingInterval) poll();
+      if (
+        this.running &&
+        !document.hidden &&
+        navigator.onLine &&
+        !this.pollingInterval
+      )
+        poll();
     };
     this._pollResume = resume;
-    window.addEventListener('online', resume);
-    document.addEventListener('visibilitychange', resume);
+    window.addEventListener("online", resume);
+    document.addEventListener("visibilitychange", resume);
     resume();
   }
 
@@ -597,14 +730,20 @@ export class LiveTrackingMap {
    */
   destroy() {
     this.stop();
-    
+
+    if (this.resizeHandler) {
+      window.removeEventListener("resize", this.resizeHandler);
+      window.visualViewport?.removeEventListener("resize", this.resizeHandler);
+      this.resizeHandler = null;
+    }
+
     this.vehicleMarker?.remove();
     this.destinationMarker?.remove();
     this.stageMarkers?.clear();
     this.routePolyline?.remove();
     this.camera?.destroy();
     this.modeController?.destroy();
-    
+
     if (this.map) {
       this.map.remove();
       this.map = null;
@@ -639,5 +778,5 @@ export {
   RoutePolyline,
   decodePolyline,
   formatDuration,
-  formatDistance
+  formatDistance,
 };

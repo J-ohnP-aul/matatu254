@@ -132,7 +132,9 @@ export class LiveTrackingMap {
       attribution: this.options.attribution,
       maxZoom: 19,
     };
-    const primaryTiles = L.tileLayer(this.options.tileLayer, tileOptions).addTo(this.map);
+    const primaryTiles = L.tileLayer(this.options.tileLayer, tileOptions).addTo(
+      this.map,
+    );
     let fallbackLoaded = false;
     primaryTiles.on("tileerror", () => {
       if (fallbackLoaded || !this.map) return;

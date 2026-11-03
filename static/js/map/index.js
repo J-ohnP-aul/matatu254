@@ -128,11 +128,21 @@ export class LiveTrackingMap {
       attributionControl: true,
     });
 
-    // Add tile layer
-    L.tileLayer(this.options.tileLayer, {
+    const tileOptions = {
       attribution: this.options.attribution,
       maxZoom: 19,
-    }).addTo(this.map);
+    };
+    const primaryTiles = L.tileLayer(this.options.tileLayer, tileOptions).addTo(this.map);
+    let fallbackLoaded = false;
+    primaryTiles.on("tileerror", () => {
+      if (fallbackLoaded || !this.map) return;
+      fallbackLoaded = true;
+      this.map.removeLayer(primaryTiles);
+      L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+        tileOptions,
+      ).addTo(this.map);
+    });
     this.resizeHandler = () => this.map?.invalidateSize({ animate: false });
     requestAnimationFrame(this.resizeHandler);
     window.setTimeout(this.resizeHandler, 250);

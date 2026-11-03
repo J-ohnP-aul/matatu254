@@ -1,5 +1,5 @@
 {% extends 'base.html' %} {% load static %} {% block title %}{{
-trip.matatu.registration_number }} · Crew trip{% endblock %} {% block app_title
+trip.matatu.registration_number }} - Crew trip{% endblock %} {% block app_title
 %}Crew trip{% endblock %} {% block extra_head %}
 <link
   rel="stylesheet"
@@ -7,13 +7,15 @@ trip.matatu.registration_number }} · Crew trip{% endblock %} {% block app_title
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
   crossorigin=""
 />
-{% endblock %} {% block app_back %}<a
+{% endblock %} {% block app_back %}
+<a
   class="header-back"
   href="{% url 'conductor:dashboard' %}"
   data-nav-direction="back"
   aria-label="Back to crew dashboard"
-  >←</a
->{% endblock %} {% block content %}
+  >Back</a
+>
+{% endblock %} {% block content %}
 <section
   class="page-shell conductor-page"
   id="trip-dashboard"
@@ -27,13 +29,14 @@ trip.matatu.registration_number }} · Crew trip{% endblock %} {% block app_title
   <header class="page-heading">
     <div>
       <h1>{{ trip.matatu.registration_number }}</h1>
-      <p>{{ trip.route.name }} · {{ trip.get_status_display }}</p>
+      <p>{{ trip.route.name }} - {{ trip.get_status_display }}</p>
     </div>
   </header>
+
   <section
     class="map-card crew-map-card"
     id="map-container"
-    aria-labelledby="crew-map-title"
+    aria-label="Live crew route map"
   >
     <div
       id="crew-map"
@@ -43,11 +46,9 @@ trip.matatu.registration_number }} · Crew trip{% endblock %} {% block app_title
     ></div>
     <p
       id="gps-freshness"
-      class="map-caption gps-freshness{% if gps_stale %} is-stale{% endif %}"
+      class="map-caption gps-freshness"
       role="status"
       aria-live="polite"
-      data-gps-stale="{{ gps_stale|yesno:'true,false' }}"
-      data-gps-age-seconds="{{ gps_age_seconds|default_if_none:'' }}"
     >
       {% if gps_age_seconds == None %}Waiting for the first vehicle GPS update{%
       elif gps_stale %}Vehicle location is delayed{% else %}Vehicle location is
@@ -58,22 +59,12 @@ trip.matatu.registration_number }} · Crew trip{% endblock %} {% block app_title
   <div
     id="next-stop-alert"
     role="status"
-    class="destination-alert conductor-alert{% if not next_stage_remaining or next_stage_remaining.distance_m > 1200 %} is-calm{% endif %}"
-    {%
-    if
-    not
-    next_stage
-    %}
-    hidden{%
-    endif
-    %}
+    class="destination-alert conductor-alert"
   >
-    <span aria-hidden="true">◉</span
-    ><span id="next-stop-alert-text"
-      >{% if next_stage_remaining and next_stage_remaining.distance_m <= 1200
-      %}Approaching {{ next_stage.name }}, {{ alighting_count }} alighting{%
-      else %}Next stop: {{ next_stage.name|default:'Waiting for GPS' }} · {{
-      alighting_count }} alighting{% endif %}</span
+    <span aria-hidden="true">*</span>
+    <span id="next-stop-alert-text"
+      >Next stop: {{ next_stage.name|default:'Waiting for GPS' }} - {{
+      alighting_count }} alighting</span
     >
   </div>
 
@@ -83,11 +74,7 @@ trip.matatu.registration_number }} · Crew trip{% endblock %} {% block app_title
   >
     <div class="live-card-heading">
       <h2 id="live-trip-heading">Live trip</h2>
-      <span
-        class="badge{% if trip.status == 'active' %} badge-success{% endif %}"
-        id="trip-status"
-        >{{ trip.get_status_display }}</span
-      >
+      <span class="badge" id="trip-status">{{ trip.get_status_display }}</span>
     </div>
     <div class="progress-header">
       <span class="progress-label">Trip progress</span
@@ -120,18 +107,12 @@ trip.matatu.registration_number }} · Crew trip{% endblock %} {% block app_title
       <div class="metric-card">
         <span class="metric-label">To next stage</span
         ><strong class="metric-value" id="next-stage-distance"
-          >{% if next_stage_remaining %}{{
-          next_stage_remaining.distance_km|floatformat:1 }} km{% elif
-          at_destination %}0 m{% else %}Waiting for GPS{% endif %}</strong
+          >Waiting for GPS</strong
         >
       </div>
       <div class="metric-card">
         <span class="metric-label">ETA</span
-        ><strong class="metric-value" id="next-stage-eta"
-          >{% if next_stage_remaining %}{{
-          next_stage_remaining.duration_minutes|floatformat:0 }} min{% elif
-          at_destination %}Arrived{% else %}Not available{% endif %}</strong
-        >
+        ><strong class="metric-value" id="next-stage-eta">Not available</strong>
       </div>
       <div class="metric-card">
         <span class="metric-label">Onboard</span
@@ -144,31 +125,23 @@ trip.matatu.registration_number }} · Crew trip{% endblock %} {% block app_title
       </div>
       <div class="metric-card">
         <span class="metric-label">Speed</span
-        ><strong class="metric-value" id="vehicle-speed"
-          >{% if speed_kmh != None %}{{ speed_kmh|floatformat:0 }} km/h{% else
-          %}Not available{% endif %}</strong
-        >
+        ><strong class="metric-value" id="vehicle-speed">Not available</strong>
       </div>
       <div class="metric-card">
         <span class="metric-label">Latitude</span
         ><strong class="metric-value" id="vehicle-latitude"
-          >{% if vehicle_pos %}{{ vehicle_pos.0|floatformat:5 }}{% else %}Not
-          available{% endif %}</strong
+          >Not available</strong
         >
       </div>
       <div class="metric-card">
         <span class="metric-label">Longitude</span
         ><strong class="metric-value" id="vehicle-longitude"
-          >{% if vehicle_pos %}{{ vehicle_pos.1|floatformat:5 }}{% else %}Not
-          available{% endif %}</strong
+          >Not available</strong
         >
       </div>
     </div>
     <p class="trip-remaining-summary" id="trip-remaining-summary">
-      {% if remaining %}{{ remaining.distance_km|floatformat:1 }} km and about
-      {{ remaining.duration_minutes|floatformat:0 }} min to {{
-      trip_destination.name }}{% elif at_destination %}Trip destination
-      reached{% else %}Waiting for a GPS position{% endif %}
+      Waiting for a GPS position
     </p>
   </section>
 
@@ -183,27 +156,16 @@ trip.matatu.registration_number }} · Crew trip{% endblock %} {% block app_title
         >Live counts</span
       >
     </div>
-    {% if upcoming_stops %}
     <div class="crew-counts-mobile">
       {% for stop in upcoming_stops %}
       <article
-        class="surface crew-count-card stop-row{% if stop.is_current %} is-complete{% elif stop.is_next %} is-next{% endif %}"
+        class="surface crew-count-card stop-row"
         data-stage-order="{{ stop.stage.sequence_order }}"
         data-stage-lat="{{ stop.stage.latitude }}"
         data-stage-lon="{{ stop.stage.longitude }}"
       >
         <span class="stop-name">{{ stop.stage.name }}</span
-        ><span
-          class="next-stop-badge"
-          {%
-          if
-          not
-          stop.is_next
-          %}
-          hidden{%
-          endif
-          %}
-          >Next stop</span
+        ><span class="next-stop-badge">Next stop</span
         ><span class="alighting-count" data-alighting-count
           >{{ stop.alighting_count }}</span
         >
@@ -221,7 +183,7 @@ trip.matatu.registration_number }} · Crew trip{% endblock %} {% block app_title
         <tbody>
           {% for stop in upcoming_stops %}
           <tr
-            class="stop-row{% if stop.is_current %} is-complete{% elif stop.is_next %} is-next{% endif %}"
+            class="stop-row"
             data-stage-order="{{ stop.stage.sequence_order }}"
             data-stage-lat="{{ stop.stage.latitude }}"
             data-stage-lon="{{ stop.stage.longitude }}"
@@ -230,30 +192,13 @@ trip.matatu.registration_number }} · Crew trip{% endblock %} {% block app_title
             <td>
               <strong class="alighting-count" data-alighting-count
                 >{{ stop.alighting_count }}</strong
-              ><span
-                class="next-stop-badge"
-                {%
-                if
-                not
-                stop.is_next
-                %}
-                hidden{%
-                endif
-                %}
-                >Next stop</span
-              >
+              ><span class="next-stop-badge">Next stop</span>
             </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-    {% else %}
-    <div class="surface empty-state">
-      <h2>No route stages</h2>
-      <p>Add stages to this route to track passenger stops.</p>
-    </div>
-    {% endif %}
   </section>
 
   <section class="surface surface-pad gps-card" aria-labelledby="gps-heading">

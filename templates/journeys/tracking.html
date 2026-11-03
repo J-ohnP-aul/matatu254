@@ -1,5 +1,5 @@
 {% extends 'base.html' %} {% load static %} {% block title %}Journey to {{
-destination.name }} · Matatu254{% endblock %} {% block app_title %}Live
+destination.name }} - Matatu254{% endblock %} {% block app_title %}Live
 journey{% endblock %} {% block extra_head %}
 <link
   rel="stylesheet"
@@ -7,13 +7,15 @@ journey{% endblock %} {% block extra_head %}
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
   crossorigin=""
 />
-{% endblock %} {% block app_back %}<a
+{% endblock %} {% block app_back %}
+<a
   class="header-back"
   href="{% url 'core:dashboard' %}"
   data-nav-direction="back"
   aria-label="Back to home"
-  >←</a
->{% endblock %} {% block content %}
+  >Back</a
+>
+{% endblock %} {% block content %}
 <section
   class="journey-page"
   id="journey-tracking-card"
@@ -26,7 +28,7 @@ journey{% endblock %} {% block extra_head %}
   <header class="journey-header">
     <div>
       <p class="route-meta">
-        {{ trip.matatu.registration_number }} · {{ trip.route.name }}
+        {{ trip.matatu.registration_number }} - {{ trip.route.name }}
       </p>
       <h1>Your stop: {{ destination.name }}</h1>
     </div>
@@ -35,21 +37,15 @@ journey{% endblock %} {% block extra_head %}
     >
   </header>
 
-  <section id="map-container" class="map-card" aria-labelledby="map-title">
+  <section id="map-container" class="map-card" aria-label="Live navigation map">
     <div
       id="map"
       class="live-map"
       role="region"
       aria-label="Live navigation map"
     ></div>
-    <p
-      class="map-caption"
-      id="gps-freshness"
-      aria-live="polite"
-      data-gps-stale="{{ gps_stale|yesno:'true,false' }}"
-      data-gps-age-seconds="{{ gps_age_seconds|default_if_none:'' }}"
-    >
-      {% if gps_age_seconds == None %}Waiting for the vehicle’s first GPS
+    <p class="map-caption" id="gps-freshness" aria-live="polite">
+      {% if gps_age_seconds == None %}Waiting for the vehicle's first GPS
       update{% elif gps_stale %}Vehicle location delayed{% else %}Vehicle
       location live{% endif %}
     </p>
@@ -93,33 +89,22 @@ journey{% endblock %} {% block extra_head %}
       <div class="metric-card">
         <span class="metric-label">Remaining distance</span
         ><strong class="metric-value" id="remaining-distance"
-          >{% if remaining %}{% if remaining.distance_m >= 1000 %}{{
-          remaining.distance_km|floatformat:1 }} km{% else %}{{
-          remaining.distance_m|floatformat:0 }} m{% endif %}{% elif
-          current_stage.id == destination.id %}0 m{% else %}Waiting for GPS{%
-          endif %}</strong
+          >Waiting for GPS</strong
         >
       </div>
       <div class="metric-card">
         <span class="metric-label">Estimated time</span
         ><strong class="metric-value" id="remaining-eta"
-          >{% if remaining %}{{ remaining.duration_minutes|floatformat:0 }}
-          min{% elif current_stage.id == destination.id %}Arrived{% else
-          %}Waiting for GPS{% endif %}</strong
+          >Waiting for GPS</strong
         >
       </div>
     </div>
-    <div
-      id="destination-alert"
-      role="status"
-      class="destination-alert{% if journey.status == 'approaching' %} is-approaching{% endif %}"
-    >
-      <span aria-hidden="true">◉</span
+    <div id="destination-alert" role="status" class="destination-alert">
+      <span aria-hidden="true">*</span
       ><span
         id="destination-alert-text"
         data-notification-id="{{ latest_notification.id|default:0 }}"
-        >{% if latest_notification %}{{ latest_notification.message }}{% else
-        %}We’ll alert you when {{ destination.name }} is close.{% endif %}</span
+        >We will alert you when {{ destination.name }} is close.</span
       >
     </div>
     <section class="route-stages" aria-labelledby="route-stages-heading">
@@ -129,32 +114,15 @@ journey{% endblock %} {% block extra_head %}
       <ol class="route-list" id="route-stages">
         {% for stage in route_stages %}
         <li
-          class="route-stop{% if current_stage and stage.sequence_order < current_stage.sequence_order %} is-complete{% elif current_stage and stage.id == current_stage.id %} is-current{% elif next_stage and stage.id == next_stage.id %} is-next{% endif %}"
+          class="route-stop"
           data-stage-order="{{ stage.sequence_order }}"
           data-stage-name="{{ stage.name }}"
           data-stage-lat="{{ stage.latitude }}"
           data-stage-lon="{{ stage.longitude }}"
         >
-          <span
-            class="route-stop-icon{% if current_stage and stage.sequence_order <= current_stage.sequence_order %} is-complete{% endif %}"
-            aria-hidden="true"
-          ></span>
-          <span class="route-stop-name">{{ stage.name }}</span>
-          <span
-            class="route-stop-badge"
-            {%
-            if
-            not
-            next_stage
-            or
-            stage.id
-            !="next_stage.id"
-            %}
-            hidden{%
-            endif
-            %}
-            >Next stop</span
-          >
+          <span class="route-stop-icon" aria-hidden="true"></span
+          ><span class="route-stop-name">{{ stage.name }}</span
+          ><span class="route-stop-badge" hidden>Next stop</span>
         </li>
         {% empty %}
         <li class="route-stop">No route stages are configured.</li>
@@ -166,14 +134,7 @@ journey{% endblock %} {% block extra_head %}
       class="journey-actions"
       method="post"
       action="{% url 'journeys:end-journey' journey.id %}"
-      {%
-      if
-      journey.status
-      !="arrived"
-      %}
-      hidden{%
-      endif
-      %}
+      hidden
     >
       {% csrf_token %}<button
         type="submit"
@@ -183,21 +144,7 @@ journey{% endblock %} {% block extra_head %}
         End journey
       </button>
     </form>
-    <p
-      id="tracking-refresh-note"
-      class="gps-status"
-      {%
-      if
-      journey.status=""
-      ="arrived"
-      or
-      journey.status=""
-      ="ended"
-      %}
-      hidden{%
-      endif
-      %}
-    >
+    <p id="tracking-refresh-note" class="gps-status">
       Live trip updates refresh automatically.
     </p>
   </section>

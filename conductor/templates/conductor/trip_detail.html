@@ -1,13 +1,16 @@
-{% extends 'base.html' %} {% load static %} {% block title %}{{
-trip.matatu.registration_number }} - Crew trip{% endblock %} {% block app_title
-%}Crew trip{% endblock %} {% block extra_head %}
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ trip.matatu.registration_number }} - Crew trip{% endblock %}
+{% block app_title %}Crew trip{% endblock %}
+{% block extra_head %}
 <link
   rel="stylesheet"
   href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
   crossorigin=""
 />
-{% endblock %} {% block app_back %}
+{% endblock %}
+{% block app_back %}
 <a
   class="header-back"
   href="{% url 'conductor:dashboard' %}"
@@ -15,7 +18,8 @@ trip.matatu.registration_number }} - Crew trip{% endblock %} {% block app_title
   aria-label="Back to crew dashboard"
   >Back</a
 >
-{% endblock %} {% block content %}
+{% endblock %}
+{% block content %}
 <section
   class="page-shell conductor-page"
   id="trip-dashboard"
@@ -50,9 +54,7 @@ trip.matatu.registration_number }} - Crew trip{% endblock %} {% block app_title
       role="status"
       aria-live="polite"
     >
-      {% if gps_age_seconds == None %}Waiting for the first vehicle GPS update{%
-      elif gps_stale %}Vehicle location is delayed{% else %}Vehicle location is
-      live{% endif %}
+      {% if gps_age_seconds == None %}Waiting for the first vehicle GPS update{% elif gps_stale %}Vehicle location is delayed{% else %}Vehicle location is live{% endif %}
     </p>
   </section>
 

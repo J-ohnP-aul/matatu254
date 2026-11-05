@@ -85,6 +85,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
+    'channels',
+    
     'accounts',
     'core',
     'fleet',
@@ -142,6 +144,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+ASGI_APPLICATION = 'config.asgi.application'
 
 
 # Database
@@ -222,6 +225,28 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Use public OSRM demo server (CORS-enabled, no API key)
 # Override with OSRM_BASE_URL env var for custom/self-hosted instances
 OSRM_BASE_URL = os.environ.get('OSRM_BASE_URL', 'https://router.project-osrm.org/route/v1/driving')
+
+# Location transport mode: 'polling' (default), 'websocket', or 'auto'
+LOCATION_TRANSPORT = os.environ.get('LOCATION_TRANSPORT', 'polling')
+
+# Channel layers configuration for WebSocket support
+# Uses in-memory layer for development; configure REDIS_URL for production
+redis_url = os.environ.get('REDIS_URL', '').strip()
+if redis_url:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [redis_url],
+            },
+        },
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }
 
 # Security settings for production
 if not DEBUG:

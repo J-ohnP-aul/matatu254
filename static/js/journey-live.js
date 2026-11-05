@@ -1,4 +1,5 @@
 import { createLiveTrackingMap } from './map/index.js';
+import { createTransport } from './transport/index.js';
 
 (async () => {
   const card = document.getElementById('journey-tracking-card');
@@ -9,6 +10,7 @@ import { createLiveTrackingMap } from './map/index.js';
   const latestPositionUrl = card.dataset.latestPositionUrl;
   const tripId = card.dataset.tripId;
   const journeyId = card.dataset.journeyId;
+  const locationTransport = card.dataset.locationTransport || 'polling';
   const stageRows = [...document.querySelectorAll('#route-stages [data-stage-order]')];
   const freshness = document.getElementById('gps-freshness');
   let lastNotificationId = Number(document.getElementById('destination-alert-text')?.dataset.notificationId || 0);
@@ -64,6 +66,7 @@ import { createLiveTrackingMap } from './map/index.js';
       journeyId,
       routeDataUrl,
       latestPositionUrl,
+      locationTransport,
       interpolationDuration: 3000,
       lowSpeedThreshold: 3,
       onETAUpdate: (eta) => {

@@ -30,6 +30,7 @@ import {
   StageMarkers,
   RoutePolyline,
 } from "./markers.js";
+import { createTransport } from "../transport/index.js";
 
 export class LiveTrackingMap {
   constructor(containerId, options = {}) {
@@ -52,6 +53,7 @@ export class LiveTrackingMap {
       routeDataUrl: options.routeDataUrl || null,
       latestPositionUrl: options.latestPositionUrl || null,
       locationStreamUrl: options.locationStreamUrl || null,
+      locationTransport: options.locationTransport || "polling",
 
       // Behavior options
       gpsFilterAlpha: options.gpsFilterAlpha ?? 0.3,
@@ -88,6 +90,7 @@ export class LiveTrackingMap {
     this.pollingInterval = null;
     this.lastPositionTimestamp = null;
     this.sseConnection = null;
+    this.transport = null;
     this.running = false;
 
     // Performance
@@ -393,6 +396,11 @@ export class LiveTrackingMap {
       this.sseConnection = null;
     }
 
+    if (this.transport) {
+      this.transport.stop();
+      this.transport = null;
+    }
+
     if (this.modeTickInterval) {
       clearInterval(this.modeTickInterval);
     }
@@ -641,10 +649,28 @@ export class LiveTrackingMap {
   }
 
   _startGPSUpdates() {
-    // Try SSE first, fallback to polling
-    // Passenger tracking uses the readable position endpoint. The SSE endpoint
-    // is restricted to the assigned operator/conductor and returns 403 here.
-    this._startPolling();
+    const mode = this.options.locationTransport || "polling";
+    if (mode === "polling") {
+      // Original behavior: poll the latest-position endpoint.
+      this._startPolling();
+      return;
+    }
+
+    // WebSocket or auto mode: use the transport abstraction.
+    this.transport = createTransport(mode, {
+      tripId: this.options.tripId,
+      apiBase: this.options.apiBase,
+      latestPositionUrl: this.options.latestPositionUrl,
+    });
+
+    this.transport.on("position", (data) => {
+      if (data.timestamp && data.timestamp !== this.lastPositionTimestamp) {
+        this.lastPositionTimestamp = data.timestamp;
+        this.processGPSFix(data);
+      }
+    });
+
+    this.transport.start();
   }
 
   _startSSE() {

@@ -7,3 +7,5 @@ python-dotenv>=1.0,<2.0
 requests>=2.31,<3.0
 pywebpush>=2.0,<3.0
 qrcode[pil]>=7.4,<9.0
+channels>=4.0,<5.0
+

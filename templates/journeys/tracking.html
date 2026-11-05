@@ -17,13 +17,14 @@ journey{% endblock %} {% block extra_head %}
 >
 {% endblock %} {% block content %}
 <section
-  class="journey-page"
-  id="journey-tracking-card"
-  data-tracking-url="{% url 'journeys:tracking-data' journey.id %}"
-  data-route-data-url="{% url 'journeys:route-data' journey.id %}"
-  data-latest-position-url="{% url 'latest-position' trip.id %}"
-  data-trip-id="{{ trip.id }}"
-  data-journey-id="{{ journey.id }}"
+   class="journey-page"
+   id="journey-tracking-card"
+   data-tracking-url="{% url 'journeys:tracking-data' journey.id %}"
+   data-route-data-url="{% url 'journeys:route-data' journey.id %}"
+   data-latest-position-url="{% url 'latest-position' trip.id %}"
+   data-trip-id="{{ trip.id }}"
+   data-journey-id="{{ journey.id }}"
+   data-location-transport="{{ location_transport|default:'polling' }}"
 >
   <header class="journey-header">
     <div>

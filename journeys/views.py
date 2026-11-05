@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -116,6 +117,7 @@ def journey_detail(request, journey_id):
         "latest_notification": latest_notification,
         "gps_stale": trip.is_stale,
         "gps_age_seconds": trip.gps_age_seconds,
+        "location_transport": getattr(settings, "LOCATION_TRANSPORT", "polling"),
     })
 
 

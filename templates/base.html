@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#00823E">
+  <meta name="theme-color" content="#102B50">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>{% block title %}Matatu254{% endblock %}</title>
@@ -11,18 +11,23 @@
   <link rel="manifest" href="{% static 'manifest.json' %}">
   <link rel="apple-touch-icon" href="{% static 'images/pwa-icon-192.png' %}">
   <link rel="icon" type="image/png" href="{% static 'images/pwa-icon-192.png' %}">
-  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261019">
-  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261103">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261119">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261119">
   {% block extra_head %}{% endblock %}
 </head>
-<body{% if user.is_authenticated %} class="app-user"{% endif %}>
+<body{% if user.is_authenticated %} class="app-user{% if user.role != 'ADMIN' %} narrow-shell{% endif %}"{% endif %}>
   <a class="skip-link" href="#main-content">Skip to content</a>
   <header class="site-header">
     <div class="site-header-inner">
       {% block app_back %}{% endblock %}
       <a class="app-brand" href="{% if user.is_authenticated and user.role == 'CONDUCTOR' %}{% url 'conductor:dashboard' %}{% elif user.is_authenticated and user.role == 'ADMIN' %}{% url 'management:dashboard' %}{% elif user.is_authenticated %}{% url 'core:dashboard' %}{% else %}{% url 'core:home' %}{% endif %}" aria-label="Matatu254 home">
-        <img src="{% static 'images/pwa-icon-192.png' %}" alt="" width="32" height="32">
-        <span>Matatu254</span>
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1h1.5a1.5 1.5 0 0 1 1.5 1.5V14a2 2 0 0 1-2 2h-.5"/><path d="M4 6v10a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V6"/><path d="M17 9h2"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="15.5" cy="18.5" r="1.5"/><path d="M7 10h6M7 13h4"/></svg>
+        </span>
+        <span>Matatu<span class="brand-accent">254</span></span>
       </a>
       <p class="app-title">{% block app_title %}{{ request.resolver_match.url_name|default:'Matatu254'|title }}{% endblock %}</p>
       {% if user.is_authenticated %}
@@ -39,6 +44,10 @@
           <a href="{% url 'conductor:dashboard' %}"{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name != 'notifications' %} aria-current="page"{% endif %}>Trip</a>
           <a href="{% url 'conductor:notifications' %}"{% if request.resolver_match.url_name == 'notifications' %} aria-current="page"{% endif %}>Alerts</a>
         </nav>
+        {% else %}
+        <a class="header-icon-btn" href="{% url 'notifications:list' %}" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        </a>
         {% endif %}
         {% if user.role == 'PASSANGER' %}
           <a class="header-action" href="{% url 'accounts:profile' %}">Profile</a>
@@ -62,15 +71,31 @@
 
   {% if user.is_authenticated and user.role == 'PASSANGER' %}
   <nav class="bottom-tabs is-visible" aria-label="Main navigation">
-    <a href="{% url 'core:dashboard' %}"{% if request.resolver_match.namespace == 'core' %} aria-current="page"{% endif %}><span class="tab-icon" aria-hidden="true">⌂</span><span>Home</span></a>
-    <a href="{% url 'journeys:scan-qr' %}"{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name != 'history' %} aria-current="page"{% endif %}><span class="tab-icon" aria-hidden="true">⌗</span><span>Scan</span></a>
-    <a href="{% url 'journeys:history' %}"{% if request.resolver_match.url_name == 'history' %} aria-current="page"{% endif %}><span class="tab-icon" aria-hidden="true">↻</span><span>Trips</span></a>
-    <a href="{% url 'accounts:profile' %}"{% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name == 'profile' %} aria-current="page"{% endif %}><span class="tab-icon" aria-hidden="true">◉</span><span>Profile</span></a>
+    <a href="{% url 'core:dashboard' %}"{% if request.resolver_match.namespace == 'core' %} aria-current="page"{% endif %}>
+      <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 21V12h6v9"/></svg></span>
+      <span>Home</span>
+    </a>
+    <a href="{% url 'journeys:scan-qr' %}"{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name != 'history' %} aria-current="page"{% endif %}>
+      <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg></span>
+      <span>Scan</span>
+    </a>
+    <a href="{% url 'notifications:list' %}"{% if request.resolver_match.namespace == 'notifications' %} aria-current="page"{% endif %}>
+      <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
+      <span>Alerts</span>
+    </a>
+    <a href="{% url 'journeys:history' %}"{% if request.resolver_match.url_name == 'history' %} aria-current="page"{% endif %}>
+      <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13 6-3m-6 3V7m6 10 4.553 2.276A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4m0 0L9 7"/></svg></span>
+      <span>Trips</span>
+    </a>
+    <a href="{% url 'accounts:profile' %}"{% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name == 'profile' %} aria-current="page"{% endif %}>
+      <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg></span>
+      <span>Profile</span>
+    </a>
   </nav>
   {% endif %}
 
   {% block scripts %}{% endblock %}
-  <script defer src="{% static 'js/app-shell.js' %}?v=20261019"></script>
+  <script defer src="{% static 'js/app-shell.js' %}?v=20261119"></script>
   <footer>Matatu254 · Nairobi journeys, stage by stage</footer>
 </body>
 </html>

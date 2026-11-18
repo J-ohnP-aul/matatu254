@@ -85,11 +85,10 @@ export class LiveTrackingMap {
 
     // State
     this.routeData = null;
+    this._routeCoords = null; // decoded polyline, cached once per route load
+    this._followStarted = false; // camera switched to follow on first fix
     this.lastGPSFix = null;
-    this.animationId = null;
-    this.pollingInterval = null;
     this.lastPositionTimestamp = null;
-    this.sseConnection = null;
     this.transport = null;
     this.running = false;
 
@@ -281,21 +280,32 @@ export class LiveTrackingMap {
 
     const hasPolyline =
       typeof data.polyline === "string" && data.polyline.length > 0;
-    const stageCoords = (Array.isArray(data.stages) ? data.stages : [])
+
+    // Normalize server field names once (Django sends snake_case) and cache
+    // the decoded polyline — decoding per GPS fix is far too expensive.
+    data.stages = (Array.isArray(data.stages) ? data.stages : []).map(
+      (stage) => ({
+        ...stage,
+        sequenceOrder: stage.sequenceOrder ?? stage.sequence_order ?? 0,
+      }),
+    );
+
+    const stageCoords = data.stages
       .filter(
         (s) =>
           Number.isFinite(Number(s.latitude)) &&
           Number.isFinite(Number(s.longitude)),
       )
       .map((s) => [Number(s.latitude), Number(s.longitude)]);
-    const polylineCoords = hasPolyline
+    this._routeCoords = hasPolyline
       ? decodePolyline(data.polyline)
       : stageCoords;
+    const polylineCoords = this._routeCoords;
 
     // Set route on ETA calculator
     this.etaCalculator.setRoute(
       polylineCoords,
-      data.stages || [],
+      data.stages,
       data.destinationStage,
     );
 
@@ -360,10 +370,7 @@ export class LiveTrackingMap {
     if (this.running) return;
     this.running = true;
 
-    // Start animation loop
-    this._animate();
-
-    // Start GPS updates (SSE or polling)
+    // Start GPS updates (polling, WebSocket, or auto)
     this._startGPSUpdates();
 
     // Start mode controller tick
@@ -376,26 +383,6 @@ export class LiveTrackingMap {
   stop() {
     this.running = false;
 
-    if (this.animationId) {
-      cancelAnimationFrame(this.animationId);
-      this.animationId = null;
-    }
-
-    if (this.pollingInterval) {
-      clearTimeout(this.pollingInterval);
-      this.pollingInterval = null;
-    }
-    if (this._pollResume) {
-      window.removeEventListener("online", this._pollResume);
-      document.removeEventListener("visibilitychange", this._pollResume);
-      this._pollResume = null;
-    }
-
-    if (this.sseConnection) {
-      this.sseConnection.close();
-      this.sseConnection = null;
-    }
-
     if (this.transport) {
       this.transport.stop();
       this.transport = null;
@@ -404,12 +391,6 @@ export class LiveTrackingMap {
     if (this.modeTickInterval) {
       clearInterval(this.modeTickInterval);
     }
-  }
-
-  _animate() {
-    if (!this.running) return;
-
-    this.animationId = requestAnimationFrame(() => this._animate());
   }
 
   _onInterpolatedPosition(pos) {
@@ -530,23 +511,10 @@ export class LiveTrackingMap {
       bearing: calculatedBearing,
     };
 
-    // 3. Map match to route
+    // 3. Map match to route (polyline decoded once at route load)
     let targetPos = { lat: filtered.lat, lon: filtered.lon };
     let projected = null;
-    const hasPolyline =
-      typeof this.routeData?.polyline === "string" &&
-      this.routeData.polyline.length > 0;
-    const polylineCoords = hasPolyline
-      ? decodePolyline(this.routeData.polyline)
-      : Array.isArray(this.routeData?.stages)
-        ? this.routeData.stages
-            .filter(
-              (s) =>
-                Number.isFinite(Number(s.latitude)) &&
-                Number.isFinite(Number(s.longitude)),
-            )
-            .map((s) => [Number(s.latitude), Number(s.longitude)])
-        : [];
+    const polylineCoords = this._routeCoords || [];
 
     if (polylineCoords.length >= 2) {
       projected = projectToPolyline(filtered.lat, filtered.lon, polylineCoords);
@@ -625,6 +593,16 @@ export class LiveTrackingMap {
       }
     }
 
+    // Switch from the initial route overview to the follow-cam once we know
+    // where the vehicle is — unless the user has already taken control of
+    // the map themselves (drag/zoom keeps the overview in their hands).
+    if (!this._followStarted && !this.modeController.userDragged) {
+      this._followStarted = true;
+      if (this.modeController.isFree()) {
+        this.modeController.setMode(CameraMode.FOLLOW);
+      }
+    }
+
     // Notify mode controller
     this.modeController.onVehicleUpdate();
   }
@@ -650,13 +628,10 @@ export class LiveTrackingMap {
 
   _startGPSUpdates() {
     const mode = this.options.locationTransport || "polling";
-    if (mode === "polling") {
-      // Original behavior: poll the latest-position endpoint.
-      this._startPolling();
-      return;
-    }
 
-    // WebSocket or auto mode: use the transport abstraction.
+    // All modes go through the transport abstraction so polling, WebSocket,
+    // and the auto fallback share one loop, one dedupe path, and one
+    // visibility/online resume behavior.
     this.transport = createTransport(mode, {
       tripId: this.options.tripId,
       apiBase: this.options.apiBase,
@@ -671,75 +646,6 @@ export class LiveTrackingMap {
     });
 
     this.transport.start();
-  }
-
-  _startSSE() {
-    const url =
-      this.options.locationStreamUrl ||
-      `${this.options.apiBase}/trips/${this.options.tripId}/location-stream/`;
-
-    try {
-      this.sseConnection = new EventSource(url);
-
-      this.sseConnection.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.type === "ping") {
-          this.processGPSFix(data);
-        }
-      };
-
-      this.sseConnection.onerror = () => {
-        console.warn("SSE failed, falling back to polling");
-        this.sseConnection.close();
-        this._startPolling();
-      };
-    } catch (e) {
-      this._startPolling();
-    }
-  }
-
-  _startPolling() {
-    if (this.pollingInterval || !this.options.tripId) return;
-    const poll = async () => {
-      this.pollingInterval = null;
-      if (!this.running || document.hidden || !navigator.onLine) return;
-      try {
-        const url =
-          this.options.latestPositionUrl ||
-          `${this.options.apiBase}/trips/${this.options.tripId}/latest-position/`;
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 10000);
-        const response = await fetch(url, {
-          cache: "no-store",
-          signal: controller.signal,
-        });
-        clearTimeout(timeout);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.timestamp && data.timestamp !== this.lastPositionTimestamp) {
-            this.lastPositionTimestamp = data.timestamp;
-            this.processGPSFix(data);
-          }
-        }
-      } catch (e) {
-        /* Keep the last good position visible and retry. */
-      }
-      if (this.running && !document.hidden)
-        this.pollingInterval = setTimeout(poll, 3000);
-    };
-    const resume = () => {
-      if (
-        this.running &&
-        !document.hidden &&
-        navigator.onLine &&
-        !this.pollingInterval
-      )
-        poll();
-    };
-    this._pollResume = resume;
-    window.addEventListener("online", resume);
-    document.addEventListener("visibilitychange", resume);
-    resume();
   }
 
   /**

@@ -4,8 +4,8 @@
   "description": "Live route progress and timely stop notifications for every matatu journey.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f7f9f6",
-  "theme_color": "#00823E",
+  "background_color": "#F5F7FB",
+  "theme_color": "#102B50",
   "orientation": "portrait",
   "icons": [
     {

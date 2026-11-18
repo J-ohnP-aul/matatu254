@@ -167,7 +167,7 @@
         data-stage-lon="{{ stop.stage.longitude }}"
       >
         <span class="stop-name">{{ stop.stage.name }}</span
-        ><span class="next-stop-badge">Next stop</span
+        ><span class="next-stop-badge" {% if not stop.is_next %}hidden{% endif %}>Next stop</span
         ><span class="alighting-count" data-alighting-count
           >{{ stop.alighting_count }}</span
         >
@@ -194,7 +194,7 @@
             <td>
               <strong class="alighting-count" data-alighting-count
                 >{{ stop.alighting_count }}</strong
-              ><span class="next-stop-badge">Next stop</span>
+              ><span class="next-stop-badge" {% if not stop.is_next %}hidden{% endif %}>Next stop</span>
             </td>
           </tr>
           {% endfor %}

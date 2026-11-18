@@ -2,25 +2,32 @@
 {% block title %}Home · Matatu254{% endblock %}
 {% block app_title %}Home{% endblock %}
 {% block content %}
-<section class="page-shell passenger-home">
+<section class="passenger-home">
   <header class="page-heading"><div><h1>Good to see you, {{ user.first_name|default:user.username }}.</h1><p>Where are you headed today?</p></div></header>
+
   {% if user.role == 'PASSANGER' %}
     {% if active_journey %}
-      <section class="surface surface-pad active-trip-summary" aria-labelledby="active-trip-heading">
-        <div class="section-heading"><h2 id="active-trip-heading">Your trip is underway</h2><span class="badge badge-success">{{ active_journey.get_status_display }}</span></div>
-        <p>{{ active_journey.trip.route.name }} · {{ active_journey.trip.matatu.registration_number }}</p>
-        <div class="journey-stat-grid">
-          <div class="journey-stat"><small>Getting off at</small><strong>{{ active_journey.destination_stage.name }}</strong></div>
-          <div class="journey-stat"><small>Started</small><strong>{{ active_journey.start_time|date:'H:i' }}</strong></div>
-        </div>
-        <div class="btn-row"><a class="btn btn-primary" href="{% url 'journeys:journey-detail' active_journey.pk %}">Open live journey</a></div>
-      </section>
+      <a class="action-card" href="{% url 'journeys:journey-detail' active_journey.pk %}">
+        <span class="action-icon is-green" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 19 9l-3 11H8L5 9z"/><circle cx="12" cy="13" r="2"/></svg>
+        </span>
+        <span class="action-card-body">
+          <strong>Your trip is underway</strong>
+          <small>{{ active_journey.trip.route.name }} · {{ active_journey.trip.matatu.registration_number }} · Getting off at {{ active_journey.destination_stage.name }}</small>
+        </span>
+        <span class="action-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+      </a>
     {% else %}
-      <section class="surface surface-pad home-start" aria-labelledby="start-trip-heading">
-        <h2 id="start-trip-heading">Your next stop, in view.</h2>
-        <p>Scan the QR inside your matatu, choose where you’re getting off, and follow the ride.</p>
-        <a class="btn btn-primary" href="{% url 'journeys:scan-qr' %}" data-vibrate>Scan a matatu QR code <span aria-hidden="true">→</span></a>
-      </section>
+      <a class="action-card" href="{% url 'journeys:scan-qr' %}" data-vibrate>
+        <span class="action-icon is-green" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM21 14v.01M14 21v.01M17 17h.01M21 17v4h-4"/></svg>
+        </span>
+        <span class="action-card-body">
+          <strong>Scan a matatu QR code</strong>
+          <small>Choose where you're getting off, then follow the ride</small>
+        </span>
+        <span class="action-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+      </a>
     {% endif %}
 
     <div class="section-heading"><h2>Recent destinations</h2><a href="{% url 'journeys:history' %}">All trips</a></div>

@@ -104,6 +104,7 @@
   --content-width: 76rem;
   --reading-width: 44rem;
   --screen-min-width: 20rem;
+  --tabbar-wide-width: 34rem;
   --topbar-height: 3.5rem;
   --form-panel-width: 34rem;
   --form-large-width: 48rem;
@@ -168,6 +169,12 @@
   --landing-desktop-column-min: 20rem;
   --scan-desktop-column-min: 16rem;
   --motion-off-duration: .01ms;
+  --tabbar-wide-transform-hidden: 150%;
+  --content-stagger-1: 30ms;
+  --content-stagger-2: 60ms;
+  --content-stagger-3: 90ms;
+  --content-stagger-4: 120ms;
+  --content-stagger-5: 150ms;
 
   --radius-sm: .5rem;
   --radius-md: .875rem;

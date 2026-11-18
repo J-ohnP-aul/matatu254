@@ -217,6 +217,24 @@ p {
   width: 1.25rem;
   height: 1.25rem;
 }
+.header-back {
+  display: inline-grid;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--navy-50);
+  color: var(--navy-800);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+}
+.header-back:hover {
+  background: var(--navy-100);
+  color: var(--navy-900);
+}
 .narrow-shell .main,
 .narrow-shell .flash-messages,
 .narrow-shell .site-header-inner {
@@ -470,6 +488,22 @@ button.btn {
   width: min(100%, var(--form-panel-width));
   margin: clamp(var(--space-4), var(--space-fluid-auth), var(--space-16)) auto;
   padding: clamp(var(--space-5), var(--space-fluid-5), var(--space-10));
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sheet);
+}
+.auth-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+  color: var(--ink);
+  font-weight: 800;
+  font-size: var(--text-md);
+  letter-spacing: -.02em;
+}
+.auth-brand .brand-accent {
+  color: var(--brand-500);
 }
 .auth-shell h1 {
   margin-bottom: var(--space-2);
@@ -1271,6 +1305,8 @@ input[type="radio"] {
   z-index: var(--z-content);
 }
 .active-journey-banner {
+  position: relative;
+  z-index: var(--z-content);
   margin-bottom: var(--space-3);
 }
 .action-card {
@@ -1572,6 +1608,23 @@ tbody tr:hover {
 }
 .notification-message {
   margin: 0 0 var(--space-2);
+}
+.notification-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+}
+.notification-row + .notification-row {
+  border-top: var(--border-width) solid var(--border);
+}
+.surface > .notification-row:first-child {
+  padding-top: 0;
+}
+.surface > .notification-row:last-child {
+  padding-bottom: 0;
 }
 .badge,
 .trip-status {

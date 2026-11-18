@@ -18,11 +18,18 @@ from core.geo import haversine_distance_m
 from core.osrm import OSRMError, RouteInfo, get_route_info
 from django.conf import settings
 import requests
+import time
 
 # How close (meters) the vehicle must be to a stage to count as "reached".
 # MVP constant for now; move to system_config once the admin threshold
 # screens (FR-A-07) exist.
 STAGE_ARRIVAL_RADIUS_M = 20
+
+# Road distance between two stages rarely changes, but it is requested on
+# every tracking poll. Cache OSRM segment results per stage pair for a few
+# minutes so a poll never blocks on N sequential OSRM round-trips.
+_SEGMENT_CACHE_TTL_S = 600
+_segment_cache: dict[tuple[int, int], tuple[RouteInfo, float]] = {}
 
 
 def is_near_stage(vehicle_lat: float, vehicle_lon: float, stage) -> bool:
@@ -43,11 +50,18 @@ def get_segment_road_distance(stage_a, stage_b) -> RouteInfo:
     duration) if OSRM is unreachable, so callers always get a RouteInfo
     back rather than having to handle OSRMError themselves.
     """
+    cache_key = (stage_a.id, stage_b.id)
+    cached = _segment_cache.get(cache_key)
+    if cached:
+        route_info, cached_at = cached
+        if time.monotonic() - cached_at < _SEGMENT_CACHE_TTL_S:
+            return route_info
+
     origin = (float(stage_a.longitude), float(stage_a.latitude))
     destination = (float(stage_b.longitude), float(stage_b.latitude))
 
     try:
-        return get_route_info(origin, destination)
+        route_info = get_route_info(origin, destination)
     except OSRMError:
         # Fallback: straight-line distance, assume a flat average speed
         # (25 km/h) to still produce a usable duration estimate.
@@ -57,7 +71,10 @@ def get_segment_road_distance(stage_a, stage_b) -> RouteInfo:
         )
         fallback_speed_mps = 25 * 1000 / 3600  # 25 km/h -> m/s
         duration_s = distance_m / fallback_speed_mps
-        return RouteInfo(distance_m=distance_m, duration_s=duration_s)
+        route_info = RouteInfo(distance_m=distance_m, duration_s=duration_s)
+
+    _segment_cache[cache_key] = (route_info, time.monotonic())
+    return route_info
 
 
 def remaining_road_distance(current_vehicle_coords, next_stage, destination_stage) -> RouteInfo:

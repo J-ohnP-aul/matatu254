@@ -13,6 +13,9 @@ import { createTransport } from './transport/index.js';
   const locationTransport = card.dataset.locationTransport || 'polling';
   const stageRows = [...document.querySelectorAll('#route-stages [data-stage-order]')];
   const freshness = document.getElementById('gps-freshness');
+  // Server `tracking-data` is the single source for the distance/ETA cards.
+  // The map interpolates the marker continuously between those updates.
+  const METRICS_POLL_MS = 10000;
   let lastNotificationId = Number(document.getElementById('destination-alert-text')?.dataset.notificationId || 0);
 
   function updateRoute(currentOrder, nextOrder) {
@@ -69,21 +72,6 @@ import { createTransport } from './transport/index.js';
       locationTransport,
       interpolationDuration: 3000,
       lowSpeedThreshold: 3,
-      onETAUpdate: (eta) => {
-        if (!eta) return;
-        if (eta.formattedDistance) {
-          const distEl = document.getElementById('remaining-distance');
-          if (distEl && distEl.textContent !== 'Waiting for GPS') {
-            distEl.textContent = eta.formattedDistance;
-          }
-        }
-        if (eta.formattedDuration) {
-          const etaEl = document.getElementById('remaining-eta');
-          if (etaEl && etaEl.textContent !== 'Waiting for GPS') {
-            etaEl.textContent = eta.formattedDuration;
-          }
-        }
-      },
       onStageChange: (stage, status) => {
         if (status === 'complete' || status === 'current') {
           updateRoute(stage.sequenceOrder || stage.sequence_order, (stage.sequenceOrder || stage.sequence_order) + 1);
@@ -156,11 +144,17 @@ import { createTransport } from './transport/index.js';
 
   let timer = null;
   let refreshing = false;
+  function scheduleNext() {
+    // Clear any pending timer first — repeated `online` / `visibilitychange`
+    // triggers must not stack duplicate polling chains.
+    if (timer) window.clearTimeout(timer);
+    if (!document.hidden) timer = window.setTimeout(pollJourney, METRICS_POLL_MS);
+  }
   async function pollJourney() {
     if (refreshing || document.hidden || !navigator.onLine) return;
     refreshing = true;
     try { await refreshJourney(); } finally { refreshing = false; }
-    if (!document.hidden) timer = window.setTimeout(pollJourney, 3500);
+    scheduleNext();
   }
   pollJourney();
   document.addEventListener('visibilitychange', () => {

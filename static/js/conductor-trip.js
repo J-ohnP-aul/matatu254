@@ -316,18 +316,29 @@ import { createLiveTrackingMap } from './map/index.js';
   let trackingPollBusy = false;
   let passengerPollBusy = false;
 
+  function scheduleTracking() {
+    // Clear any pending timer first — repeated `online` / `visibilitychange`
+    // triggers must not stack duplicate polling chains.
+    if (trackingTimer) window.clearTimeout(trackingTimer);
+    if (!document.hidden) trackingTimer = window.setTimeout(pollTracking, 4000);
+  }
+  function schedulePassengers() {
+    if (passengerTimer) window.clearTimeout(passengerTimer);
+    if (!document.hidden) passengerTimer = window.setTimeout(pollPassengers, 10000);
+  }
+
   async function pollTracking() {
     if (trackingPollBusy || document.hidden || !navigator.onLine) return;
     trackingPollBusy = true;
     try { await refreshTrip(); } finally { trackingPollBusy = false; }
-    if (!document.hidden) trackingTimer = window.setTimeout(pollTracking, 4000);
+    scheduleTracking();
   }
 
   async function pollPassengers() {
     if (passengerPollBusy || document.hidden || !navigator.onLine) return;
     passengerPollBusy = true;
     try { await refreshPassengers(); } finally { passengerPollBusy = false; }
-    if (!document.hidden) passengerTimer = window.setTimeout(pollPassengers, 10000);
+    schedulePassengers();
   }
 
   pollTracking();

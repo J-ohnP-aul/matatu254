@@ -9,7 +9,7 @@ export class PollingTransport {
     this.tripId = options.tripId;
     this.apiBase = options.apiBase || '';
     this.latestPositionUrl = options.latestPositionUrl || null;
-    this.interval = options.interval || 3000;
+    this.interval = options.interval || 2000;
 
     this._listeners = {};
     this._timer = null;
@@ -30,6 +30,15 @@ export class PollingTransport {
   start() {
     if (this._running) return;
     this._running = true;
+    // The loop parks itself while the tab is hidden or offline; resume it
+    // when the tab becomes visible or connectivity returns.
+    this._onResume = () => {
+      if (this._running && !document.hidden && navigator.onLine && !this._timer) {
+        this._poll();
+      }
+    };
+    document.addEventListener('visibilitychange', this._onResume);
+    window.addEventListener('online', this._onResume);
     this._emit('connected', { transport: 'polling' });
     this._poll();
   }
@@ -39,6 +48,11 @@ export class PollingTransport {
     if (this._timer) {
       clearTimeout(this._timer);
       this._timer = null;
+    }
+    if (this._onResume) {
+      document.removeEventListener('visibilitychange', this._onResume);
+      window.removeEventListener('online', this._onResume);
+      this._onResume = null;
     }
     this._emit('disconnected', { transport: 'polling' });
   }

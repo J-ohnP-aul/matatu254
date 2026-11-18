@@ -101,12 +101,15 @@ export class AutoTransport {
     const prev = this._activeMode;
     this._activeMode = mode;
 
-    // Stop the inactive transport to avoid duplicate subscriptions
     if (mode === 'websocket') {
+      // Stop polling to avoid duplicate subscriptions while the
+      // WebSocket is the active source.
       this._pollTransport.stop();
-    } else {
-      // Keep polling running as fallback; don't stop it.
-      // WebSocket will restart in background.
+    } else if (!this._pollTransport._running) {
+      // Polling is the fallback source, so it must be running — it may
+      // have been stopped when the WebSocket took over. The WebSocket
+      // keeps retrying in the background and switches back on reconnect.
+      this._pollTransport.start();
     }
 
     this._emit('transport_changed', {

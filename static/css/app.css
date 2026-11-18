@@ -1219,23 +1219,22 @@ input[type="radio"] {
 .home-hero {
   position: relative;
   overflow: hidden;
-  margin: calc(-1 * var(--space-6)) calc(-1 * var(--page-gutter)) var(--space-6);
-  padding: var(--space-6) var(--page-gutter) var(--space-10);
+  margin: calc(-1 * var(--space-6)) calc(-1 * var(--page-gutter)) calc(-1 * var(--space-12));
+  padding: var(--space-6) var(--page-gutter) var(--space-14);
   background:
     radial-gradient(120% 90% at 85% 10%, rgb(23 105 232 / .35), transparent 55%),
     radial-gradient(90% 70% at 10% 100%, rgb(16 185 129 / .22), transparent 60%),
     linear-gradient(160deg, var(--navy-900) 10%, var(--navy-800) 60%, var(--navy-700));
   color: var(--neutral-0);
 }
-.home-hero::after {
+.home-hero .hero-art {
   position: absolute;
-  right: calc(-1 * var(--space-6));
-  bottom: calc(-1 * var(--space-4));
-  width: 12rem;
-  height: 12rem;
-  opacity: .35;
-  content: "";
-  background: var(--hero-art, none) center / contain no-repeat;
+  right: var(--space-4);
+  bottom: var(--space-2);
+  width: 9rem;
+  max-width: 40vw;
+  opacity: .9;
+  pointer-events: none;
 }
 .home-hero .hero-badge {
   display: inline-flex;
@@ -1268,9 +1267,11 @@ input[type="radio"] {
 .action-cards {
   display: grid;
   gap: var(--space-3);
-  margin-top: calc(-1 * var(--space-12));
   position: relative;
   z-index: var(--z-content);
+}
+.active-journey-banner {
+  margin-bottom: var(--space-3);
 }
 .action-card {
   display: flex;

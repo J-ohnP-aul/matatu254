@@ -5,6 +5,7 @@ import json
 from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 
 from .models import ActiveTrip
@@ -106,3 +107,38 @@ def latest_position(request, trip_id):
         "gps_age_seconds": trip.gps_age_seconds,
         "is_stale": trip.is_stale,
     })
+
+
+@login_required
+@require_GET
+def live_vehicles(request):
+  """Return all active trips with their latest cached position.
+
+  Read-only feed for the public live map. Positions come from the same
+  ActiveTrip cache the journey screens read, so freshness semantics
+  (is_stale / gps_age_seconds) are identical.
+  """
+  trips = (
+    ActiveTrip.objects
+    .filter(status=ActiveTrip.Status.ACTIVE)
+    .exclude(current_latitude__isnull=True, current_longitude__isnull=True)
+    .select_related("matatu", "route")
+  )
+  vehicles = []
+  for trip in trips:
+    latitude = float(trip.current_latitude)
+    longitude = float(trip.current_longitude)
+    if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+      continue
+    vehicles.append({
+      "trip_id": trip.pk,
+      "registration": trip.matatu.registration_number,
+      "route_id": trip.route_id,
+      "route_name": trip.route.name,
+      "latitude": latitude,
+      "longitude": longitude,
+      "last_ping_at": trip.last_ping_at.isoformat() if trip.last_ping_at else None,
+      "gps_age_seconds": trip.gps_age_seconds,
+      "is_stale": trip.is_stale,
+    })
+  return JsonResponse({"vehicles": vehicles})

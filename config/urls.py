@@ -27,6 +27,7 @@ urlpatterns = [
     path('manifest.json', serve, {'document_root': str(BASE_DIR), 'path': 'manifest.json'}),
     path('sw.js', serve, {'document_root': str(BASE_DIR), 'path': 'sw.js'}),
     path('', include('core.urls')),
+    path('', include('r_outes.urls')),
     path('accounts/', include('accounts.urls')),
     path('trips/', include('trips.urls')),
     path('fleet/', include('fleet.urls')),

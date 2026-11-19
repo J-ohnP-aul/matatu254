@@ -8,12 +8,12 @@
     <div class="btn-row"><a class="btn btn-secondary" href="{% url 'management:matatu-create' %}">Add matatu</a><a class="btn btn-primary" href="{% url 'management:trip-create' %}">Create trip</a></div>
   </header>
 
-  <section class="stats management-stats" aria-label="Network totals">
-    <article class="stat-card"><span class="stat-title">Matatus</span><strong class="stat-value">{{ stats.total_matatus }}</strong><span class="stat-desc">Vehicles in your fleet</span></article>
-    <article class="stat-card"><span class="stat-title">Active trips</span><strong class="stat-value">{{ stats.active_trips }}</strong><span class="stat-desc">Trips underway</span></article>
-    <article class="stat-card"><span class="stat-title">Routes</span><strong class="stat-value">{{ stats.total_routes }}</strong><span class="stat-desc">Configured journeys</span></article>
-    <article class="stat-card"><span class="stat-title">Stages</span><strong class="stat-value">{{ stats.total_stages }}</strong><span class="stat-desc">Stops across routes</span></article>
-    <article class="stat-card"><span class="stat-title">Passengers</span><strong class="stat-value">{{ stats.total_passengers }}</strong><span class="stat-desc">Registered journey users</span></article>
+  <section class="stat-strip" aria-label="Network totals">
+    <div class="stat-cell"><strong class="stat-value">{{ stats.total_matatus }}</strong><span class="stat-title">Matatus</span></div>
+    <div class="stat-cell"><strong class="stat-value">{{ stats.active_trips }}</strong><span class="stat-title">Active trips</span></div>
+    <div class="stat-cell"><strong class="stat-value">{{ stats.total_routes }}</strong><span class="stat-title">Routes</span></div>
+    <div class="stat-cell"><strong class="stat-value">{{ stats.total_stages }}</strong><span class="stat-title">Stages</span></div>
+    <div class="stat-cell"><strong class="stat-value">{{ stats.total_passengers }}</strong><span class="stat-title">Passengers</span></div>
   </section>
 
   <div class="management-dashboard-grid">

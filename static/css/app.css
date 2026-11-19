@@ -82,8 +82,18 @@ h3,
 h4 {
   color: var(--ink);
   font-family: var(--font-display);
-  line-height: var(--line-tight);
-  letter-spacing: var(--heading-tracking);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+h1 {
+  font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.75rem);
+  font-weight: 700;
+}
+h2 {
+  font-size: clamp(1.4rem, 1.15rem + 1vw, 1.9rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .01em;
 }
 .app-brand,
 .stage-number,
@@ -93,6 +103,12 @@ h4 {
 .board-route-name {
   font-family: var(--font-display);
   font-variant-numeric: tabular-nums;
+}
+.app-brand,
+.board-route-name {
+  font-size: 1.35rem;
+  text-transform: uppercase;
+  letter-spacing: .02em;
 }
 h1 {
   font-size: var(--text-xl);
@@ -214,13 +230,13 @@ p {
   white-space: nowrap;
 }
 .top-nav a[aria-current="page"] {
-  background: var(--navy-50);
-  color: var(--navy-800);
+  background: var(--chrome-soft);
+  color: var(--chrome-soft-ink);
   font-weight: 700;
 }
 .header-action {
-  background: var(--navy-50);
-  color: var(--navy-800);
+  background: var(--chrome-soft);
+  color: var(--chrome-soft-ink);
 }
 .header-icon-btn {
   display: inline-grid;
@@ -230,8 +246,8 @@ p {
   margin-left: auto;
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--navy-50);
-  color: var(--navy-800);
+  background: var(--chrome-soft);
+  color: var(--chrome-soft-ink);
   text-decoration: none;
 }
 .header-icon-btn svg {
@@ -245,8 +261,8 @@ p {
   place-items: center;
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--navy-50);
-  color: var(--navy-800);
+  background: var(--chrome-soft);
+  color: var(--chrome-soft-ink);
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1;
@@ -254,7 +270,7 @@ p {
 }
 .header-back:hover {
   background: var(--navy-100);
-  color: var(--navy-900);
+  color: var(--navy-800);
 }
 .narrow-shell .main,
 .narrow-shell .flash-messages,
@@ -476,8 +492,8 @@ button.btn {
   color: var(--neutral-0);
 }
 .btn-secondary {
-  background: var(--navy-50);
-  color: var(--navy-800);
+  background: var(--chrome-soft);
+  color: var(--chrome-soft-ink);
 }
 .btn-danger {
   background: var(--danger-soft);
@@ -621,21 +637,40 @@ input[type="radio"] {
 }
 .home-steps {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-8);
   margin: var(--space-8) 0 0;
   padding: 0;
   list-style: none;
 }
 .home-steps li {
-  padding-top: var(--space-4);
-  border-top: var(--space-0-75) solid var(--brand-500);
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-4) var(--space-5);
+  padding: var(--space-5) 0;
+}
+.home-steps li + li {
+  border-top: var(--border-width) solid var(--border);
+}
+.home-steps li::before {
+  content: counter(steps, decimal-leading-zero);
+  counter-increment: steps;
+  color: var(--navy-300);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.home-steps {
+  counter-reset: steps;
 }
 .home-steps h3 {
-  margin: var(--space-3) 0 var(--space-2);
+  margin: 0;
+  font-size: var(--text-md);
 }
 .home-steps p {
-  margin: 0;
+  grid-column: 2;
+  margin: var(--space-1) 0 0;
   color: var(--ink-muted);
 }
 .journey-links {
@@ -2018,10 +2053,6 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
   .demo-stop {
     min-width: var(--home-route-min-mobile);
   }
-  .home-steps {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-5);
-  }
   .scan-layout {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -2097,6 +2128,38 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
   }
 }
 
+
+.stat-strip {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+.stat-cell {
+  display: grid;
+  flex: 1 1 7.5rem;
+  justify-items: start;
+  gap: var(--space-0-5);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-width) solid var(--border);
+}
+.stat-cell + .stat-cell {
+  border-left: var(--border-width) solid var(--border);
+}
+.stat-value {
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.stat-title {
+  color: var(--ink-muted);
+  font-size: var(--text-xs);
+  font-weight: 650;
+}
 
 /* ── Stage board (home) — the live network as content ────────────────── */
 .stage-board {

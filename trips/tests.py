@@ -188,11 +188,15 @@ class WebSocketAuthTests(TestCase):
 
     def test_conductor_can_subscribe(self):
         """An assigned conductor can connect."""
+        async_to_sync(self._assert_can_connect)(self.conductor)
+
+    async def _assert_can_connect(self, user):
         comm = WebsocketCommunicator(self._get_application(), self._ws_url())
-        comm.scope["user"] = self.conductor
-        connected, subprotocol = async_to_sync(comm.connect)()
+        comm.scope["user"] = user
+        connected, _ = await comm.connect()
         self.assertTrue(connected)
-        async_to_sync(comm.disconnect)(code=1000)
+        await comm.receive_json_from()
+        await comm.disconnect(code=1000)
 
     def test_passenger_with_journey_can_subscribe(self):
         """A passenger with an active journey session can connect."""
@@ -202,19 +206,11 @@ class WebSocketAuthTests(TestCase):
             destination_stage=self.stage,
             status=JourneySession.Status.IN_TRANSIT,
         )
-        comm = WebsocketCommunicator(self._get_application(), self._ws_url())
-        comm.scope["user"] = self.passenger
-        connected, _ = async_to_sync(comm.connect)()
-        self.assertTrue(connected)
-        async_to_sync(comm.disconnect)(code=1000)
+        async_to_sync(self._assert_can_connect)(self.passenger)
 
     def test_admin_can_subscribe(self):
         """An admin can connect to any trip."""
-        comm = WebsocketCommunicator(self._get_application(), self._ws_url())
-        comm.scope["user"] = self.admin
-        connected, _ = async_to_sync(comm.connect)()
-        self.assertTrue(connected)
-        async_to_sync(comm.disconnect)(code=1000)
+        async_to_sync(self._assert_can_connect)(self.admin)
 
     def test_passenger_without_journey_cannot_subscribe(self):
         """A passenger with no journey for this trip is rejected."""

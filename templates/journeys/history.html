@@ -11,7 +11,7 @@
         <li class="history-row">
           <div class="history-route"><strong>{{ journey.trip.route.name }}</strong><span class="badge">{{ journey.trip.matatu.registration_number }}</span></div>
           <p><span class="muted">Alighted at</span> <strong>{{ journey.destination_stage.name }}</strong></p>
-          <small>{% if journey.start_time %}{{ journey.start_time|date:'M j, Y · H:i' }}{% endif %}{% if journey.end_time %} · Finished {{ journey.end_time|date:'H:i' }}{% endif %}</small>
+          <small>{% if journey.start_time %}{{ journey.start_time|date:'M j, Y · H:i' }}{% endif %}{% if journey.end_time %} · Finished {{ journey.end_time|date:'H:i' }}{% if journey.start_time %} · {{ journey.end_time|timeuntil:journey.start_time }} on the road{% endif %}{% endif %}</small>
         </li>
       {% endfor %}
     </ul>

@@ -5,9 +5,8 @@
 {% block content %}
 {% if user.is_authenticated and user.role == 'PASSANGER' %}
   <section class="home-hero" aria-label="Matatu254">
-    <span class="hero-badge">Track · Ride · Reach</span>
-    <h1>Your Nairobi Matatu Journey, Simplified</h1>
-    <p class="hero-sub">Scan. Track. Get there.</p>
+    <h1>Where is your matatu right now?</h1>
+    <p class="hero-sub">Pick a route below — the board shows which vehicles are on it this minute.</p>
     <svg class="hero-art" aria-hidden="true" viewBox="0 0 120 64" fill="none">
       <rect x="18" y="10" width="66" height="34" rx="8" fill="#10B981"/>
       <rect x="24" y="16" width="22" height="12" rx="2" fill="#E8FFEF"/>
@@ -23,7 +22,7 @@
 
   {% if active_journey %}
     <a class="action-card active-journey-banner" href="{% url 'journeys:journey-detail' active_journey.pk %}">
-      <span class="action-icon is-green" aria-hidden="true">
+      <span class="action-icon is-live" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 19 9l-3 11H8L5 9z"/><circle cx="12" cy="13" r="2"/></svg>
       </span>
       <span class="action-card-body">
@@ -34,71 +33,38 @@
     </a>
   {% endif %}
 
-  <nav class="action-cards" aria-label="Quick actions">
-    <a class="action-card" href="{% url 'journeys:scan-qr' %}">
-      <span class="action-icon is-green" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM21 14v.01M14 21v.01M17 17h.01M21 17v4h-4"/></svg>
-      </span>
-      <span class="action-card-body">
-        <strong>Scan Vehicle Code</strong>
-        <small>Identify the matatu you're in</small>
-      </span>
-      <span class="action-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
-    </a>
-    <a class="action-card" href="{% url 'journeys:scan-qr' %}">
-      <span class="action-icon is-blue" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-      </span>
-      <span class="action-card-body">
-        <strong>Select Your Stage</strong>
-        <small>Choose your destination or drop-off point</small>
-      </span>
-      <span class="action-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
-    </a>
-    <a class="action-card" href="{% if active_journey %}{% url 'journeys:journey-detail' active_journey.pk %}{% else %}{% url 'journeys:history' %}{% endif %}">
-      <span class="action-icon is-violet" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>
-      </span>
-      <span class="action-card-body">
-        <strong>Track Your Journey</strong>
-        <small>Monitor progress along the route</small>
-      </span>
-      <span class="action-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
-    </a>
-    <a class="action-card" href="{% url 'notifications:list' %}">
-      <span class="action-icon is-amber" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-      </span>
-      <span class="action-card-body">
-        <strong>Get Stop Alerts</strong>
-        <small>Receive notifications when you're near</small>
-      </span>
-      <span class="action-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
-    </a>
-  </nav>
+  <div class="section-heading stage-board-heading">
+    <h2>Stage board</h2>
+    <span class="board-updated" id="board-updated" role="status" aria-live="polite">checking live…</span>
+  </div>
+  <div class="stage-board" id="stage-board" data-live-url="{% url 'live-vehicles' %}">
+    {% for route in home_routes %}
+      <a class="board-card" href="{% url 'explore:route-detail' route.id %}" data-route-id="{{ route.id }}">
+        <h3 class="board-route-name">{{ route.name }}</h3>
+        <span class="board-live is-quiet" data-board-live="{{ route.id }}">
+          <span class="board-live-dot" aria-hidden="true"></span>
+          <span data-board-live-text="{{ route.id }}">no live data</span>
+        </span>
+        <span class="board-meta">
+          <small>{{ route.stage_total }} stage{{ route.stage_total|pluralize }} on this route</small>
+        </span>
+        <span class="action-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+      </a>
+    {% empty %}
+      <div class="surface empty-state"><h3>No routes yet</h3><p>Routes will appear on the board once they are configured.</p></div>
+    {% endfor %}
+  </div>
+
+  <a class="board-cta" href="{% url 'journeys:scan-qr' %}" data-vibrate>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM21 14v.01M14 21v.01M17 17h.01M21 17v4h-4"/></svg>
+    Scan a matatu to start your journey
+  </a>
 
   <div class="section-heading">
-    <h2>Popular Routes</h2>
+    <h2>Get off-alerts</h2>
   </div>
-  {% if home_routes %}
-    <div class="routes-row">
-      {% for route in home_routes %}
-        <article class="route-chip">
-          <div class="route-chip-head">
-            <strong>{{ route.name }}</strong>
-            {% if forloop.first %}<span class="badge badge-success">Popular</span>{% endif %}
-          </div>
-          <small>{{ route.stage_total }} stage{{ route.stage_total|pluralize }} on this route</small>
-        </article>
-      {% endfor %}
-    </div>
-  {% else %}
-    <div class="surface empty-state"><p>No routes are available yet — check back soon.</p></div>
-  {% endif %}
-
   <section class="promo-card" aria-label="Stop alerts">
-    <h2>Know your stop</h2>
-    <p>Get a heads-up as your stage approaches — enable phone alerts before you travel.</p>
+    <p>We watch your trip and alert you as your stage approaches — enable phone alerts before you travel.</p>
     <a class="btn btn-primary" href="{% url 'notifications:list' %}">Set up alerts <span aria-hidden="true">›</span></a>
   </section>
 {% elif user.is_authenticated %}
@@ -153,5 +119,6 @@
 {% endif %}
 {% endblock %}
 {% block scripts %}
-{% if not user.is_authenticated %}<script defer src="{% static 'js/landing-demo.js' %}?v=20261119"></script>{% endif %}
+{% if user.is_authenticated and user.role == 'PASSANGER' %}<script type="module" src="{% static 'js/home-board.js' %}?v=20261121cb"></script>{% endif %}
+{% if not user.is_authenticated %}<script defer src="{% static 'js/landing-demo.js' %}?v=20261121cb"></script>{% endif %}
 {% endblock %}

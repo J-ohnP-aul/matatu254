@@ -80,8 +80,9 @@ def select_destination(request, trip_id):
     if request.method == "POST":
         stage_id = request.POST.get("destination_stage_id")
         stage = get_object_or_404(Stage, pk=stage_id, route=trip.route)
-        
+
         journey = create_journey_session(request.user, trip, stage)
+        messages.success(request, f"Tracking {trip.route.name} — we'll alert you before {stage.name}.")
         return redirect("journeys:journey-detail", journey_id=journey.id)
     
     stages = trip.route.stages.order_by("sequence_order")

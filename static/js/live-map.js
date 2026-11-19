@@ -48,9 +48,18 @@ import { decodePolyline } from './map/map-matcher.js';
   const stageIndex = new Map();    // stage_id -> {stage, routes[]}
   let activeRouteId = 'all';
 
+  // Route colors come from tokens.css so the palette is themed in one place.
+  const routePalette = getComputedStyle(document.documentElement)
+    .getPropertyValue('--route-color-1')
+    ? [1, 2, 3, 4, 5, 6].map((n) =>
+        getComputedStyle(document.documentElement)
+          .getPropertyValue(`--route-color-${n}`)
+          .trim(),
+      )
+    : ['#1769E8', '#10B981', '#7C5CD6', '#F59E0B', '#E11D74', '#0EA5E9'];
+
   function styleFor(index) {
-    const palette = ['#1769E8', '#10B981', '#7C5CD6', '#F59E0B', '#E11D74', '#0EA5E9'];
-    return palette[index % palette.length];
+    return routePalette[index % routePalette.length];
   }
 
   routes.forEach((route, index) => {

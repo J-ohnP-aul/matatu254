@@ -20,7 +20,7 @@
                 <input type="radio" name="destination_stage_id" value="{{ stage.id }}"{% if forloop.first %} checked{% endif %}>
                 <span><strong>{{ stage.name }}</strong><small>Stage {{ stage.sequence_order }}</small></span>
               </label>
-              <span class="stage-map-marker" aria-hidden="true">●</span>
+              <span class="stage-map-marker" aria-hidden="true"></span>
             </li>
           {% endfor %}
         </ol>

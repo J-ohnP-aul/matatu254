@@ -101,7 +101,7 @@ journey{% endblock %} {% block extra_head %}
       </div>
     </div>
     <div id="destination-alert" role="status" class="destination-alert">
-      <span aria-hidden="true">*</span
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
       ><span
         id="destination-alert-text"
         data-notification-id="{{ latest_notification.id|default:0 }}"
@@ -159,6 +159,6 @@ journey{% endblock %} {% block extra_head %}
 <script src="https://unpkg.com/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.js"></script>
 <script
   type="module"
-  src="{% static 'js/journey-live.js' %}?v=20261120"
+  src="{% static 'js/journey-live.js' %}?v=20261121"
 ></script>
 {% endblock %}

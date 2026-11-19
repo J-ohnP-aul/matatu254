@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Explore · Matatu254{% endblock %}
+{% block app_title %}Explore{% endblock %}
+{% block content %}
+<section class="explore-screen">
+  <header class="page-heading"><div><h1>Explore the network</h1><p>Find routes and stages before you travel.</p></div></header>
+
+  <label class="explore-search" for="explore-search">
+    <span class="visually-hidden">Search routes and stages</span>
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+    <input id="explore-search" type="search" placeholder="Search routes or stages" autocomplete="off">
+  </label>
+
+  <div class="section-heading"><h2>Popular routes</h2><a href="{% url 'explore:live-map' %}">Live map</a></div>
+  <div class="explore-route-list" id="explore-routes">
+    {% for route in routes %}
+      <a class="explore-card surface" href="{% url 'explore:route-detail' route.id %}"
+         data-search="{{ route.name|lower }} {% for stage in route.stages %}{{ stage.name|lower }} {% endfor %}">
+        <span class="explore-card-icon is-blue" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13 6-3m-6 3V7m6 10 4.553 2.276A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+        </span>
+        <span class="action-card-body">
+          <strong>{{ route.name }}</strong>
+          <small>{{ route.stages|length }} stage{{ route.stages|length|pluralize }}{% if forloop.first %} · Popular{% endif %}</small>
+        </span>
+        <span class="action-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+      </a>
+    {% empty %}
+      <div class="surface empty-state"><h2>No routes yet</h2><p>Routes will appear here once they are configured.</p></div>
+    {% endfor %}
+  </div>
+
+  <div class="section-heading"><h2>Stages</h2></div>
+  <div class="explore-stage-list" id="explore-stages">
+    {% for route in routes %}
+      {% for stage in route.stages %}
+        <a class="stage-item" href="{% url 'explore:live-map' %}?route={{ route.id }}"
+           data-search="{{ stage.name|lower }} {{ route.name|lower }}">
+          <span class="stage-item-dot" aria-hidden="true"></span>
+          <span class="action-card-body"><strong>{{ stage.name }}</strong><small>{{ route.name }} · Stage {{ stage.sequence_order }}</small></span>
+        </a>
+      {% endfor %}
+    {% endfor %}
+  </div>
+  <div class="surface empty-state" id="explore-empty" hidden><p>Nothing matches your search.</p></div>
+
+  <section class="promo-card" aria-label="Nearby stages">
+    <h2>Stages near you</h2>
+    <p>Allow location to sort stages by how close they are right now.</p>
+    <button type="button" class="btn btn-primary" id="nearby-btn">Find nearby stages</button>
+  </section>
+</section>
+{{ stages|json_script:"stages-data" }}
+{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'js/explore.js' %}?v=20261120"></script>{% endblock %}

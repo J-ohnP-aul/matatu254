@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Live Map · Matatu254{% endblock %}
+{% block app_title %}Live map{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+{% endblock %}
+{% block app_back %}<a class="header-back" href="{% url 'core:dashboard' %}" data-nav-direction="back" aria-label="Back to home">←</a>{% endblock %}
+{% block content %}
+<section class="map-screen" id="live-map-screen" data-vehicles-url="{% url 'live-vehicles' %}">
+  <div id="live-map" class="map-screen-canvas" role="region" aria-label="Live matatu map"></div>
+  <nav class="map-route-chips" id="route-chips" aria-label="Filter by route">
+    <button type="button" class="map-chip is-active" data-route-id="all">All routes</button>
+    {% for route in routes %}
+      <button type="button" class="map-chip" data-route-id="{{ route.id }}">{{ route.name }}</button>
+    {% endfor %}
+  </nav>
+  <div class="map-sheet" id="map-sheet" hidden>
+    <button type="button" class="map-sheet-handle" id="map-sheet-close" aria-label="Close details"></button>
+    <div class="map-sheet-body" id="map-sheet-body"></div>
+  </div>
+  <p class="map-live-status" id="map-live-status" role="status" aria-live="polite">Connecting to live updates…</p>
+</section>
+{{ routes|json_script:"routes-data" }}
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script type="module" src="{% static 'js/live-map.js' %}?v=20261120b"></script>
+{% endblock %}

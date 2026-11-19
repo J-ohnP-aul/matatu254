@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ route.name }} · Matatu254{% endblock %}
+{% block app_title %}Route{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+{% endblock %}
+{% block app_back %}<a class="header-back" href="{% url 'explore:index' %}" data-nav-direction="back" aria-label="Back to explore">←</a>{% endblock %}
+{% block content %}
+<section class="explore-screen">
+  <header class="page-heading"><div><h1>{{ route.name }}</h1><p>{{ route.description|default:"Matatu route" }} · {{ stages|length }} stage{{ stages|length|pluralize }}</p></div></header>
+
+  <section class="map-card" aria-label="Route map">
+    <div id="route-map" class="route-detail-map" role="region" aria-label="Map of {{ route.name }}"></div>
+  </section>
+
+  <div class="btn-row">
+    <a class="btn btn-primary" href="{% url 'explore:live-map' %}?route={{ route.id }}">Watch it live <span aria-hidden="true">›</span></a>
+  </div>
+
+  <div class="section-heading"><h2>Stages in order</h2></div>
+  <ol class="surface surface-pad stage-list">
+    {% for stage in stages %}
+      <li class="journey-stage">
+        <span class="stage-number" aria-hidden="true">{{ stage.sequenceOrder }}</span>
+        <span><strong>{{ stage.name }}</strong><small class="muted">{{ stage.latitude }}, {{ stage.longitude }}</small></span>
+      </li>
+    {% empty %}
+      <li class="empty-state">No stages configured for this route yet.</li>
+    {% endfor %}
+  </ol>
+</section>
+{{ route_payload|json_script:"route-data" }}
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script type="module" src="{% static 'js/explore.js' %}?v=20261120"></script>
+{% endblock %}

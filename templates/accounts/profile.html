@@ -10,6 +10,7 @@
     <div class="profile-row"><strong>Account type</strong><span>{{ user.get_role_display|default:user.role|title }}</span></div>
     <div class="profile-row"><strong>Last sign in</strong><span>{% if user.last_login %}{{ user.last_login|date:'M j, Y · H:i' }}{% else %}This is your first sign in{% endif %}</span></div>
     <div class="btn-row">
+      <a class="btn btn-secondary" href="{% url 'journeys:history' %}">Trip history</a>
       <button type="button" class="btn btn-secondary" data-install-app hidden>Install Matatu254</button>
       <a class="btn btn-danger" href="{% url 'accounts:logout' %}">Sign out</a>
     </div>

@@ -1,4 +1,4 @@
-const CACHE_NAME = "matatu254-pwa-v12";
+const CACHE_NAME = "matatu254-pwa-v15";
 const OFFLINE_URL = "/offline/";
 
 async function findShellAssets() {

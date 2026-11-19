@@ -84,6 +84,29 @@ if (searchInput) {
   });
 }
 
+/* ── Live vehicle counts on route cards (real /trips/live/ data) ────── */
+const liveCountCards = document.querySelectorAll('[data-live-count]');
+if (liveCountCards.length) {
+  fetch('/trips/live/', { headers: { Accept: 'application/json' }, cache: 'no-store' })
+    .then((response) => (response.ok ? response.json() : Promise.reject(new Error('HTTP ' + response.status))))
+    .then((data) => {
+      const byRoute = new Map();
+      for (const vehicle of data.vehicles || []) {
+        if (!vehicle.is_stale) {
+          byRoute.set(String(vehicle.route_id), (byRoute.get(String(vehicle.route_id)) || 0) + 1);
+        }
+      }
+      liveCountCards.forEach((badge) => {
+        const routeId = badge.dataset.liveCount;
+        const count = byRoute.get(routeId) || 0;
+        const text = badge.querySelector('[data-live-count-text]');
+        if (text) text.textContent = count === 1 ? '1 live' : `${count} live`;
+        badge.hidden = count === 0;
+      });
+    })
+    .catch(() => { /* badges stay hidden — no invented counts */ });
+}
+
 /* ── Route detail: static route map ─────────────────────────────────── */
 const routeMapEl = document.getElementById('route-map');
 if (routeMapEl && window.L) {

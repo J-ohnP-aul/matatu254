@@ -19,11 +19,14 @@
     <button type="button" class="map-sheet-handle" id="map-sheet-close" aria-label="Close details"></button>
     <div class="map-sheet-body" id="map-sheet-body"></div>
   </div>
+  <button type="button" class="map-recenter" id="recenter-btn" aria-label="Show my position">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/></svg>
+  </button>
   <p class="map-live-status" id="map-live-status" role="status" aria-live="polite">Connecting to live updates…</p>
 </section>
 {{ routes|json_script:"routes-data" }}
 {% endblock %}
 {% block scripts %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script type="module" src="{% static 'js/live-map.js' %}?v=20261120b"></script>
+<script type="module" src="{% static 'js/live-map.js' %}?v=20261123b"></script>
 {% endblock %}

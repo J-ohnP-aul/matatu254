@@ -133,13 +133,166 @@ class JourneyTrackingDataTests(TestCase):
 		self.assertTrue(response.json()["gps_stale"])
 		self.assertGreaterEqual(response.json()["gps_age_seconds"], 120)
 
-	def test_qr_and_destination_selection_resume_existing_active_journey(self):
+def test_qr_and_destination_selection_resume_existing_active_journey(self):
+		# The scanner stays reachable mid-journey (banner instead of a hard
+		# redirect) so a passenger can board a different matatu.
 		response = self.client.get(reverse("journeys:scan-qr"))
+		self.assertEqual(response.status_code, 200)
+		self.assertIn("already tracking", response.content.decode())
+
+		# Choosing a stage on the same matatu resumes the existing session.
+		response = self.client.post(
+			reverse("journeys:select-destination", args=[self.trip.pk]),
+			{"destination_stage_id": self.journey.destination_stage_id},
+		)
 		self.assertRedirects(
 			response,
 			reverse("journeys:journey-detail", args=[self.journey.pk]),
 		)
+		self.assertEqual(JourneySession.objects.filter(passenger=self.passenger).count(), 1)
+from django.test import TestCase
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+from django.utils import timezone
+from datetime import timedelta
+from types import SimpleNamespace
+from unittest.mock import patch
 
+from fleet.models import Matatu, QRCode
+from journeys.models import JourneySession
+from r_outes.models import Route, Stage
+from trips.models import ActiveTrip
+
+
+class JourneyQRScanTests(TestCase):
+	def test_unknown_qr_shows_simple_error_and_returns_to_scanner(self):
+		response = self.client.post(
+			reverse("journeys:scan-result"),
+			{"code_value": "NOT-A-REAL-CODE"},
+		)
+
+		self.assertRedirects(
+			response,
+			reverse("journeys:scan-qr"),
+			fetch_redirect_response=False,
+		)
+		followed_response = self.client.get(response.url)
+		self.assertContains(
+			followed_response,
+			"QR code not found or inactive. Please check it and try again.",
+		)
+
+	def test_inactive_qr_shows_simple_error_and_returns_to_scanner(self):
+		matatu = Matatu.objects.create(registration_number="KAA 002A", operator="Test")
+		QRCode.objects.create(
+			matatu=matatu,
+			code_value="MAT-INACTIVE",
+			status=QRCode.Status.INACTIVE,
+		)
+
+		response = self.client.post(
+			reverse("journeys:scan-result"),
+			{"code_value": "MAT-INACTIVE"},
+		)
+
+		self.assertRedirects(
+			response,
+			reverse("journeys:scan-qr"),
+			fetch_redirect_response=False,
+		)
+		followed_response = self.client.get(response.url)
+		self.assertContains(
+			followed_response,
+			"QR code not found or inactive. Please check it and try again.",
+		)
+
+
+class JourneyTrackingDataTests(TestCase):
+	def setUp(self):
+		self.passenger = get_user_model().objects.create_user(
+			username="passenger", password="test-password"
+		)
+		route = Route.objects.create(name="Test Route")
+		Stage.objects.create(
+			route=route, name="Start", sequence_order=1,
+			latitude=0, longitude=0.01,
+		)
+		destination = Stage.objects.create(
+			route=route, name="Destination", sequence_order=2,
+			latitude=0, longitude=0.02,
+		)
+		matatu = Matatu.objects.create(registration_number="KAA 001A", operator="Test")
+		self.trip = ActiveTrip.objects.create(
+			matatu=matatu,
+			route=route,
+			status=ActiveTrip.Status.ACTIVE,
+		)
+		self.trip.current_latitude = 0
+		self.trip.current_longitude = 0
+		self.trip.save(update_fields=["current_latitude", "current_longitude"])
+		self.journey = JourneySession.objects.create(
+			passenger=self.passenger,
+			trip=self.trip,
+			destination_stage=destination,
+			status=JourneySession.Status.DESTINATION_SELECTED,
+		)
+		self.url = reverse("journeys:tracking-data", args=[self.journey.id])
+		self.client.force_login(self.passenger)
+
+	@patch("journeys.views.calculate_remaining")
+	def test_tracking_endpoint_recalculates_from_latest_gps_position(self, calculate_remaining_mock):
+		calculate_remaining_mock.side_effect = lambda vehicle_pos, *_: SimpleNamespace(
+			distance_m=2000 - vehicle_pos[1] * 100000,
+			distance_km=(2000 - vehicle_pos[1] * 100000) / 1000,
+			duration_s=300,
+			duration_minutes=5,
+		)
+
+		first_response = self.client.get(self.url)
+		self.assertEqual(first_response.status_code, 200)
+		self.assertEqual(first_response.json()["distance_m"], 2000)
+		self.assertEqual(first_response.json()["next_stage_order"], 1)
+		self.assertEqual(first_response.json()["progress_percent"], 0)
+		self.assertTrue(first_response.json()["gps_stale"])
+		self.assertIsNone(first_response.json()["gps_age_seconds"])
+
+		page_response = self.client.get(
+			reverse("journeys:journey-detail", args=[self.journey.id])
+		)
+		self.assertEqual(page_response.status_code, 200)
+		self.assertContains(page_response, "Journey progress")
+		self.assertContains(page_response, "Route stages")
+		self.assertContains(page_response, "Destination")
+
+		self.trip.current_longitude = 0.005
+		self.trip.last_ping_at = timezone.now()
+		self.trip.save(update_fields=["current_longitude", "last_ping_at"])
+		second_response = self.client.get(self.url)
+
+		self.assertEqual(second_response.status_code, 200)
+		self.assertEqual(second_response.json()["distance_m"], 1500)
+		self.assertFalse(second_response.json()["gps_stale"])
+		self.assertLessEqual(second_response.json()["gps_age_seconds"], 60)
+		self.assertEqual(calculate_remaining_mock.call_count, 3)
+
+	def test_tracking_data_marks_old_gps_ping_stale(self):
+		self.trip.last_ping_at = timezone.now() - timedelta(seconds=120)
+		self.trip.save(update_fields=["last_ping_at"])
+
+		response = self.client.get(self.url)
+
+		self.assertEqual(response.status_code, 200)
+		self.assertTrue(response.json()["gps_stale"])
+		self.assertGreaterEqual(response.json()["gps_age_seconds"], 120)
+
+	def test_qr_and_destination_selection_resume_existing_active_journey(self):
+		# The scanner stays reachable mid-journey (banner instead of a hard
+		# redirect) so a passenger can board a different matatu.
+		response = self.client.get(reverse("journeys:scan-qr"))
+		self.assertEqual(response.status_code, 200)
+		self.assertIn("already tracking", response.content.decode())
+
+		# Choosing a stage on the same matatu resumes the existing session.
 		response = self.client.post(
 			reverse("journeys:select-destination", args=[self.trip.pk]),
 			{"destination_stage_id": self.journey.destination_stage_id},

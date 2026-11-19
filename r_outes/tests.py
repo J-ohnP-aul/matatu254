@@ -3,7 +3,8 @@ from django.test import TestCase
 from django.urls import reverse
 
 from r_outes.models import Route, Stage
-from fleet.models import Matatu
+from fleet.models import Matatu, QRCode
+from journeys.models import JourneySession
 from trips.models import ActiveTrip
 from accounts.models import User as AppUser
 
@@ -120,3 +121,49 @@ class LiveMapExploreTests(TestCase):
         response = self.client.get(f'/explore/route/{self.route.pk}/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'stage-list')
+
+
+class JourneySwitchingTests(TestCase):
+    """Scanning mid-journey: banner, and auto-switch on new stage pick."""
+
+    def setUp(self):
+        self.user = AppUser.objects.create_user(username='rider2', password='test-123', role='PASSANGER')
+        self.matatu_a = Matatu.objects.create(registration_number='KDA-001', operator='Ops A')
+        self.matatu_b = Matatu.objects.create(registration_number='KDB-002', operator='Ops B')
+        self.route_a = Route.objects.create(name='Route A')
+        self.stage_a1 = Stage.objects.create(route=self.route_a, name='A1', sequence_order=1, latitude=-1.29, longitude=36.82)
+        Stage.objects.create(route=self.route_a, name='A2', sequence_order=2, latitude=-1.30, longitude=36.83)
+        self.route_b = Route.objects.create(name='Route B')
+        self.stage_b1 = Stage.objects.create(route=self.route_b, name='B1', sequence_order=1, latitude=-1.31, longitude=36.84)
+        Stage.objects.create(route=self.route_b, name='B2', sequence_order=2, latitude=-1.32, longitude=36.85)
+        self.trip_a = ActiveTrip.objects.create(matatu=self.matatu_a, route=self.route_a, status=ActiveTrip.Status.ACTIVE)
+        self.trip_b = ActiveTrip.objects.create(matatu=self.matatu_b, route=self.route_b, status=ActiveTrip.Status.ACTIVE)
+        QRCode.objects.create(matatu=self.matatu_b, code_value='MAT-0002', status=QRCode.Status.ACTIVE)
+        self.journey = JourneySession.objects.create(
+            passenger=self.user, trip=self.trip_a, destination_stage=self.stage_a1,
+            status=JourneySession.Status.IN_TRANSIT,
+        )
+        self.client.force_login(self.user)
+
+    def test_scan_page_reachable_with_active_journey(self):
+        response = self.client.get('/journeys/scan/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("already tracking", response.content.decode())
+
+    def test_scan_result_processes_code_mid_journey(self):
+        response = self.client.post('/journeys/scan/result/', {'code_value': 'MAT-0002'})
+        self.assertRedirects(response, f'/journeys/trip/{self.trip_b.pk}/stages/')
+
+    def test_new_stage_pick_closes_previous_journey(self):
+        response = self.client.post(f'/journeys/trip/{self.trip_b.pk}/select/', {'destination_stage_id': self.stage_b1.pk})
+        self.journey.refresh_from_db()
+        self.assertEqual(self.journey.status, JourneySession.Status.ENDED)
+        self.assertTrue(JourneySession.objects.filter(
+            passenger=self.user, trip=self.trip_b, destination_stage=self.stage_b1,
+        ).exclude(pk=self.journey.pk).exists())
+
+    def test_same_matatu_resumes_existing_journey(self):
+        response = self.client.post(f'/journeys/trip/{self.trip_a.pk}/select/', {'destination_stage_id': self.stage_a1.pk})
+        self.journey.refresh_from_db()
+        self.assertEqual(self.journey.status, JourneySession.Status.IN_TRANSIT)
+        self.assertFalse(JourneySession.objects.exclude(pk=self.journey.pk).filter(passenger=self.user).exists())

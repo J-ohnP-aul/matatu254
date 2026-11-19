@@ -330,6 +330,10 @@ p {
   background: var(--warning-soft);
   color: var(--warning);
 }
+.flash-messages .info {
+  background: var(--accent-100);
+  color: var(--accent-800);
+}
 footer {
   padding: var(--space-8) var(--page-gutter)
     calc(var(--space-8) + env(safe-area-inset-bottom));
@@ -1056,6 +1060,15 @@ input[type="radio"] {
   border-radius: var(--radius-md);
   background: var(--brand-50);
   color: var(--brand-800);
+}
+.active-journey-note {
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+.active-journey-note .note-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-left: auto;
 }
 .destination-alert.is-approaching {
   background: var(--warning-soft);

@@ -14,29 +14,28 @@ from journeys.services import (
     get_active_journey,
     update_journey_status,
     calculate_remaining,
-    end_journey,
+    end_journey as end_journey_service,
 )
 from r_outes.routes_services import is_near_stage
 
 
 def scan_qr(request):
-    """Render the camera scanner page"""
+    """Render the camera scanner page.
+
+    Passengers with an active journey can still scan — the page shows a
+    banner with their journey, and picking a stage on another matatu
+    closes the old journey (see select_destination).
+    """
+    active_journey = None
     if request.user.is_authenticated:
         active_journey = get_active_journey(request.user)
-        if active_journey:
-            return redirect("journeys:journey-detail", journey_id=active_journey.pk)
-    return render(request, "journeys/scan.html")
+    return render(request, "journeys/scan.html", {"active_journey": active_journey})
 
 
 def scan_result(request):
     """Process scanned QR code_value"""
     if request.method != "POST":
         return redirect("journeys:scan-qr")
-
-    if request.user.is_authenticated:
-        active_journey = get_active_journey(request.user)
-        if active_journey:
-            return redirect("journeys:journey-detail", journey_id=active_journey.pk)
 
     code_value = request.POST.get("code_value", "").strip()
     if not code_value:
@@ -74,12 +73,23 @@ def trip_stages(request, trip_id):
 def select_destination(request, trip_id):
     trip = get_object_or_404(ActiveTrip, pk=trip_id, status=ActiveTrip.Status.ACTIVE)
     active_journey = get_active_journey(request.user)
-    if active_journey:
-        return redirect("journeys:journey-detail", journey_id=active_journey.pk)
-    
+
     if request.method == "POST":
         stage_id = request.POST.get("destination_stage_id")
         stage = get_object_or_404(Stage, pk=stage_id, route=trip.route)
+
+        # Boarding the same matatu again? Resume the existing session.
+        if active_journey and active_journey.trip_id == trip.pk:
+            return redirect("journeys:journey-detail", journey_id=active_journey.pk)
+
+        # Boarding a different matatu: close the previous journey (as in
+        # real life — you got off) and start the new one.
+        if active_journey:
+            end_journey_service(active_journey)
+            messages.info(
+                request,
+                f"Previous journey to {active_journey.destination_stage.name} was closed.",
+            )
 
         journey = create_journey_session(request.user, trip, stage)
         messages.success(request, f"Tracking {trip.route.name} — we'll alert you before {stage.name}.")
@@ -219,7 +229,7 @@ def end_journey(request, journey_id):
     journey = get_object_or_404(JourneySession, pk=journey_id, passenger=request.user)
     
     if request.method == "POST":
-        end_journey(journey)
+        end_journey_service(journey)
         return redirect("core:dashboard")
     
     return render(request, "journeys/confirm_end.html", {"journey": journey})

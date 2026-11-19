@@ -110,6 +110,27 @@ class LiveMapExploreTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'routes-data')
 
+    def test_live_map_dispatches_passenger_with_active_journey(self):
+        # A passenger with an active journey gets their trip page from the
+        # Map tab; the public radar remains for everyone else.
+        self.client.force_login(self.user)
+        self.trip.current_latitude = -1.2921
+        self.trip.current_longitude = 36.8219
+        self.trip.save()
+        JourneySession.objects.create(
+            passenger=self.user, trip=self.trip,
+            destination_stage=Stage.objects.filter(route=self.route).first(),
+            status=JourneySession.Status.IN_TRANSIT,
+        )
+        response = self.client.get('/map/')
+        self.assertRedirects(response, f'/journeys/session/{JourneySession.objects.latest("id").id}/')
+
+    def test_live_map_shows_public_radar_without_active_journey(self):
+        self.client.force_login(self.user)
+        response = self.client.get('/map/')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'routes-data')
+
     def test_explore_page_renders_with_route_and_stages(self):
         self.client.force_login(self.user)
         response = self.client.get('/explore/')

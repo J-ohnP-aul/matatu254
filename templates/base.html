@@ -71,7 +71,7 @@
 
   {% if user.is_authenticated and user.role == 'PASSANGER' %}
   <nav class="bottom-tabs is-visible" aria-label="Main navigation">
-    <a href="{% url 'explore:live-map' %}"{% if request.resolver_match.url_name == 'live-map' %} aria-current="page"{% endif %}>
+    <a href="{% url 'explore:live-map' %}"{% if request.resolver_match.url_name == 'live-map' or request.resolver_match.url_name == 'journey-detail' %} aria-current="page"{% endif %}>
       <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
       <span>Map</span>
     </a>
@@ -79,7 +79,7 @@
       <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span>
       <span>Explore</span>
     </a>
-    <a href="{% url 'journeys:scan-qr' %}"{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name != 'history' %} aria-current="page"{% endif %}>
+    <a href="{% url 'journeys:scan-qr' %}"{% if request.resolver_match.namespace == 'journeys' and request.resolver_match.url_name not in 'history journey-detail' %} aria-current="page"{% endif %}>
       <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/></svg></span>
       <span>Scan</span>
     </a>

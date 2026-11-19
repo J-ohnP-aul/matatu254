@@ -8,7 +8,9 @@ OSRM-backed helpers. No data is invented; route geometry comes from OSRM
 import time
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
+
+from journeys.services import get_active_journey
 
 from .models import Route
 from .routes_services import get_route_polyline
@@ -61,7 +63,16 @@ def _route_payload(route):
 
 @login_required
 def live_map(request):
-    """Public live map: all routes + stages embedded, vehicles polled live."""
+    """Public live map: all routes + stages embedded, vehicles polled live.
+
+    For a passenger with an active journey this view dispatches to their
+    journey page instead — their trip is the map they want. The public
+    radar stays reachable via Explore (and for everyone else).
+    """
+    if request.user.role == "PASSANGER":
+        active = get_active_journey(request.user)
+        if active:
+            return redirect("journeys:journey-detail", journey_id=active.pk)
     routes = [
         _route_payload(route)
         for route in Route.objects.prefetch_related("stages").order_by("name")

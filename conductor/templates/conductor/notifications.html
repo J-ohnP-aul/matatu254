@@ -5,13 +5,13 @@
 {% block content %}
   <div class="page-shell">
     <header class="page-heading"><div><h1>Notifications</h1></div>
-      <a class="btn btn-outline" href="{% url 'conductor:dashboard' %}">Back to dashboard</a>
+      <a class="btn btn-secondary btn-sm" href="{% url 'conductor:dashboard' %}">Back to dashboard</a>
     </header>
 
     <section class="surface surface-pad" data-push-controls data-subscription-url="{% url 'notifications:push-subscription' %}" data-public-key="{{ webpush_public_key }}">
       <div><h2>Phone notifications</h2><p class="muted" data-push-status>Get journey updates even when Matatu254 is closed.</p></div>
       <button type="button" class="btn btn-primary" data-push-enable>Enable notifications</button>
-      <button type="button" class="btn btn-outline" data-push-disable hidden>Turn off on this device</button>
+      <button type="button" class="btn btn-secondary" data-push-disable hidden>Turn off on this device</button>
       <form hidden>{% csrf_token %}</form>
     </section>
 
@@ -34,9 +34,10 @@
       </div>
     {% else %}
       <div class="surface empty-state">
-        <p>No notifications yet.</p>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <p>No notifications yet — passenger journey alerts will appear here.</p>
       </div>
     {% endif %}
   </div>
 {% endblock %}
-{% block scripts %}<script defer src="{% static 'js/push-notifications.js' %}?v=20261020"></script>{% endblock %}
+{% block scripts %}<script defer src="{% static 'js/push-notifications.js' %}?v=20261120b"></script>{% endblock %}

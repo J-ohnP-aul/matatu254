@@ -4,7 +4,7 @@
 {% block app_back %}<a class="header-back" href="{% url 'core:dashboard' %}" data-nav-direction="back" aria-label="Back to home">←</a>{% endblock %}
 {% block content %}
 <section class="page-shell history-screen">
-  <header class="page-heading"><div><h1>Your trips</h1><p>Completed journeys and the stages you chose.</p></div><a class="btn btn-primary" href="{% url 'journeys:scan-qr' %}">Start a journey</a></header>
+  <header class="page-heading"><div><h1>Your trips</h1><p>Completed journeys and the stages you chose.</p></div>{% if journeys %}<a class="btn btn-primary" href="{% url 'journeys:scan-qr' %}">Start a journey</a>{% endif %}</header>
   {% if journeys %}
     <ul class="surface surface-pad history-list">
       {% for journey in journeys %}

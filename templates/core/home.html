@@ -61,7 +61,7 @@
   </a>
 
   <div class="section-heading">
-    <h2>Get off-alerts</h2>
+    <h2>Stop alerts</h2>
   </div>
   <section class="promo-card" aria-label="Stop alerts">
     <p>We watch your trip and alert you as your stage approaches — enable phone alerts before you travel.</p>
@@ -119,6 +119,6 @@
 {% endif %}
 {% endblock %}
 {% block scripts %}
-{% if user.is_authenticated and user.role == 'PASSANGER' %}<script type="module" src="{% static 'js/home-board.js' %}?v=20261121cb"></script>{% endif %}
-{% if not user.is_authenticated %}<script defer src="{% static 'js/landing-demo.js' %}?v=20261121cb"></script>{% endif %}
+{% if user.is_authenticated and user.role == 'PASSANGER' %}<script type="module" src="{% static 'js/home-board.js' %}?v=20261120b"></script>{% endif %}
+{% if not user.is_authenticated %}<script defer src="{% static 'js/landing-demo.js' %}?v=20261120b"></script>{% endif %}
 {% endblock %}

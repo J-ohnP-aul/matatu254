@@ -8,7 +8,7 @@
     <div class="surface table-wrap"><table><thead><tr><th>Registration</th><th>Operator</th><th>Conductor</th><th>QR status</th><th>Trips</th><th>Created</th><th>Actions</th></tr></thead><tbody>
       {% for matatu in matatus %}<tr>
         <td><strong>{{ matatu.registration_number }}</strong></td><td>{{ matatu.operator }}</td>
-        <td>{{ matatu.conductor.username|default:'Not assigned' }}</td>
+        <td>{{ matatu.conductor.username|default:'—' }}</td>
         <td>{% if matatu.qr_code %}<span class="badge{% if matatu.qr_code.status == 'active' %} badge-success{% else %} badge-error{% endif %}">{{ matatu.qr_code.get_status_display }}</span>{% else %}<span class="badge">No QR</span>{% endif %}</td>
         <td>{{ matatu.trip_count }}</td><td>{{ matatu.created_at|date:'M j, Y' }}</td>
         <td><div class="table-actions"><a class="btn btn-secondary btn-sm" href="{% url 'management:matatu-edit' matatu.pk %}">Edit</a><a class="btn btn-secondary btn-sm" href="{% url 'management:matatu-qr' matatu.pk %}">QR code</a></div></td>

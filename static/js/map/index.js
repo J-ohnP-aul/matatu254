@@ -22,7 +22,7 @@ import {
   getPolylineBearing,
   findNearestStage,
 } from "./map-matcher.js";
-import { CameraController, enableMapRotation } from "./camera.js?v=20261123";
+import { CameraController, enableMapRotation } from "./camera.js?v=20261124";
 import { ETACalculator, formatDuration, formatDistance } from "./eta.js";
 import { ModeController, CameraMode } from "./modes.js";
 import {
@@ -30,7 +30,7 @@ import {
   DestinationMarker,
   StageMarkers,
   RoutePolyline,
-} from "./markers.js";
+} from "./markers.js?v=20261124";
 import { createTransport } from "../transport/index.js";
 
 export class LiveTrackingMap {

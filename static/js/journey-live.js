@@ -1,4 +1,4 @@
-import { createLiveTrackingMap } from './map/index.js?v=20261123c';
+import { createLiveTrackingMap } from './map/index.js?v=20261124';
 import { createTransport } from './transport/index.js';
 
 (async () => {
@@ -45,12 +45,18 @@ import { createTransport } from './transport/index.js';
     const minutes = Math.max(0, Math.round(value));
     return minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60} min` : `${minutes} min`;
   }
+  function humanAge(seconds) {
+    if (seconds < 60) return `${seconds}s ago`;
+    if (seconds < 3600) return `${Math.round(seconds / 60)}m ago`;
+    if (seconds < 172800) return `${Math.round(seconds / 3600)}h ago`;
+    return `${Math.round(seconds / 86400)}d ago`;
+  }
   function updateFreshness(stale, age) {
     if (!freshness) return;
     freshness.classList.toggle('is-stale', stale);
     freshness.textContent = age === null
       ? 'Waiting for the vehicle’s first GPS update'
-      : stale ? `Vehicle location delayed · last update ${formatMinutes(age / 60)} ago` : 'Vehicle location live · updated just now';
+      : stale ? `Vehicle location delayed · last seen ${humanAge(age)}` : 'Vehicle location live · updated just now';
   }
   function updateProgress(value) {
     const percent = Math.min(100, Math.max(0, Math.round(value || 0)));

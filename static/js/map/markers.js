@@ -228,7 +228,7 @@ export class StageMarkers {
 
   addStage(stage, status = 'upcoming') {
     const iconHtml = this._createStageIcon(stage, status);
-    
+
     const marker = L.marker([stage.latitude, stage.longitude], {
       icon: L.divIcon({
         html: iconHtml,
@@ -239,6 +239,9 @@ export class StageMarkers {
       zIndexOffset: 800
     }).addTo(this.map);
 
+    // Tooltip strategy: only the stage a traveller needs next (the
+    // current one) is permanent; every other name reveals on hover/tap.
+    // Ten always-open labels used to stack into an unreadable pile.
     const label = document.createElement('span');
     label.textContent = stage.name;
     label.style.cssText = [
@@ -247,13 +250,13 @@ export class StageMarkers {
       'white-space:nowrap'
     ].join(';');
     marker.bindTooltip(label, {
-      permanent: true,
+      permanent: status === 'current',
       direction: 'right',
       offset: [10, 0],
       opacity: 1,
       className: 'stage-name-tooltip'
     });
-    
+
     this.markers.set(stage.id, marker);
     return marker;
   }
@@ -289,7 +292,7 @@ export class StageMarkers {
   updateStageStatus(stageId, status) {
     const marker = this.markers.get(stageId);
     if (!marker) return;
-    
+
     const iconHtml = this._createStageIcon({ id: stageId }, status);
     marker.setIcon(L.divIcon({
       html: iconHtml,
@@ -297,6 +300,16 @@ export class StageMarkers {
       iconSize: [32, 32],
       iconAnchor: [16, 16]
     }));
+
+    // Keep the permanent name label on the current stage only.
+    const tooltip = marker.getTooltip();
+    if (tooltip) {
+      if (status === 'current') tooltip.options.permanent = true;
+      else {
+        tooltip.options.permanent = false;
+        if (marker.isTooltipOpen()) marker.closeTooltip();
+      }
+    }
   }
 
   removeStage(stageId) {

@@ -45,66 +45,123 @@ def calculate_remaining(vehicle_pos, next_stage, destination_stage):
     return remaining_road_distance(vehicle_pos, next_stage, destination_stage)
 
 
+def advance_journey_progress(journey: JourneySession, route_stages, vehicle_pos):
+    """
+    Monotonic stage completion from along-track distance.
+
+    Projects the vehicle onto the ordered stage line and marks every stage
+    whose cumulative distance is behind the vehicle as completed. State is
+    persisted on the journey (completed_stage_ids / current_stage_index)
+    and only ever advances: a vehicle parked between two stages keeps the
+    last completed stage visible and never un-completes a passed one.
+
+    Returns (current_stage, next_stage) for the journey's destination span.
+    """
+    from core.geo import haversine_distance_m
+    from r_outes.routes_services import along_track_position
+
+    dest_order = journey.destination_stage.sequence_order
+    stages = [st for st in route_stages if st.sequence_order <= dest_order]
+    if not stages:
+        journey.completed_stage_ids = []
+        journey.current_stage_index = 0
+        return None, None
+
+    perp = 0.0
+    if vehicle_pos is not None:
+        along, _total, perp = along_track_position(vehicle_pos[0], vehicle_pos[1], stages)
+    else:
+        along = 0.0
+
+    cumulative = [0.0]
+    for a, b in zip(stages, stages[1:]):
+        cumulative.append(cumulative[-1] + haversine_distance_m(
+            float(a.latitude), float(a.longitude),
+            float(b.latitude), float(b.longitude),
+        ))
+
+    # 25 m tolerance: a fix just past a stage still counts it as completed.
+    # The first stage additionally needs the vehicle to have actually
+    # reached the corridor (perp <= 100 m or clear progress > tolerance) —
+    # otherwise a passenger still walking to the route start would count
+    # the first stage as passed (along clamps to 0 there).
+    derived_ids = set()
+    for i, c in enumerate(cumulative):
+        if c > along + 25:
+            break
+        if i == 0 and perp > 100 and along <= 25:
+            continue  # not yet at the route start
+        derived_ids.add(stages[i].id)
+    completed_ids = set(journey.completed_stage_ids or []) | derived_ids
+    ordered = [st.id for st in stages if st.id in completed_ids]
+
+    journey.completed_stage_ids = ordered
+    if ordered:
+        index = max(journey.current_stage_index, len(ordered) - 1)
+        journey.current_stage_index = min(index, len(stages) - 1)
+    else:
+        journey.current_stage_index = 0
+
+    if not ordered:
+        # Journey not started yet: nothing completed, first stage upcoming.
+        return None, stages[0]
+    current_stage = stages[journey.current_stage_index]
+    next_index = journey.current_stage_index + 1
+    next_stage = stages[next_index] if next_index < len(stages) else None
+    return current_stage, next_stage
+
+
 def update_journey_status(journey: JourneySession) -> JourneySession:
     """
     Determine and update journey status based on vehicle position.
-    Returns the journey (potentially with updated status).
+
+    Stage memory is monotonic (see advance_journey_progress): passed stages
+    stay completed while the vehicle is in transit between checkpoints.
     """
+    from r_outes.routes_services import is_near_stage
+
     trip = journey.trip
     route_stages = list(trip.route.stages.order_by("sequence_order"))
-    
-    # Vehicle position from trip cache
+
     vehicle_pos = None
     if trip.current_latitude is not None and trip.current_longitude is not None:
         vehicle_pos = (float(trip.current_latitude), float(trip.current_longitude))
-    
-    if not vehicle_pos:
-        return journey
-    
-    # Find current stage (last reached) and next stage (first not reached)
-    current_stage = None
-    next_stage = None
 
-    destination_order = journey.destination_stage.sequence_order
-    route_stages = [stage for stage in route_stages if stage.sequence_order <= destination_order]
-    for stage in route_stages:
-        if is_near_stage(vehicle_pos[0], vehicle_pos[1], stage):
-            current_stage = stage
-        elif next_stage is None:
-            next_stage = stage
+    current_stage, next_stage = advance_journey_progress(journey, route_stages, vehicle_pos)
 
     if current_stage and current_stage.id != journey.destination_stage_id:
         _send_stage_reached_notification(journey, current_stage)
-    
+
     # Determine new status based on current status and position
     new_status = journey.status
-    
+
     if journey.status == JourneySession.Status.DESTINATION_SELECTED:
         if current_stage is not None:
             new_status = JourneySession.Status.IN_TRANSIT
-    
+
     elif journey.status == JourneySession.Status.IN_TRANSIT:
         if current_stage and current_stage.id == journey.destination_stage_id:
             new_status = JourneySession.Status.APPROACHING
         elif next_stage and next_stage.id == journey.destination_stage_id:
-            if is_near_stage(vehicle_pos[0], vehicle_pos[1], journey.destination_stage):
+            if vehicle_pos and is_near_stage(vehicle_pos[0], vehicle_pos[1], journey.destination_stage):
                 new_status = JourneySession.Status.APPROACHING
-    
+
     elif journey.status == JourneySession.Status.APPROACHING:
-        if current_stage and current_stage.id == journey.destination_stage_id:
-            new_status = JourneySession.Status.ARRIVED
-    
+        if vehicle_pos and current_stage and current_stage.id == journey.destination_stage_id:
+            if is_near_stage(vehicle_pos[0], vehicle_pos[1], journey.destination_stage):
+                new_status = JourneySession.Status.ARRIVED
+
     # Update if changed
     if new_status != journey.status:
         journey.status = new_status
-        journey.save(update_fields=["status"])
-        
+
         # Trigger notification on APPROACHING
         if new_status == JourneySession.Status.APPROACHING:
             _send_approaching_notification(journey)
         elif new_status == JourneySession.Status.ARRIVED:
             _send_arrived_notification(journey)
-    
+
+    journey.save(update_fields=["status", "completed_stage_ids", "current_stage_index"])
     return journey
 
 

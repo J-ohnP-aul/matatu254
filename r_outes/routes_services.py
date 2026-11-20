@@ -144,3 +144,51 @@ def get_route_polyline(origin, destination):
     except Exception:
         pass
     return None
+
+
+def along_track_position(vehicle_lat, vehicle_lon, stages):
+    """
+    Distance (metres) already travelled along the ordered stage line.
+
+    Projects the vehicle onto each consecutive-stage segment (planar
+    approximation in local metres — fine for the short hops between
+    stages) and keeps the closest projection's along-track distance.
+    Returns (along_m, total_m, perp_m). The perpendicular distance tells
+    "waiting at the first stage" (perp ~ 0) apart from "still walking to
+    the route start" (perp large, along clamped to 0). This gives stage
+    completion a stable definition that does not flicker like a radius
+    check: a vehicle sitting between two stages still has an unambiguous
+    distance.
+    """
+    import math
+
+    points = [(float(s.latitude), float(s.longitude)) for s in stages]
+    if len(points) < 2:
+        return 0.0, 0.0, 0.0
+
+    kx = 111320 * math.cos(math.radians((points[0][0] + points[-1][0]) / 2))
+    ky = 110540.0
+    px = vehicle_lon * kx
+    py = vehicle_lat * ky
+
+    best_along = 0.0
+    best_perp = float("inf")
+    cumulative = 0.0
+    for i in range(len(points) - 1):
+        ax = points[i][1] * kx
+        ay = points[i][0] * ky
+        bx = points[i + 1][1] * kx
+        by = points[i + 1][0] * ky
+        seg = math.hypot(bx - ax, by - ay)
+        dx, dy = bx - ax, by - ay
+        if seg > 0:
+            t = ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)
+            t = max(0.0, min(1.0, t))
+            proj_x = ax + t * dx
+            proj_y = ay + t * dy
+            perp = math.hypot(px - proj_x, py - proj_y)
+            if perp < best_perp:
+                best_perp = perp
+                best_along = cumulative + t * seg
+        cumulative += seg
+    return best_along, cumulative, best_perp

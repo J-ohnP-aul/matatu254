@@ -7,6 +7,8 @@ from fleet.models import Matatu, QRCode
 from journeys.models import JourneySession
 from trips.models import ActiveTrip
 from accounts.models import User as AppUser
+from journeys.services import update_journey_status
+from django.utils import timezone
 
 
 class RouteManagementTests(TestCase):
@@ -188,3 +190,68 @@ class JourneySwitchingTests(TestCase):
         self.journey.refresh_from_db()
         self.assertEqual(self.journey.status, JourneySession.Status.IN_TRANSIT)
         self.assertFalse(JourneySession.objects.exclude(pk=self.journey.pk).filter(passenger=self.user).exists())
+
+
+class MonotonicProgressTests(TestCase):
+    """Stage memory persists through transit and never un-completes."""
+
+    def setUp(self):
+        self.user = AppUser.objects.create_user(username='rider3', password='test-123', role='PASSANGER')
+        self.route = Route.objects.create(name='Progress route')
+        # Three stages ~1.1 km apart on a straight line
+        self.stage1 = Stage.objects.create(route=self.route, name='P1', sequence_order=1, latitude=-1.290, longitude=36.820)
+        self.stage2 = Stage.objects.create(route=self.route, name='P2', sequence_order=2, latitude=-1.300, longitude=36.820)
+        self.stage3 = Stage.objects.create(route=self.route, name='P3', sequence_order=3, latitude=-1.310, longitude=36.820)
+        self.matatu = Matatu.objects.create(registration_number='KDP-001', operator='Ops')
+        self.trip = ActiveTrip.objects.create(matatu=self.matatu, route=self.route, status=ActiveTrip.Status.ACTIVE)
+        self.journey = JourneySession.objects.create(
+            passenger=self.user, trip=self.trip, destination_stage=self.stage3,
+            status=JourneySession.Status.IN_TRANSIT,
+        )
+
+    def _ping(self, lat):
+        self.trip.current_latitude = lat
+        self.trip.current_longitude = 36.820
+        self.trip.last_ping_at = timezone.now()
+        self.trip.save()
+
+    def test_reaching_stage_persists_completion(self):
+        self._ping(-1.2905)  # at/past P1
+        update_journey_status(self.journey)
+        self.journey.refresh_from_db()
+        self.assertIn(self.stage1.id, self.journey.completed_stage_ids)
+        self.assertEqual(self.journey.current_stage_index, 0)
+
+    def test_transit_between_stages_keeps_memory(self):
+        self._ping(-1.2905)
+        update_journey_status(self.journey)
+        # Now halfway between P2 and P3 — nothing near either stage
+        self._ping(-1.3055)
+        update_journey_status(self.journey)
+        self.journey.refresh_from_db()
+        self.assertIn(self.stage1.id, self.journey.completed_stage_ids)
+        self.assertIn(self.stage2.id, self.journey.completed_stage_ids)
+        self.assertEqual(self.journey.current_stage_index, 1)
+
+    def test_completion_never_regresses_on_bad_fix(self):
+        self._ping(-1.3055)  # past P2
+        update_journey_status(self.journey)
+        # GPS glitch reports the vehicle back near P1
+        self._ping(-1.2902)
+        update_journey_status(self.journey)
+        self.journey.refresh_from_db()
+        self.assertIn(self.stage2.id, self.journey.completed_stage_ids)
+        self.assertEqual(self.journey.current_stage_index, 1)  # stays at P2
+        self.assertEqual(len(self.journey.completed_stage_ids), 2)
+
+    def test_tracking_data_reports_persisted_state(self):
+        self._ping(-1.3055)
+        update_journey_status(self.journey)
+        client = self.client_class()
+        client.force_login(self.user)
+        response = client.get(f'/journeys/session/{self.journey.pk}/tracking-data/')
+        data = response.json()
+        self.assertEqual(data['current_stage'], 'P2')
+        self.assertEqual(data['next_stage'], 'P3')
+        self.assertEqual(data['current_stage_index'], 1)
+        self.assertEqual(len(data['completed_stage_ids']), 2)

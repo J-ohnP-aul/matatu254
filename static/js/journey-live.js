@@ -18,17 +18,21 @@ import { createTransport } from './transport/index.js';
   const METRICS_POLL_MS = 10000;
   let lastNotificationId = Number(document.getElementById('destination-alert-text')?.dataset.notificationId || 0);
 
-  function updateRoute(currentOrder, nextOrder) {
+  function updateRoute(currentOrder, nextOrder, headingLabel) {
     stageRows.forEach((row) => {
       const order = Number(row.dataset.stageOrder);
       const current = currentOrder !== null && order === currentOrder;
       const complete = currentOrder !== null && order < currentOrder;
       const next = nextOrder !== null && order === nextOrder;
+      // Completed stages stay complete; the badge names the stage in transit.
       row.classList.toggle('is-complete', complete || current);
       row.classList.toggle('is-current', current);
       row.classList.toggle('is-next', next);
       const badge = row.querySelector('.route-stop-badge');
-      if (badge) badge.hidden = !next;
+      if (badge) {
+        badge.hidden = !next;
+        if (next && headingLabel) badge.textContent = headingLabel;
+      }
       const icon = row.querySelector('.route-stop-icon');
       if (icon) icon.classList.toggle('is-complete', complete || current);
     });
@@ -60,6 +64,21 @@ import { createTransport } from './transport/index.js';
 
   const initialPercent = Number(document.getElementById('journey-progress')?.getAttribute('aria-valuenow')) || 0;
   updateProgress(initialPercent);
+  // Instant paint from the persisted mirror (server poll confirms shortly)
+  try {
+    const saved = JSON.parse(localStorage.getItem(`matatu254-journey-${journeyId}-progress`) || 'null');
+    if (saved && Array.isArray(saved.completed)) {
+      stageRows.forEach((row) => {
+        const order = Number(row.dataset.stageOrder);
+        const current = saved.index;
+        const complete = order <= current;
+        row.classList.toggle('is-complete', complete);
+        row.classList.toggle('is-current', order === current);
+        const icon = row.querySelector('.route-stop-icon');
+        if (icon) icon.classList.toggle('is-complete', complete);
+      });
+    }
+  } catch (_) { /* mirror is best-effort */ }
 
   // Initialize interactive LiveTrackingMap
   let liveMap = null;
@@ -97,8 +116,21 @@ import { createTransport } from './transport/index.js';
       const nxtStage = document.getElementById('next-stage');
       if (nxtStage) nxtStage.textContent = data.next_stage || 'At destination';
       updateProgress(data.progress_percent);
-      updateRoute(data.current_stage_order, data.next_stage_order);
+      const heading = data.status === 'In transit' && data.next_stage
+        ? `Heading to ${data.next_stage}`
+        : 'Next stop';
+      updateRoute(data.current_stage_order, data.next_stage_order, heading);
       updateFreshness(data.gps_stale, data.gps_age_seconds);
+      // Mirror persisted progress so a reload paints instantly from storage
+      try {
+        localStorage.setItem(
+          `matatu254-journey-${journeyId}-progress`,
+          JSON.stringify({
+            completed: data.completed_stage_ids || [],
+            index: data.current_stage_index ?? 0,
+          }),
+        );
+      } catch (_) { /* storage full/blocked — server state is authoritative */ }
 
       // Feed GPS fix directly to live map for continuous smooth navigation
       if (liveMap && Number.isFinite(data.vehicle_latitude) && Number.isFinite(data.vehicle_longitude)) {

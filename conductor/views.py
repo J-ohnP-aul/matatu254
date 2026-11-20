@@ -223,11 +223,24 @@ def _get_trip_tracking_snapshot(trip, route_stages):
         vehicle_pos = (float(trip.current_latitude), float(trip.current_longitude))
 
     destination = route_stages[-1] if route_stages else None
+    # Along-track completion: the last stage whose cumulative distance the
+    # vehicle has passed is the current stage (no radius flicker between
+    # checkpoints).
     current_stage = None
     if vehicle_pos:
+        from r_outes.routes_services import along_track_position
+        from core.geo import haversine_distance_m
+        _along, _total, _perp = along_track_position(vehicle_pos[0], vehicle_pos[1], route_stages)
+        cumulative = 0.0
         for stage in route_stages:
-            if is_near_stage(vehicle_pos[0], vehicle_pos[1], stage):
+            if cumulative <= along + 25:
                 current_stage = stage
+            nxt = stage.next_stage
+            if nxt is not None:
+                cumulative += haversine_distance_m(
+                    float(stage.latitude), float(stage.longitude),
+                    float(nxt.latitude), float(nxt.longitude),
+                )
 
     if current_stage:
         next_stage = next(

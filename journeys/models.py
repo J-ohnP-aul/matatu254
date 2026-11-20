@@ -25,5 +25,9 @@ class JourneySession(models.Model):
   destination_stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
   start_time = models.DateTimeField(auto_now_add=True)
   end_time = models.DateTimeField(null=True, blank=True)
+  # Monotonic progress: stage ids already passed (route order) and the
+  # index of the last completed stage. Never un-completed during transit.
+  completed_stage_ids = models.JSONField(default=list, blank=True)
+  current_stage_index = models.PositiveIntegerField(default=0)
   
   

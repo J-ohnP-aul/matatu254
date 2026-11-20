@@ -145,6 +145,8 @@ def journey_tracking_data(request, journey_id):
     return JsonResponse({
         "status": journey.get_status_display(),
         "current_stage": tracking["current_stage"].name if tracking["current_stage"] else None,
+        "completed_stage_ids": journey.completed_stage_ids,
+        "current_stage_index": journey.current_stage_index,
         "current_stage_order": tracking["current_stage"].sequence_order if tracking["current_stage"] else None,
         "progress_percent": tracking["progress_percent"],
         "next_stage": tracking["next_stage"].name if tracking["next_stage"] else None,
@@ -170,30 +172,31 @@ def journey_tracking_data(request, journey_id):
 
 
 def _get_tracking_snapshot(journey, route_stages):
-    """Build tracking values using the latest cached vehicle position."""
+    """Build tracking values from the journey's persisted, monotonic stage
+    state — passed stages stay completed while in transit between stages
+    (update_journey_status has already advanced the state)."""
     trip = journey.trip
-    vehicle_pos = None
-    if trip.current_latitude is not None and trip.current_longitude is not None:
-        vehicle_pos = (float(trip.current_latitude), float(trip.current_longitude))
-
     destination = journey.destination_stage
     stages_to_destination = [
         stage for stage in route_stages
         if stage.sequence_order <= destination.sequence_order
     ]
-    current_stage = None
-    for stage in stages_to_destination:
-        if vehicle_pos and is_near_stage(vehicle_pos[0], vehicle_pos[1], stage):
-            current_stage = stage
-
-    if current_stage:
-        next_stage = next(
-            (stage for stage in stages_to_destination
-             if stage.sequence_order > current_stage.sequence_order),
-            None,
+    if journey.completed_stage_ids:
+        index = min(journey.current_stage_index, max(len(stages_to_destination) - 1, 0))
+        current_stage = stages_to_destination[index] if stages_to_destination else None
+        next_stage = (
+            stages_to_destination[index + 1]
+            if stages_to_destination and index + 1 < len(stages_to_destination)
+            else None
         )
     else:
+        # Not started: first stage is the upcoming one.
+        current_stage = None
         next_stage = stages_to_destination[0] if stages_to_destination else None
+
+    vehicle_pos = None
+    if trip.current_latitude is not None and trip.current_longitude is not None:
+        vehicle_pos = (float(trip.current_latitude), float(trip.current_longitude))
 
     remaining = calculate_remaining(vehicle_pos, next_stage, destination) if vehicle_pos and next_stage else None
     return {

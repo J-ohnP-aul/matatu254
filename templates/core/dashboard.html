@@ -3,7 +3,7 @@
 {% block app_title %}Home{% endblock %}
 {% block content %}
 <section class="passenger-home">
-  <header class="page-heading"><div><h1>Good to see you, {{ user.first_name|default:user.username }}.</h1><p>Where are you headed today?</p></div></header>
+  <header class="page-heading"><div><h1>Good to see you, {{ user.first_name|default:user.username }}.</h1><p>{% if user.role == 'PASSANGER' %}Where are you headed today?{% else %}Your crew overview.{% endif %}</p></div></header>
 
   {% if user.role == 'PASSANGER' %}
     {% if active_journey %}
@@ -44,7 +44,31 @@
       <div class="surface empty-state"><h2>No saved destinations yet</h2><p>Your completed matatu journeys will appear here for a quick reminder.</p></div>
     {% endif %}
   {% elif user.role == 'CONDUCTOR' %}
-    <section class="surface surface-pad"><h2>Keep your trip moving.</h2><p>Check passenger counts and upcoming alighting stages.</p><a class="btn btn-primary" href="{% url 'conductor:dashboard' %}">Open crew dashboard</a></section>
+    {% if crew_trip %}
+      <a class="board-card" href="{% url 'conductor:trip-detail' crew_trip.pk %}">
+        <h3 class="board-route-name">{{ crew_matatu.registration_number }}</h3>
+        <span class="board-live"><i class="board-live-dot" aria-hidden="true"></i><span>{{ crew_onboard }} onboard</span></span>
+        <span class="board-meta"><small>{{ crew_trip.route.name }} · Trip active now</small></span>
+        <span class="action-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
+      </a>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="{% url 'conductor:trip-detail' crew_trip.pk %}">Open live trip</a>
+        <a class="btn btn-secondary" href="{% url 'conductor:notifications' %}">Crew alerts</a>
+      </div>
+    {% elif crew_matatu %}
+      <section class="surface empty-state">
+        <h2>{{ crew_matatu.registration_number }} is standing by</h2>
+        <p>There's no active trip on this vehicle right now. An administrator starts trips — you'll see live counts here the moment one begins.</p>
+      </section>
+      <div class="btn-row">
+        <a class="btn btn-secondary" href="{% url 'conductor:notifications' %}">Crew alerts</a>
+      </div>
+    {% else %}
+      <section class="surface empty-state">
+        <h2>No vehicle assigned yet</h2>
+        <p>Ask an administrator to assign your crew account to a matatu, and your live trip will appear here.</p>
+      </section>
+    {% endif %}
   {% elif user.role == 'ADMIN' %}
     <section class="surface surface-pad"><h2>Operations at a glance.</h2><p>Manage matatus, routes, stages, and active trips.</p><a class="btn btn-primary" href="{% url 'management:dashboard' %}">Open management</a></section>
   {% endif %}

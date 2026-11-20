@@ -4,6 +4,8 @@ from django.db.models import Count
 from journeys.services import get_active_journey
 from journeys.models import JourneySession
 from r_outes.models import Route
+from trips.models import ActiveTrip
+from conductor.views import _get_assigned_matatu
 
 
 def home(request):
@@ -34,4 +36,29 @@ def dashboard(request):
     ).select_related(
       'trip__route', 'trip__matatu', 'destination_stage'
     ).order_by('-start_time')[:3]
+  elif request.user.role == 'CONDUCTOR':
+    # Crew home mirrors the crew dashboard's real queries: assigned
+    # matatu, its active trip, and live onboard count.
+    matatu = _get_assigned_matatu(request.user)
+    context['crew_matatu'] = matatu
+    context['crew_trip'] = None
+    context['crew_onboard'] = 0
+    if matatu:
+      trip = (
+        ActiveTrip.objects
+        .filter(matatu=matatu, status=ActiveTrip.Status.ACTIVE)
+        .select_related('route')
+        .first()
+      )
+      context['crew_trip'] = trip
+      if trip:
+        active_statuses = [
+          JourneySession.Status.DESTINATION_SELECTED,
+          JourneySession.Status.IN_TRANSIT,
+          JourneySession.Status.APPROACHING,
+          JourneySession.Status.ARRIVED,
+        ]
+        context['crew_onboard'] = JourneySession.objects.filter(
+          trip=trip, status__in=active_statuses
+        ).count()
   return render(request, "core/dashboard.html", context)

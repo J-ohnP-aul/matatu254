@@ -157,3 +157,28 @@ class ConductorAuthorizationTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.json()["gps_stale"])
         self.assertGreaterEqual(response.json()["gps_age_seconds"], 120)
+
+
+class TripSnapshotAlongTrackTests(TestCase):
+    """The crew snapshot must work with a vehicle position set (it 500'd
+    with NameError when the along-track path first ran)."""
+
+    def test_snapshot_with_vehicle_position(self):
+        from conductor.views import _get_trip_tracking_snapshot
+        from r_outes.models import Route, Stage
+        from trips.models import ActiveTrip
+        from fleet.models import Matatu
+
+        route = Route.objects.create(name='Crew route')
+        s1 = Stage.objects.create(route=route, name='C1', sequence_order=1, latitude=-1.29, longitude=36.82)
+        s2 = Stage.objects.create(route=route, name='C2', sequence_order=2, latitude=-1.30, longitude=36.82)
+        s3 = Stage.objects.create(route=route, name='C3', sequence_order=3, latitude=-1.31, longitude=36.82)
+        matatu = Matatu.objects.create(registration_number='KDC-003', operator='Ops')
+        trip = ActiveTrip.objects.create(matatu=matatu, route=route, status=ActiveTrip.Status.ACTIVE)
+        trip.current_latitude = -1.305   # between C2 and C3
+        trip.current_longitude = 36.82
+        trip.save()
+
+        snapshot = _get_trip_tracking_snapshot(trip, list(route.stages.order_by('sequence_order')))
+        self.assertEqual(snapshot['current_stage'].name, 'C2')   # last passed stage
+        self.assertEqual(snapshot['next_stage'].name, 'C3')      # heading-to stage

@@ -233,7 +233,7 @@ def _get_trip_tracking_snapshot(trip, route_stages):
         _along, _total, _perp = along_track_position(vehicle_pos[0], vehicle_pos[1], route_stages)
         cumulative = 0.0
         for stage in route_stages:
-            if cumulative <= along + 25:
+            if cumulative <= _along + 25:
                 current_stage = stage
             nxt = stage.next_stage
             if nxt is not None:

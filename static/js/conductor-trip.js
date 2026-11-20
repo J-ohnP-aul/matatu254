@@ -1,4 +1,4 @@
-import { createLiveTrackingMap } from './map/index.js';
+import { createLiveTrackingMap } from './map/index.js?v=20261123c';
 
 (() => {
   const root = document.getElementById('trip-dashboard');

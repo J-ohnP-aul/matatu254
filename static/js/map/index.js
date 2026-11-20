@@ -12,6 +12,7 @@ import {
   TurnAnticipation,
   calculateBearing,
   calculateSpeed,
+  haversineDistance,
 } from "./bearing.js";
 import {
   projectToPolyline,
@@ -21,7 +22,7 @@ import {
   getPolylineBearing,
   findNearestStage,
 } from "./map-matcher.js";
-import { CameraController, enableMapRotation } from "./camera.js";
+import { CameraController, enableMapRotation } from "./camera.js?v=20261123";
 import { ETACalculator, formatDuration, formatDistance } from "./eta.js";
 import { ModeController, CameraMode } from "./modes.js";
 import {
@@ -394,22 +395,29 @@ export class LiveTrackingMap {
   }
 
   _onInterpolatedPosition(pos) {
-    // Update vehicle marker
-    const bearingResult = this.bearingSmoother.getBearing();
-    const anticipated = this.turnAnticipation.getAnticipatedBearing(
-      bearingResult,
-      this._distanceToNextManeuver(),
-    );
+    // Heading only exists when the vehicle is actually moving. While
+    // stationary, the smoother is suppressed and no bearing may reach the
+    // camera — otherwise atan2 noise spins a heading-up map endlessly.
+    const suppressed = this.bearingSmoother.isSuppressed();
+    const speed = this.bearingSmoother.lastSpeed ?? 0;
+    const heading = !suppressed && speed >= 3
+      ? this.bearingSmoother.getBearing()
+      : null;
+    const anticipated = heading !== null
+      ? this.turnAnticipation.getAnticipatedBearing(
+          heading,
+          this._distanceToNextManeuver(),
+        ).bearing
+      : null;
 
-    this.vehicleMarker.updatePosition(pos, anticipated.bearing);
-    this.vehicleMarker.setBearingSuppressed(
-      this.bearingSmoother.isSuppressed(),
-    );
+    // The icon keeps its last real direction; only the camera feed stops.
+    this.vehicleMarker.updatePosition(pos, anticipated ?? this.vehicleMarker.currentBearing);
+    this.vehicleMarker.setBearingSuppressed(suppressed);
 
     // Update camera (if following)
     if (this.modeController.isFollowing()) {
-      this.vehicleMarker.marker.speed = this.bearingSmoother.lastSpeed;
-      this.vehicleMarker.marker.bearing = anticipated.bearing;
+      this.vehicleMarker.marker.speed = suppressed ? 0 : speed;
+      this.vehicleMarker.marker.bearing = anticipated; // null while stationary
     }
   }
 
@@ -484,22 +492,35 @@ export class LiveTrackingMap {
     ) {
       const dt = fixTime - this.lastGPSFix.timestamp;
       if (dt > 0) {
-        if (calculatedSpeed == null) {
-          calculatedSpeed = calculateSpeed(
-            this.lastGPSFix.lat,
-            this.lastGPSFix.lon,
-            filtered.lat,
-            filtered.lon,
-            dt,
-          );
-        }
-        if (calculatedBearing == null) {
-          calculatedBearing = calculateBearing(
-            this.lastGPSFix.lat,
-            this.lastGPSFix.lon,
-            filtered.lat,
-            filtered.lon,
-          );
+        const movedM = haversineDistance(
+          this.lastGPSFix.lat,
+          this.lastGPSFix.lon,
+          filtered.lat,
+          filtered.lon,
+        );
+        if (movedM < 3) {
+          // Stationary: a bearing from sub-metre jitter is atan2 noise and
+          // would spin a heading-up camera. Keep the last heading instead.
+          calculatedBearing = null;
+          if (calculatedSpeed == null) calculatedSpeed = 0;
+        } else {
+          if (calculatedSpeed == null) {
+            calculatedSpeed = calculateSpeed(
+              this.lastGPSFix.lat,
+              this.lastGPSFix.lon,
+              filtered.lat,
+              filtered.lon,
+              dt,
+            );
+          }
+          if (calculatedBearing == null) {
+            calculatedBearing = calculateBearing(
+              this.lastGPSFix.lat,
+              this.lastGPSFix.lon,
+              filtered.lat,
+              filtered.lon,
+            );
+          }
         }
       }
     }

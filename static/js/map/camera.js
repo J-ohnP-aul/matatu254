@@ -17,6 +17,7 @@ export class CameraController {
     this.followOptions = {
       zoomBySpeed: options.zoomBySpeed ?? true,
       headingUp: options.headingUp ?? true,
+      lowSpeedThreshold: options.lowSpeedThreshold ?? 3, // km/h — below this the map must not rotate
       minZoom: options.minZoom ?? 10,
       maxZoom: options.maxZoom ?? 19,
       baseZoom: options.baseZoom ?? 17,
@@ -188,7 +189,7 @@ export class CameraController {
     
     const markerLatLng = this.marker.getLatLng();
     const targetZoom = this.targetZoom ?? this.map.getZoom();
-    const targetBearing = this.targetBearing ?? 0;
+    const targetBearing = this.targetBearing ?? this.map.getBearing?.() ?? 0;
     
     // Animate camera to marker
     this.map.flyTo(markerLatLng, targetZoom, {
@@ -217,33 +218,51 @@ export class CameraController {
     
     const markerLatLng = this.marker.getLatLng();
     const speed = this.marker.speed || 0; // km/h
-    const bearing = this.marker.bearing || 0;
+    const bearing = this.marker.bearing;
     
     // Update target zoom based on speed
     if (this.followOptions.zoomBySpeed) {
       this.targetZoom = this._calculateZoomForSpeed(speed);
     }
     
-    // Update target bearing for heading-up
+    // Heading-up rotation ONLY while the vehicle is actually moving.
+    // A null bearing (stationary) keeps the current rotation — this is
+    // what stops the map spinning from GPS bearing noise.
     if (this.followOptions.headingUp) {
-      this.targetBearing = bearing;
+      const moving = speed > this.followOptions.lowSpeedThreshold
+        && Number.isFinite(Number(bearing));
+      this.targetBearing = moving ? Number(bearing) : (this.map.getBearing?.() ?? this.targetBearing ?? 0);
     }
     
-    if (immediate) {
-      this.map.setView(markerLatLng, this.targetZoom, { animate: false });
-      if (this.followOptions.headingUp && this.map.setBearing) {
-        this.map.setBearing(this.targetBearing, { animate: false });
-      }
-    } else {
-      // In follow mode driven by 60fps rAF interpolation, setView keeps the camera
-      // locked to the vehicle smoothly without queuing fighting pan animations.
-      const currentZoom = this.map.getZoom();
-      const zoom = this.targetZoom ?? currentZoom;
+    this._applyCamera(markerLatLng, immediate);
+  }
+
+  /**
+   * Write camera state only when something actually changed. A stationary
+   * vehicle must produce ZERO map writes — otherwise bearing/zoom noise
+   * makes the map drift and spin on its own.
+   */
+  _applyCamera(markerLatLng, immediate) {
+    const zoom = this.targetZoom ?? this.map.getZoom();
+    const bearing = this.followOptions.headingUp
+      ? (this.targetBearing ?? this.map.getBearing?.() ?? 0)
+      : (this.map.getBearing?.() ?? 0);
+
+    const center = this.map.getCenter();
+    const moved = center.distanceTo(markerLatLng) > 0.5; // metres
+    const zoomed = Math.abs((this.map.getZoom() ?? 0) - zoom) > 0.01;
+    const currentBearing = this.map.getBearing?.() ?? 0;
+    const rotated = Math.abs(currentBearing - bearing) > 0.5;
+
+    // Equality check applies even on the initial snap — an unchanged
+    // bearing/zoom/center must never rewrite the pane transform.
+    if (!moved && !zoomed && !rotated) return;
+
+    if (moved || zoomed) {
       this.map.setView(markerLatLng, zoom, { animate: false });
-      
-      if (this.followOptions.headingUp && this.map.setBearing && Number.isFinite(this.targetBearing)) {
-        this.map.setBearing(this.targetBearing, { animate: false });
-      }
+    }
+    if (rotated && this.followOptions.headingUp && this.map.setBearing) {
+      this.map.setBearing(bearing, { animate: false });
     }
   }
 

@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700&display=swap">
   <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261122c">
-  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261122c">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261122d">
   {% block extra_head %}{% endblock %}
 </head>
 <body{% if user.is_authenticated %} class="app-user{% if user.role != 'ADMIN' %} narrow-shell{% endif %}"{% endif %}>

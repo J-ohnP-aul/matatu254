@@ -1835,6 +1835,11 @@ tbody tr:hover {
 .crew-trip-card p {
   margin: 0;
 }
+.crew-trip-card h2,
+.conductor-page > .page-heading h1 {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
 .crew-trip-card p {
   color: var(--ink-muted);
 }
@@ -1845,6 +1850,7 @@ tbody tr:hover {
 }
 .crew-total strong {
   font-size: var(--text-xl);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 .crew-total span {
@@ -1877,6 +1883,18 @@ tbody tr:hover {
 }
 .live-card-heading h2 {
   margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+.live-card .progress-label,
+.live-card .metric-label {
+  font-weight: 500;
+}
+.live-card .progress-header strong {
+  font-weight: 600;
+}
+.live-card .metric-value {
+  font-weight: 500;
 }
 .trip-remaining-summary {
   margin: var(--space-4) 0 0;

@@ -3,7 +3,7 @@
 {% block app_title %}Home{% endblock %}
 {% block content %}
 <section class="passenger-home">
-  <header class="page-heading"><div><h1>Good to see you, {{ user.first_name|default:user.username }}.</h1><p>{% if user.role == 'PASSANGER' %}Where are you headed today?{% else %}Your crew overview.{% endif %}</p></div></header>
+  <header class="page-heading"><div><h1>{{ user.first_name|default:user.username }}</h1><p>{% if user.role == 'PASSANGER' %}Your recent and active journeys{% else %}Your assigned vehicle and trip{% endif %}</p></div></header>
 
   {% if user.role == 'PASSANGER' %}
     {% if active_journey %}
@@ -35,7 +35,7 @@
       <div class="journey-links">
         {% for journey in recent_journeys %}
           <a class="journey-link surface" href="{% url 'journeys:history' %}">
-            <span><strong>{{ journey.destination_stage.name }}</strong><small>{{ journey.trip.route.name }} · {{ journey.end_time|date:'M j' }}</small></span>
+            <span class="journey-link-copy"><strong>{{ journey.destination_stage.name }}</strong><small>{{ journey.trip.route.name }}</small><small>{{ journey.end_time|date:'M j' }}</small></span>
             <span class="action-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
           </a>
         {% endfor %}
@@ -70,7 +70,7 @@
       </section>
     {% endif %}
   {% elif user.role == 'ADMIN' %}
-    <section class="surface surface-pad"><h2>Operations at a glance.</h2><p>Manage matatus, routes, stages, and active trips.</p><a class="btn btn-primary" href="{% url 'management:dashboard' %}">Open management</a></section>
+    <section class="surface surface-pad"><h2>Fleet and route controls</h2><p>Manage vehicles, route stages, and active trips.</p><a class="btn btn-primary" href="{% url 'management:dashboard' %}">Manage operations</a></section>
   {% endif %}
 </section>
 {% endblock %}

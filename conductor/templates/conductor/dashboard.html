@@ -4,7 +4,7 @@
 {% block app_title %}Crew dashboard{% endblock %}
 {% block content %}
 <section class="page-shell crew-dashboard">
-  <header class="page-heading"><div><h1>Your trip at a glance</h1><p>Passenger counts by the stage where they plan to alight.</p></div></header>
+  <header class="page-heading"><div><h1>Passenger counts</h1><p>See how many passengers plan to leave at each stage.</p></div></header>
   {% if not matatu %}
     <div class="surface empty-state"><h2>No matatu assigned</h2><p>Ask an administrator to assign a vehicle to your crew account.</p></div>
   {% elif not active_trip %}

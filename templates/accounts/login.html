@@ -2,15 +2,15 @@
 {% block title %}Sign in · Matatu254{% endblock %}
 
 {% block content %}
-  <section class="auth-shell form-panel auth-stub">
+  <section class="auth-shell form-panel">
     <div class="auth-brand" aria-hidden="true">
       <span class="brand-mark">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1h1.5a1.5 1.5 0 0 1 1.5 1.5V14a2 2 0 0 1-2 2h-.5"/><path d="M4 6v10a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V6"/><path d="M17 9h2"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="15.5" cy="18.5" r="1.5"/><path d="M7 10h6M7 13h4"/></svg>
       </span>
       <span>Matatu<span class="brand-accent">254</span></span>
     </div>
-    <h1>Welcome back.</h1>
-    <p class="muted">Sign in to continue your journey.</p>
+    <h1>Sign in</h1>
+    <p class="muted">Check your journey, saved trips, or crew tools.</p>
     {% if form.errors %}<div class="alert alert-error" role="alert">Your username and password did not match. Try again.</div>{% endif %}
     <form method="post" action="{% url 'accounts:login' %}">
       {% csrf_token %}
@@ -27,6 +27,6 @@
       <button type="submit" class="btn btn-primary">Log in</button>
       <input type="hidden" name="next" value="{% url 'core:dashboard' %}">
     </form>
-    <p class="auth-stub-foot">Matatu254 · Nairobi · Stage by stage</p>
+    <p class="auth-note">Passenger and crew tools for Nairobi routes</p>
   </section>
 {% endblock content %}

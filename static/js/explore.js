@@ -130,7 +130,7 @@ if (routeMapEl && window.L) {
       ? decodeEncodedPolyline(route.geometry)
       : [];
     if (coords.length >= 2) {
-      L.polyline(coords, { color: '#1769E8', weight: 5, opacity: 0.85 }).addTo(map);
+      L.polyline(coords, { color: '#2857A4', weight: 5, opacity: 0.85 }).addTo(map);
       points.push(...coords);
     }
   }
@@ -140,7 +140,7 @@ if (routeMapEl && window.L) {
   route.stages.forEach((stage, index) => {
     L.circleMarker([stage.latitude, stage.longitude], {
       radius: 6, color: '#FFFFFF', weight: 2.5,
-      fillColor: index === route.stages.length - 1 ? '#10B981' : '#1769E8', fillOpacity: 1,
+      fillColor: index === route.stages.length - 1 ? '#176B4D' : '#2857A4', fillOpacity: 1,
     }).addTo(map).bindTooltip(stage.name, { direction: 'top' });
     points.push([stage.latitude, stage.longitude]);
   });

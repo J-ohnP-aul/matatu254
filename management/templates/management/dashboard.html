@@ -4,7 +4,7 @@
 {% block content %}
 <section class="management-shell admin-dashboard">
   <header class="page-heading">
-    <div><h1>Operations overview</h1><p>Your fleet and passenger network, at a glance.</p></div>
+    <div><h1>Fleet and trips</h1><p>Current vehicles, routes, and passenger activity.</p></div>
     <div class="btn-row"><a class="btn btn-secondary" href="{% url 'management:matatu-create' %}">Add matatu</a><a class="btn btn-primary" href="{% url 'management:trip-create' %}">Create trip</a></div>
   </header>
 
@@ -44,13 +44,13 @@
     <aside class="management-quick-links">
       <section class="surface surface-pad"><h2>Quick links</h2><p class="muted">Jump to a management area.</p>
         <nav aria-label="Management areas" class="journey-links">
-          <a class="journey-link" href="{% url 'management:matatu-list' %}"><span><strong>Manage matatus</strong><small>Fleet and QR codes</small></span><span aria-hidden="true">→</span></a>
-          <a class="journey-link" href="{% url 'management:route-list' %}"><span><strong>Manage routes</strong><small>Routes and stages</small></span><span aria-hidden="true">→</span></a>
-          <a class="journey-link" href="{% url 'management:trip-list' %}"><span><strong>Trip history</strong><small>Review all trips</small></span><span aria-hidden="true">→</span></a>
-          <a class="journey-link" href="{% url 'management:system-config' %}"><span><strong>System settings</strong><small>Configure the service</small></span><span aria-hidden="true">→</span></a>
+          <a class="journey-link" href="{% url 'management:matatu-list' %}"><span><strong>Manage matatus</strong><small>Fleet and QR codes</small></span></a>
+          <a class="journey-link" href="{% url 'management:route-list' %}"><span><strong>Manage routes</strong><small>Routes and stages</small></span></a>
+          <a class="journey-link" href="{% url 'management:trip-list' %}"><span><strong>Trip history</strong><small>Review all trips</small></span></a>
+          <a class="journey-link" href="{% url 'management:system-config' %}"><span><strong>System settings</strong><small>Configure the service</small></span></a>
         </nav>
       </section>
-      <section class="surface surface-pad"><h2>Keep routes clear</h2><p>Review stage names and route details so passengers can choose the right stop.</p><a href="{% url 'management:route-list' %}">Review routes →</a></section>
+      <section class="surface surface-pad"><h2>Keep route details current</h2><p>Clear stage names help passengers choose the right stop.</p><a href="{% url 'management:route-list' %}">Review routes</a></section>
     </aside>
   </div>
 </section>

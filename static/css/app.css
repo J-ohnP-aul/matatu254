@@ -85,36 +85,25 @@ h4 {
   line-height: 1.1;
   letter-spacing: 0;
 }
-h1 {
-  font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.75rem);
-  font-weight: 700;
-}
-h2 {
-  font-size: clamp(1.4rem, 1.15rem + 1vw, 1.9rem);
-  font-weight: 700;
-}
-.app-brand,
 .stage-number,
 .metric-value,
 .crew-total strong,
 .stat-value,
 .board-route-name {
-  font-family: var(--font-display);
+  font-family: var(--font-route);
   font-variant-numeric: tabular-nums;
 }
 .app-brand,
 .board-route-name {
   font-size: 1.35rem;
-  text-transform: uppercase;
-  letter-spacing: .02em;
 }
 h1 {
   font-size: var(--text-xl);
-  font-weight: 760;
+  font-weight: 700;
 }
 h2 {
   font-size: var(--text-lg);
-  font-weight: 720;
+  font-weight: 700;
 }
 h3 {
   font-size: var(--text-md);
@@ -451,10 +440,10 @@ footer {
 .surface,
 .card,
 .form-panel {
-  border: 0;
+  border: var(--border-width) solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
 }
 .surface-pad,
 .card-body {
@@ -471,9 +460,8 @@ button.btn {
   justify-content: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-4);
-  transform: translateY(0) scale(1);
   border: 0;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
   background: var(--neutral-100);
   color: var(--ink);
   cursor: pointer;
@@ -481,13 +469,13 @@ button.btn {
   font-weight: 700;
   text-align: center;
   text-decoration: none;
-  transition: transform var(--dur-fast) var(--ease-out);
+  transition: background-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard), filter var(--dur-fast) var(--ease-standard);
 }
 .btn:hover {
-  transform: translateY(var(--small-hover-rise));
+  filter: brightness(.96);
 }
 .btn:active {
-  transform: scale(var(--small-press-scale));
+  filter: brightness(.9);
 }
 .btn-primary {
   background: var(--navy-800);
@@ -500,6 +488,10 @@ button.btn {
 .btn-secondary {
   background: var(--chrome-soft);
   color: var(--chrome-soft-ink);
+}
+.btn-secondary:hover {
+  background: var(--neutral-200);
+  color: var(--ink);
 }
 .btn-danger {
   background: var(--danger-soft);
@@ -644,8 +636,8 @@ input[type="radio"] {
 }
 .ticket-side a:hover,
 .journey-link:hover {
-  transform: translateX(var(--space-1));
-  background: var(--surface);
+  border-color: var(--accent-500);
+  background: var(--accent-50);
 }
 .home-how {
   width: min(100%, var(--content-width));
@@ -679,7 +671,7 @@ input[type="radio"] {
   content: counter(steps, decimal-leading-zero);
   counter-increment: steps;
   color: var(--navy-300);
-  font-family: var(--font-display);
+  font-family: var(--font-route);
   font-size: 1.5rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -700,6 +692,29 @@ input[type="radio"] {
   display: grid;
   gap: var(--space-2);
   margin-top: var(--space-4);
+}
+.journey-link-copy {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-1);
+}
+.journey-link {
+  display: flex;
+  min-height: var(--touch-target);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--border-width) solid var(--border);
+  color: var(--ink);
+  text-decoration: none;
+}
+.journey-links > .journey-link:last-child {
+  border-bottom: 0;
+}
+.journey-link-copy small + small {
+  color: var(--ink-muted);
+  font-size: var(--text-xs);
 }
 .journey-link-primary {
   background: var(--brand-500);
@@ -824,6 +839,8 @@ input[type="radio"] {
   border-radius: 50%;
   background: var(--brand-50);
   color: var(--brand-800);
+  font-family: var(--font-route);
+  font-size: 1.2rem;
   font-weight: 750;
 }
 .stage-search {
@@ -971,7 +988,7 @@ input[type="radio"] {
   box-shadow: var(--shadow-sheet) !important;
   padding: 3px 8px !important;
   color: var(--ink) !important;
-  font-family: var(--font-display) !important;
+  font-family: var(--font-sans) !important;
   font-weight: 650 !important;
   font-size: 11px !important;
 }
@@ -1067,7 +1084,8 @@ input[type="radio"] {
   background: var(--background);
 }
 .metric-value {
-  font-size: var(--text-lg);
+  font-family: var(--font-route);
+  font-size: clamp(1.35rem, 1.2rem + .5vw, 1.8rem);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -1203,6 +1221,7 @@ input[type="radio"] {
 .journey-stat strong,
 .stat-value {
   display: block;
+  font-family: var(--font-route);
   font-size: var(--text-lg);
   font-variant-numeric: tabular-nums;
 }
@@ -1285,20 +1304,21 @@ input[type="radio"] {
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-4);
-  border-radius: var(--radius-lg);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
   background: var(--surface);
-  box-shadow: var(--shadow-sheet);
+  box-shadow: none;
   color: var(--ink);
   text-decoration: none;
-  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+  transition: border-color var(--dur-fast) var(--ease-standard), background-color var(--dur-fast) var(--ease-standard);
 }
 .action-card:hover {
-  transform: translateY(calc(-1 * var(--space-0-5)));
-  box-shadow: var(--shadow-float);
+  border-color: var(--brand-400);
+  background: var(--brand-50);
   color: var(--ink);
 }
 .action-card:active {
-  transform: scale(.98);
+  background: var(--brand-100);
 }
 .action-icon {
   display: grid;
@@ -1316,7 +1336,6 @@ input[type="radio"] {
 /* One tile treatment for all quick actions — green is reserved for live states */
 .action-icon.is-green,
 .action-icon.is-blue,
-.action-icon.is-violet,
 .action-icon.is-amber {
   background: var(--navy-50);
   color: var(--navy-800);
@@ -1354,16 +1373,14 @@ input[type="radio"] {
   font-weight: 700;
 }
 .promo-card {
-  position: relative;
-  overflow: hidden;
   display: grid;
   gap: var(--space-2);
   margin-top: var(--space-6);
   padding: var(--space-5);
-  border-radius: var(--radius-xl);
-  background:
-    radial-gradient(120% 120% at 100% 0%, rgb(23 105 232 / .16), transparent 55%),
-    linear-gradient(135deg, var(--accent-50), var(--brand-50));
+  border: var(--border-width) solid var(--border);
+  border-left: .25rem solid var(--brand-500);
+  border-radius: var(--radius-md);
+  background: var(--surface);
 }
 .board-updated {
   color: var(--ink-muted);
@@ -1388,6 +1405,7 @@ input[type="radio"] {
 .overflow-x-auto {
   width: 100%;
   overflow-x: auto;
+  border: var(--border-width) solid var(--border);
   border-radius: var(--radius-md);
   background: var(--surface);
 }
@@ -1462,7 +1480,8 @@ tbody tr:hover {
 .admin-list:has(table),
 .admin-form > form {
   padding: var(--space-5);
-  border-radius: var(--radius-lg);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
   background: var(--surface);
 }
 .admin-list .table-actions,
@@ -1642,15 +1661,20 @@ tbody tr:hover {
   padding: var(--space-12) var(--page-gutter) var(--space-8);
 }
 .landing-hero .btn {
-  border-radius: .625rem;
+  border-radius: var(--radius-md);
+}
+.landing-copy,
+.route-demo {
+  min-width: 0;
 }
 .landing-copy h1 {
   max-width: var(--content-limit-hero-wide);
   margin: 0;
-  font-size: clamp(2.8rem, 2rem + 3.4vw, 5.4rem);
+  font-size: clamp(2.6rem, 2rem + 2.4vw, 4.25rem);
   font-weight: 500;
   letter-spacing: -.01em;
   line-height: .98;
+  text-wrap: balance;
 }
 .landing-copy > p {
   max-width: var(--content-limit-copy);
@@ -1660,9 +1684,9 @@ tbody tr:hover {
 }
 .route-demo {
   padding: var(--space-8);
-  border: var(--border-width) solid rgb(16 43 80 / .08);
-  border-radius: 1rem;
-  background: var(--navy-50);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
 }
 .demo-flag {
   flex: 0 0 auto;
@@ -1675,6 +1699,9 @@ tbody tr:hover {
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-3);
+}
+.route-demo > header > div {
+  min-width: 0;
 }
 .route-demo > header h2 {
   margin: 0;
@@ -1698,7 +1725,7 @@ tbody tr:hover {
   justify-items: center;
   gap: var(--space-2);
   color: var(--ink-muted);
-  font-family: var(--font-display);
+  font-family: var(--font-route);
   font-size: .95rem;
   font-weight: 600;
   letter-spacing: .02em;
@@ -1950,26 +1977,6 @@ tbody tr:hover {
   text-decoration: none;
   font-weight: 700;
 }
-.board-card {
-  animation: content-arrive var(--dur-slow) var(--ease-out) both;
-}
-.board-card:nth-child(2) {
-  animation-delay: var(--content-stagger-1);
-}
-.board-card:nth-child(3) {
-  animation-delay: var(--content-stagger-2);
-}
-@keyframes content-arrive {
-  from {
-    opacity: var(--content-arrive-opacity);
-    transform: translateY(var(--space-3));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* Cross-document transitions keep Django navigation intact while letting the browser snapshot each screen. */
 @view-transition {
   navigation: auto;
@@ -2064,7 +2071,7 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
   .site-header-inner {
     gap: var(--space-2);
   }
-  .app-brand span {
+  .app-title {
     display: none;
   }
   .site-header-inner:has(.top-nav) {
@@ -2075,12 +2082,25 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
     width: 100%;
     margin: 0;
   }
-  .app-title {
-    margin-left: auto;
-    text-align: right;
-  }
   .header-action {
     margin-left: auto;
+  }
+  .landing-hero {
+    padding-inline: var(--space-4);
+  }
+  .route-demo {
+    padding: var(--space-4);
+  }
+  .route-demo-track {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .route-demo-track::-webkit-scrollbar {
+    display: none;
+  }
+  .demo-flag {
+    display: none;
   }
   .landing-hero {
     grid-template-columns: minmax(0, 1fr);
@@ -2161,6 +2181,8 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
   *::before,
   *::after {
     scroll-behavior: auto !important;
+    animation-duration: var(--motion-off-duration) !important;
+    transition-duration: var(--motion-off-duration) !important;
   }
   /* Decorative loops stop entirely… */
   .scan-viewfinder::after,
@@ -2181,9 +2203,10 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
   display: flex;
   flex-wrap: wrap;
   margin-bottom: var(--space-6);
-  border-radius: var(--radius-lg);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
   background: var(--surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
   overflow: hidden;
 }
 .stat-cell {
@@ -2221,11 +2244,11 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
 }
 .matatu-plate {
   padding: var(--space-0-5) var(--space-2);
-  border: var(--border-width) solid rgb(16 43 80 / .18);
+  border: var(--border-width) solid var(--border);
   border-radius: var(--space-1);
   background: var(--neutral-0);
   color: var(--navy-800);
-  font-family: var(--font-display);
+  font-family: var(--font-route);
   font-size: .6875rem;
   font-weight: 700;
   letter-spacing: .04em;
@@ -2364,7 +2387,22 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
 /* ── Stage board (home) — the live network as content ────────────────── */
 .stage-board {
   display: grid;
-  gap: var(--space-3);
+  gap: 0;
+  overflow: hidden;
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.stage-board .board-card {
+  border: 0;
+  border-left: .25rem solid var(--accent-500);
+  border-radius: 0;
+}
+.stage-board .board-card + .board-card {
+  border-top: var(--border-width) solid var(--border);
+}
+.stage-board .board-card:hover {
+  border-left-color: var(--brand-500);
 }
 .board-card {
   position: relative;
@@ -2373,11 +2411,18 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
   align-items: center;
   gap: var(--space-3) var(--space-4);
   padding: var(--space-4) var(--space-10) var(--space-4) var(--space-5);
-  border-radius: var(--radius-lg);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
   background: var(--surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
   color: var(--ink);
   text-decoration: none;
+  transition: border-color var(--dur-fast) var(--ease-standard), background-color var(--dur-fast) var(--ease-standard);
+}
+.board-card:hover {
+  border-color: var(--accent-500);
+  background: var(--accent-50);
+  color: var(--ink);
 }
 .board-card .action-card-chevron {
   position: absolute;
@@ -2386,14 +2431,15 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
   transform: translateY(-50%);
 }
 .board-card:active {
-  transform: scale(var(--small-press-scale));
+  background: var(--accent-100);
 }
 .board-route-name {
   grid-column: 1 / -1;
   margin: 0;
-  font-size: var(--text-lg);
+  font-family: var(--font-route);
+  font-size: clamp(1.35rem, 1.2rem + .6vw, 1.75rem);
   font-weight: 700;
-  letter-spacing: var(--heading-tracking);
+  letter-spacing: .01em;
 }
 .board-meta {
   display: grid;
@@ -2440,41 +2486,30 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
   justify-content: center;
   gap: var(--space-2);
   margin-top: var(--space-4);
-  border-radius: var(--radius-lg);
+  border: 0;
+  border-radius: var(--radius-md);
   background: var(--navy-800);
   color: var(--neutral-0);
   font-weight: 700;
   text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease-standard);
+}
+.board-cta:hover {
+  background: var(--navy-700);
+  color: var(--neutral-0);
 }
 .board-cta:active {
-  transform: scale(var(--small-press-scale));
+  background: var(--navy-950);
 }
 
-/* ── Auth ticket stub ────────────────────────────────────────────────── */
-.auth-stub {
-  position: relative;
-}
-.auth-stub::after {
-  position: absolute;
-  top: auto;
-  bottom: 4.5rem;
-  left: 0;
-  right: 0;
-  height: var(--space-1);
-  background-image: radial-gradient(circle at 5px 3px, var(--background) 3px, transparent 3.5px);
-  background-size: 1rem var(--space-1);
-  background-repeat: repeat-x;
-  content: "";
-}
-.auth-stub-foot {
+/* ── Account forms ───────────────────────────────────────────────────── */
+.auth-note {
   margin-top: var(--space-5);
   padding-top: var(--space-3);
   color: var(--ink-muted);
   font-size: var(--text-xs);
-  font-weight: 700;
-  letter-spacing: .14em;
+  font-weight: 500;
   text-align: center;
-  text-transform: uppercase;
 }
 
 /* ── Live Map & Explore ─────────────────────────────────────────────── */
@@ -2717,7 +2752,7 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
   height: 1.5rem;
 }
 .explore-card-icon.is-blue {
-  background: linear-gradient(135deg, var(--accent-500), var(--accent-800));
+  background: var(--accent-700);
 }
 .explore-stage-list {
   display: grid;
@@ -2729,11 +2764,15 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-lg);
+  border-bottom: var(--border-width) solid var(--border);
+  border-radius: 0;
   background: var(--surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
   color: var(--ink);
   text-decoration: none;
+}
+.stage-item:hover {
+  background: var(--accent-50);
 }
 .stage-item-dot {
   width: var(--space-3);

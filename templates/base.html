@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#102B50">
+  <meta name="theme-color" content="#17231F">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>{% block title %}Matatu254{% endblock %}</title>
@@ -14,8 +14,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700&display=swap">
-  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261121f">
-  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261121f">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261122c">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261122c">
   {% block extra_head %}{% endblock %}
 </head>
 <body{% if user.is_authenticated %} class="app-user{% if user.role != 'ADMIN' %} narrow-shell{% endif %}"{% endif %}>
@@ -96,6 +96,6 @@
 
   {% block scripts %}{% endblock %}
   <script defer src="{% static 'js/app-shell.js' %}?v=20261121f"></script>
-  <footer>Matatu254 · Nairobi journeys, stage by stage</footer>
+  <footer>Matatu254 <span aria-hidden="true">/</span> Nairobi routes</footer>
 </body>
 </html>

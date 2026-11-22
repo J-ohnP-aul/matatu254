@@ -5,18 +5,18 @@
 {% block content %}
 {% if user.is_authenticated and user.role == 'PASSANGER' %}
   <section class="home-hero" aria-label="Matatu254">
-    <h1>Where is your matatu right now?</h1>
-    <p class="hero-sub">Pick a route below — the board shows which vehicles are on it this minute.</p>
+    <h1>See matatus on your route.</h1>
+    <p class="hero-sub">Select a route to view live vehicles and the stages they serve.</p>
     <svg class="hero-art" aria-hidden="true" viewBox="0 0 120 64" fill="none">
-      <rect x="18" y="10" width="66" height="34" rx="8" fill="#10B981"/>
-      <rect x="24" y="16" width="22" height="12" rx="2" fill="#E8FFEF"/>
-      <rect x="50" y="16" width="12" height="12" rx="2" fill="#0A1B33"/>
-      <rect x="66" y="16" width="12" height="12" rx="2" fill="#0A1B33"/>
-      <rect x="88" y="22" width="14" height="22" rx="4" fill="#1769E8"/>
-      <circle cx="34" cy="48" r="6" fill="#0A1B33"/><circle cx="34" cy="48" r="2.5" fill="#F5F7FB"/>
-      <circle cx="66" cy="48" r="6" fill="#0A1B33"/><circle cx="66" cy="48" r="2.5" fill="#F5F7FB"/>
-      <circle cx="96" cy="48" r="6" fill="#0A1B33"/><circle cx="96" cy="48" r="2.5" fill="#F5F7FB"/>
-      <path d="M2 58h116" stroke="#F5F7FB" stroke-opacity=".25" stroke-width="2" stroke-dasharray="6 6"/>
+      <rect x="18" y="10" width="66" height="34" rx="5" fill="var(--route-green)"/>
+      <rect x="24" y="16" width="22" height="12" rx="2" fill="var(--mist)"/>
+      <rect x="50" y="16" width="12" height="12" rx="2" fill="var(--ink)"/>
+      <rect x="66" y="16" width="12" height="12" rx="2" fill="var(--ink)"/>
+      <rect x="88" y="22" width="14" height="22" rx="3" fill="var(--route-blue)"/>
+      <circle cx="34" cy="48" r="6" fill="var(--ink)"/><circle cx="34" cy="48" r="2.5" fill="var(--mist)"/>
+      <circle cx="66" cy="48" r="6" fill="var(--ink)"/><circle cx="66" cy="48" r="2.5" fill="var(--mist)"/>
+      <circle cx="96" cy="48" r="6" fill="var(--ink)"/><circle cx="96" cy="48" r="2.5" fill="var(--mist)"/>
+      <path d="M2 58h116" stroke="var(--mist)" stroke-opacity=".25" stroke-width="2" stroke-dasharray="6 6"/>
     </svg>
   </section>
 
@@ -65,24 +65,24 @@
   </div>
   <section class="promo-card" aria-label="Stop alerts">
     <p>We watch your trip and alert you as your stage approaches — enable phone alerts before you travel.</p>
-    <a class="btn btn-primary" href="{% url 'notifications:list' %}">Set up alerts <span aria-hidden="true">›</span></a>
+    <a class="btn btn-primary" href="{% url 'notifications:list' %}">Set up stop alerts</a>
   </section>
 {% elif user.is_authenticated %}
   <section class="page-shell passenger-home">
-    <header class="page-heading"><div><h1>Welcome back, {{ user.first_name|default:user.username }}.</h1><p>{{ user.get_role_display }} tools are ready below.</p></div></header>
+    <header class="page-heading"><div><h1>{{ user.first_name|default:user.username }}</h1><p>{{ user.get_role_display }} account</p></div></header>
     <section class="surface surface-pad">
-      <h2>{% if user.role == 'CONDUCTOR' %}Keep your trip moving.{% else %}Operations at a glance.{% endif %}</h2>
+      <h2>{% if user.role == 'CONDUCTOR' %}Your assigned matatu{% else %}Fleet and route controls{% endif %}</h2>
       <p>{% if user.role == 'CONDUCTOR' %}Check passenger counts and upcoming alighting stages.{% else %}Manage matatus, routes, stages, and active trips.{% endif %}</p>
       <div class="btn-row">
-        <a class="btn btn-primary" href="{% if user.role == 'CONDUCTOR' %}{% url 'conductor:dashboard' %}{% else %}{% url 'management:dashboard' %}{% endif %}">{% if user.role == 'CONDUCTOR' %}Open crew dashboard{% else %}Open management{% endif %}</a>
+        <a class="btn btn-primary" href="{% if user.role == 'CONDUCTOR' %}{% url 'conductor:dashboard' %}{% else %}{% url 'management:dashboard' %}{% endif %}">{% if user.role == 'CONDUCTOR' %}View passenger counts{% else %}Manage fleet and trips{% endif %}</a>
       </div>
     </section>
   </section>
 {% else %}
   <section class="landing-hero page-shell">
     <div class="landing-copy">
-      <h1>Your stop, in view.</h1>
-      <p>Scan the matatu, choose your stage, and know when it’s getting close.</p>
+      <h1>Follow your matatu to your stop.</h1>
+      <p>Scan the code inside the vehicle, choose your stage, and follow the trip as it moves.</p>
       <div class="btn-row">
         <a class="btn btn-primary" href="{% url 'accounts:register' %}">Create your account</a>
         <a class="btn btn-secondary" href="{% url 'accounts:login' %}">Sign in</a>
@@ -114,7 +114,7 @@
       <li><h3>Pick where you’re getting off</h3><p>Choose a stage from the active route before the trip starts.</p></li>
       <li><h3>Follow your journey</h3><p>Watch stage progress and get an alert as your stop approaches.</p></li>
     </ol>
-    <p class="landing-final"><a href="{% url 'accounts:register' %}">Start with your next ride <span aria-hidden="true">→</span></a></p>
+    <p class="landing-final"><a href="{% url 'accounts:register' %}">Create a passenger account</a></p>
   </section>
 {% endif %}
 {% endblock %}

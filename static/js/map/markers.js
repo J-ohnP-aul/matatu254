@@ -49,11 +49,11 @@ export class VehicleMarker {
         <svg width="40" height="40" viewBox="0 0 40 40" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
           <!-- Vehicle body -->
           <path d="M20 4 L30 16 L30 28 L24 34 L16 34 L10 28 L10 16 Z" 
-                fill="#087a45" stroke="#065a32" stroke-width="1.5"/>
+                fill="#176b4d" stroke="#124d38" stroke-width="1.5"/>
           <!-- Roof -->
-          <path d="M20 8 L26 16 L14 16 Z" fill="#0a9050"/>
+          <path d="M20 8 L26 16 L14 16 Z" fill="#176b4d"/>
           <!-- Windshield -->
-          <path d="M20 10 L24 16 L16 16 Z" fill="#7dd3a0" opacity="0.8"/>
+          <path d="M20 10 L24 16 L16 16 Z" fill="#85ad94" opacity="0.8"/>
           <!-- Wheels -->
           <circle cx="13" cy="28" r="3" fill="#1a2a20"/>
           <circle cx="27" cy="28" r="3" fill="#1a2a20"/>
@@ -177,13 +177,13 @@ export class DestinationMarker {
   _createMarker(options) {
     const iconHtml = `
       <div class="destination-marker">
-        <svg width="36" height="48" viewBox="0 0 24 32" fill="none" stroke="#087a45" stroke-width="2">
+        <svg width="36" height="48" viewBox="0 0 24 32" fill="none" stroke="#176b4d" stroke-width="2">
           <path d="M12 2C7.58 2 4 5.58 4 10c0 5.25 7 20 7 20s7-14.75 7-20C20 5.58 16.42 2 12 2z"/>
-          <circle cx="12" cy="10" r="3" fill="#087a45"/>
+          <circle cx="12" cy="10" r="3" fill="#176b4d"/>
         </svg>
         <span class="destination-label" style="
           position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-          white-space: nowrap; background: #087a45; color: white; padding: 2px 8px;
+          white-space: nowrap; background: #176b4d; color: white; padding: 2px 8px;
           border-radius: 4px; font-size: 11px; font-weight: 600; margin-top: 4px;
         ">${options.label || 'Destination'}</span>
       </div>
@@ -263,10 +263,10 @@ export class StageMarkers {
 
   _createStageIcon(stage, status) {
     const colors = {
-      upcoming: { bg: '#fff', border: '#087a45', icon: '#087a45' },
-      current: { bg: '#e8f1e9', border: '#a8cdb5', icon: '#087a45' },
-      complete: { bg: '#f0f0f0', border: '#d0d0d0', icon: '#718076' },
-      next: { bg: '#e8f1e9', border: '#a8cdb5', icon: '#f7b51b' }
+      upcoming: { bg: '#ffffff', border: '#176b4d', icon: '#176b4d' },
+      current: { bg: '#eaf2ed', border: '#85ad94', icon: '#176b4d' },
+      complete: { bg: '#e8ede8', border: '#c2cec5', icon: '#58685e' },
+      next: { bg: '#faf3e8', border: '#a96808', icon: '#a96808' }
     };
     
     const c = colors[status] || colors.upcoming;
@@ -331,7 +331,7 @@ export class RoutePolyline {
     this.map = map;
     this.polyline = null;
     this.options = {
-      color: options.color ?? '#087a45',
+      color: options.color ?? '#176b4d',
       weight: options.weight ?? 4,
       opacity: options.opacity ?? 0.8,
       dashArray: options.dashArray ?? null,

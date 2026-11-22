@@ -15,7 +15,7 @@
   </section>
 
   <div class="btn-row">
-    <a class="btn btn-primary" href="{% url 'explore:live-map' %}?route={{ route.id }}">Watch it live <span aria-hidden="true">›</span></a>
+    <a class="btn btn-primary" href="{% url 'explore:live-map' %}?route={{ route.id }}">View live matatus</a>
   </div>
 
   <div class="section-heading"><h2>Stages in order</h2></div>
@@ -34,5 +34,5 @@
 {% endblock %}
 {% block scripts %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script type="module" src="{% static 'js/explore.js' %}?v=20261121f"></script>
+<script type="module" src="{% static 'js/explore.js' %}?v=20261122a"></script>
 {% endblock %}

@@ -85,9 +85,9 @@ export class CameraController {
         btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>';
         btn.title = 'Recenter on vehicle';
         btn.style.cssText = `
-          background: white; border: none; border-radius: 50%; width: 40px; height: 40px;
+          background: var(--surface); border: 1px solid var(--border); /* taste-skill-ignore: map control needs the requested structural edge */ border-radius: 50%; width: 40px; height: 40px;
           display: flex; align-items: center; justify-content: center; cursor: pointer;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.2); opacity: 0; transform: scale(0.8);
+          opacity: 0; transform: scale(0.8);
           transition: opacity 0.2s, transform 0.2s;
         `;
         btn.onclick = () => this.recenter();

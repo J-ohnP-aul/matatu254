@@ -5,6 +5,8 @@
 
 import { smoothstep } from './interpolator.js';
 
+const cssToken = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
 export class VehicleMarker {
   constructor(map, options = {}) {
     this.map = map;
@@ -44,21 +46,25 @@ export class VehicleMarker {
   }
 
   _createVehicleIcon() {
+    const success = cssToken('--success');
+    const successSoft = cssToken('--success-soft');
+    const ink = cssToken('--ink');
+    const surface = cssToken('--neutral-0');
     return `
       <div class="vehicle-icon" style="transform: rotate(0deg); transition: transform 0.1s linear;">
-        <svg width="40" height="40" viewBox="0 0 40 40" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+        <svg width="40" height="40" viewBox="0 0 40 40">
           <!-- Vehicle body -->
           <path d="M20 4 L30 16 L30 28 L24 34 L16 34 L10 28 L10 16 Z" 
-                fill="#176b4d" stroke="#124d38" stroke-width="1.5"/>
+                fill="${success}" stroke="${success}" stroke-width="1.5"/>
           <!-- Roof -->
-          <path d="M20 8 L26 16 L14 16 Z" fill="#176b4d"/>
+          <path d="M20 8 L26 16 L14 16 Z" fill="${success}"/>
           <!-- Windshield -->
-          <path d="M20 10 L24 16 L16 16 Z" fill="#85ad94" opacity="0.8"/>
+          <path d="M20 10 L24 16 L16 16 Z" fill="${successSoft}" opacity="0.8"/>
           <!-- Wheels -->
-          <circle cx="13" cy="28" r="3" fill="#1a2a20"/>
-          <circle cx="27" cy="28" r="3" fill="#1a2a20"/>
+          <circle cx="13" cy="28" r="3" fill="${ink}"/>
+          <circle cx="27" cy="28" r="3" fill="${ink}"/>
           <!-- Direction indicator -->
-          <polygon points="20,22 17,27 23,27" fill="#fff" opacity="0.9"/>
+          <polygon points="20,22 17,27 23,27" fill="${surface}" opacity="0.9"/>
         </svg>
       </div>
     `;
@@ -177,13 +183,13 @@ export class DestinationMarker {
   _createMarker(options) {
     const iconHtml = `
       <div class="destination-marker">
-        <svg width="36" height="48" viewBox="0 0 24 32" fill="none" stroke="#176b4d" stroke-width="2">
+        <svg width="36" height="48" viewBox="0 0 24 32" fill="none" stroke="${cssToken('--success')}" stroke-width="2">
           <path d="M12 2C7.58 2 4 5.58 4 10c0 5.25 7 20 7 20s7-14.75 7-20C20 5.58 16.42 2 12 2z"/>
-          <circle cx="12" cy="10" r="3" fill="#176b4d"/>
+          <circle cx="12" cy="10" r="3" fill="${cssToken('--success')}"/>
         </svg>
         <span class="destination-label" style="
           position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-          white-space: nowrap; background: #176b4d; color: white; padding: 2px 8px;
+          white-space: nowrap; background: ${cssToken('--success')}; color: ${cssToken('--neutral-0')}; padding: 2px 8px;
           border-radius: 4px; font-size: 11px; font-weight: 600; margin-top: 4px;
         ">${options.label || 'Destination'}</span>
       </div>
@@ -245,8 +251,8 @@ export class StageMarkers {
     const label = document.createElement('span');
     label.textContent = stage.name;
     label.style.cssText = [
-      'color:#17251c',
-      'font:600 12px/1.25 system-ui,sans-serif',
+      `color:${cssToken('--ink')}`,
+      `font:600 13px/1.25 ${cssToken('--font-sans')}`,
       'white-space:nowrap'
     ].join(';');
     marker.bindTooltip(label, {
@@ -262,11 +268,16 @@ export class StageMarkers {
   }
 
   _createStageIcon(stage, status) {
+    const success = cssToken('--success');
+    const warning = cssToken('--warning');
+    const surface = cssToken('--surface');
+    const neutral = cssToken('--neutral-100');
+    const border = cssToken('--border');
     const colors = {
-      upcoming: { bg: '#ffffff', border: '#176b4d', icon: '#176b4d' },
-      current: { bg: '#eaf2ed', border: '#85ad94', icon: '#176b4d' },
-      complete: { bg: '#e8ede8', border: '#c2cec5', icon: '#58685e' },
-      next: { bg: '#faf3e8', border: '#a96808', icon: '#a96808' }
+      upcoming: { bg: surface, border: success, icon: success },
+      current: { bg: cssToken('--success-soft'), border: success, icon: success },
+      complete: { bg: neutral, border, icon: cssToken('--ink-muted') },
+      next: { bg: cssToken('--warning-soft'), border: warning, icon: warning }
     };
     
     const c = colors[status] || colors.upcoming;
@@ -276,8 +287,7 @@ export class StageMarkers {
         width: 32px; height: 32px; border-radius: 50%;
         background: ${c.bg}; border: 3px solid ${c.border};
         display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        transition: all 0.3s ease;
+        transition: background-color 150ms ease, border-color 150ms ease, transform 150ms ease;
       ">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${c.icon}" stroke-width="2.5">
           ${status === 'complete' 
@@ -331,7 +341,7 @@ export class RoutePolyline {
     this.map = map;
     this.polyline = null;
     this.options = {
-      color: options.color ?? '#176b4d',
+      color: options.color ?? cssToken('--accent'),
       weight: options.weight ?? 4,
       opacity: options.opacity ?? 0.8,
       dashArray: options.dashArray ?? null,

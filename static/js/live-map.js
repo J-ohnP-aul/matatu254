@@ -74,7 +74,7 @@ import { decodePolyline } from './map/map-matcher.js';
     route.stages.forEach((stage) => {
       const marker = L.circleMarker([stage.latitude, stage.longitude], {
         radius: 6,
-        color: '#FFFFFF',
+        color: getComputedStyle(document.documentElement).getPropertyValue('--neutral-0').trim(),
         weight: 2.5,
         fillColor: color,
         fillOpacity: 1,
@@ -309,7 +309,11 @@ import { decodePolyline } from './map/map-matcher.js';
         const { latitude, longitude } = position.coords;
         if (window.__userDot) map.removeLayer(window.__userDot);
         window.__userDot = L.circleMarker([latitude, longitude], {
-          radius: 7, color: '#FFFFFF', weight: 3, fillColor: '#2857A4', fillOpacity: 1,
+          radius: 7,
+          color: getComputedStyle(document.documentElement).getPropertyValue('--neutral-0').trim(),
+          weight: 3,
+          fillColor: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(),
+          fillOpacity: 1,
         }).addTo(map).bindTooltip('You are here', { direction: 'top' });
         map.flyTo([latitude, longitude], 15, { duration: 0.8 });
       },

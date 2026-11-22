@@ -1666,7 +1666,7 @@ tbody tr:hover {
 }
 .demo-flag {
   flex: 0 0 auto;
-  color: var(--brand-700);
+  color: var(--brand-800);
   font-size: var(--text-xs);
   font-weight: 700;
 }
@@ -1724,7 +1724,7 @@ tbody tr:hover {
   height: var(--space-3);
 }
 .demo-stop.is-current {
-  color: var(--brand-700);
+  color: var(--brand-800);
   font-weight: 700;
 }
 .demo-stop.is-current::before {

@@ -31,6 +31,7 @@
       const text = pill.querySelector('[data-board-live-text]');
       const vehicle = byRoute.get(routeId);
       if (!text) return;
+      pill.classList.remove('is-loading');
       if (vehicle && !vehicle.is_stale) {
         // Green pill: only when the backend says the vehicle is live.
         pill.classList.remove('is-quiet');

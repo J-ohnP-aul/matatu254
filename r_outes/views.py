@@ -47,6 +47,8 @@ def _route_payload(route):
         "id": route.pk,
         "name": route.name,
         "description": route.description,
+        "origin": stages[0].name if stages else "",
+        "terminus": stages[-1].name if stages else "",
         "geometry": _route_geometry(route, stages),
         "stages": [
             {

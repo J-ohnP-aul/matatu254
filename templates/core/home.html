@@ -41,7 +41,7 @@
     {% for route in home_routes %}
       <a class="board-card" href="{% url 'explore:route-detail' route.id %}" data-route-id="{{ route.id }}">
         <h3 class="board-route-name">{{ route.name }}</h3>
-        <span class="board-live is-quiet" data-board-live="{{ route.id }}">
+        <span class="board-live is-loading" data-board-live="{{ route.id }}">
           <span class="board-live-dot" aria-hidden="true"></span>
           <span data-board-live-text="{{ route.id }}">no live data</span>
         </span>
@@ -119,6 +119,6 @@
 {% endif %}
 {% endblock %}
 {% block scripts %}
-{% if user.is_authenticated and user.role == 'PASSANGER' %}<script type="module" src="{% static 'js/home-board.js' %}?v=20261120b"></script>{% endif %}
-{% if not user.is_authenticated %}<script defer src="{% static 'js/landing-demo.js' %}?v=20261120b"></script>{% endif %}
+{% if user.is_authenticated and user.role == 'PASSANGER' %}<script type="module" src="{% static 'js/home-board.js' %}?v=20261121f"></script>{% endif %}
+{% if not user.is_authenticated %}<script defer src="{% static 'js/landing-demo.js' %}?v=20261121f"></script>{% endif %}
 {% endblock %}

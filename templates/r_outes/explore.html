@@ -22,10 +22,11 @@
         </span>
         <span class="action-card-body">
           <strong>{{ route.name }}</strong>
+          {% if route.origin %}<small class="route-endpoints">{{ route.origin }} <span aria-hidden="true">→</span> {{ route.terminus }}</small>{% endif %}
           <small>{{ route.stages|length }} stage{{ route.stages|length|pluralize }}{% if forloop.first %} · Popular{% endif %}</small>
         </span>
-        <span class="explore-live" data-live-count="{{ route.id }}" hidden>
-          <i class="explore-live-dot" aria-hidden="true"></i><span data-live-count-text="{{ route.id }}">0 live</span>
+        <span class="explore-live is-loading" data-live-count="{{ route.id }}">
+          <i class="explore-live-dot" aria-hidden="true"></i><span data-live-count-text="{{ route.id }}">…</span>
         </span>
         <span class="action-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></span>
       </a>
@@ -56,4 +57,4 @@
 </section>
 {{ stages|json_script:"stages-data" }}
 {% endblock %}
-{% block scripts %}<script type="module" src="{% static 'js/explore.js' %}?v=20261120b"></script>{% endblock %}
+{% block scripts %}<script type="module" src="{% static 'js/explore.js' %}?v=20261121f"></script>{% endblock %}

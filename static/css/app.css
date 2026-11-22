@@ -2312,6 +2312,35 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
   height: 1.25rem;
 }
 
+/* Loading skeletons — shimmer in the exact spot async data lands */
+.explore-live.is-loading,
+.board-live.is-loading {
+  background: linear-gradient(
+    90deg,
+    var(--neutral-100) 25%,
+    var(--neutral-200) 45%,
+    var(--neutral-100) 65%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.2s var(--ease-standard) infinite;
+  color: transparent;
+}
+.explore-live.is-loading .explore-live-dot,
+.board-live.is-loading .board-live-dot {
+  background: var(--neutral-300);
+}
+@keyframes skeleton-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .explore-live.is-loading,
+  .board-live.is-loading {
+    animation: none;
+    background: var(--neutral-100);
+  }
+}
+
 /* Explore live-count badge */
 .explore-live {
   display: inline-flex;

@@ -100,11 +100,17 @@ if (liveCountCards.length) {
         const routeId = badge.dataset.liveCount;
         const count = byRoute.get(routeId) || 0;
         const text = badge.querySelector('[data-live-count-text]');
+        badge.classList.remove('is-loading');
         if (text) text.textContent = count === 1 ? '1 live' : `${count} live`;
         badge.hidden = count === 0;
       });
     })
-    .catch(() => { /* badges stay hidden — no invented counts */ });
+    .catch(() => {
+      liveCountCards.forEach((badge) => {
+        badge.classList.remove('is-loading');
+        badge.hidden = true; // skeleton resolves to nothing — no invented counts
+      });
+    });
 }
 
 /* ── Route detail: static route map ─────────────────────────────────── */

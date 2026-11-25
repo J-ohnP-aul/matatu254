@@ -111,7 +111,7 @@ class ConductorWorkspaceTests(TestCase):
         self.assertContains(response, "Your shift")
         self.assertContains(response, "Nairobi Central Route")
         self.assertContains(response, "Passengers by destination")
-        self.assertContains(response, "Manage passengers")
+        self.assertContains(response, reverse("conductor:passengers"))
         self.assertContains(response, "Central Station")
         self.assertContains(response, "Westlands")
 
@@ -143,7 +143,7 @@ class ConductorWorkspaceTests(TestCase):
         response = self.client.get(reverse("conductor:passengers"))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Passengers by destination")
+        self.assertContains(response, "Active passenger list")
         self.assertContains(response, "Westlands")
         self.assertContains(response, "active-rider")
         self.assertNotContains(response, "finished-rider")

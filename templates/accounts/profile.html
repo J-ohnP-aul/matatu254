@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}Your account · Matatu254{% endblock %}
-{% block app_title %}Your account{% endblock %}
+{% block app_title %}Profile{% endblock %}
 {% block content %}
-<section class="page-shell">
+<section class="page-shell profile-page">
   <header class="page-heading"><div><h1>Your profile</h1><p>Manage your account details and profile photo.</p></div></header>
   <div class="surface surface-pad profile-card">
     <form class="profile-photo-form" method="post" enctype="multipart/form-data">
@@ -19,7 +19,7 @@
         <label for="{{ form.profile_image.id_for_label }}">Add or change photo</label>
         {{ form.profile_image }}
         {% if form.profile_image.errors %}<ul class="field-errors" role="alert">{% for error in form.profile_image.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
-        <p class="field-help">JPG, PNG, or WebP · maximum 5 MB. Use the remove option to clear your current photo.</p>
+        <p class="field-help">{% if user.profile_image %}Choose JPG, PNG, or WebP under 5 MB. Select the clear option to remove your current photo.{% else %}Choose a JPG, PNG, or WebP image under 5 MB.{% endif %}</p>
       </div>
       <button class="btn btn-primary" type="submit">Save photo</button>
     </form>

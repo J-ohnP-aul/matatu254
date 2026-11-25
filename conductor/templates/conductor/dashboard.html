@@ -19,15 +19,15 @@
           </div>
           <span class="badge badge-success">Trip active</span>
         </div>
-        <p class="crew-location-state{% if active_trip.is_stale %} is-stale{% endif %}" role="status" aria-live="polite">
+        <p id="crew-gps-status" class="crew-location-state{% if active_trip.gps_age_seconds == None %} is-waiting{% elif active_trip.is_stale %} is-stale{% else %} is-live{% endif %}" role="status" aria-live="polite">
           <span class="crew-location-dot" aria-hidden="true"></span>
-          {% if active_trip.gps_age_seconds == None %}
+          <span id="crew-gps-copy">{% if active_trip.gps_age_seconds == None %}
             Waiting for the first vehicle location update
           {% elif active_trip.is_stale %}
             Vehicle location delayed · last update {{ active_trip.last_ping_at|timesince }} ago
           {% else %}
             Vehicle location live · updated {{ active_trip.last_ping_at|timesince }} ago
-          {% endif %}
+          {% endif %}</span>
         </p>
         <a class="btn btn-primary" href="{% url 'conductor:trip-detail' active_trip.pk %}">Open live trip</a>
       </section>
@@ -36,14 +36,15 @@
         <div class="crew-stat"><strong id="crew-occupied-stage-count">{{ occupied_stage_count }}</strong><span>Stages with passengers</span></div>
         <div class="crew-stat"><strong id="crew-arrived-count">{{ arrived_passengers }}</strong><span>Arrived, not yet ended</span></div>
       </section>
+      <p class="crew-refresh-status" id="crew-refresh-status" role="status" aria-live="polite">Live trip data · refreshing every 10 seconds</p>
       {% if stage_counts %}
         <section class="crew-counts crew-dashboard-stages" aria-labelledby="crew-count-heading">
-          <div class="section-heading"><div><h2 id="crew-count-heading">Passengers by destination</h2><p>Stage totals update while your trip is active.</p></div><span id="crew-refresh-status" class="muted" role="status" aria-live="polite">Live counts</span></div>
+          <div class="section-heading"><div><h2 id="crew-count-heading">Passengers by destination</h2><p>Stage totals update while your trip is active.</p></div></div>
           <div class="crew-stage-list">
             {% for row in stage_counts %}
               <a class="crew-stage-row" href="{% url 'conductor:passengers' %}?stage={{ row.stage.pk }}" data-stage-order="{{ row.stage.sequence_order }}">
                 <span class="crew-stage-copy"><strong>{{ row.stage.name }}</strong><small>Stage {{ row.stage.sequence_order }}</small></span>
-                <span class="crew-stage-count"><strong class="live-count" data-stage-count>{{ row.count }}</strong><span>passengers</span></span>
+                <span class="crew-stage-count"><strong class="live-count" data-stage-count>{{ row.count }}</strong><span data-stage-unit>passenger{{ row.count|pluralize }}</span></span>
                 <svg class="crew-stage-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
               </a>
             {% endfor %}
@@ -53,9 +54,8 @@
       {% else %}
         <div class="surface empty-state"><h2>No stages on this route</h2><p>Ask an administrator to add the route stages before boarding.</p></div>
       {% endif %}
-      <a class="btn btn-secondary crew-manage-passengers" href="{% url 'conductor:passengers' %}">Manage passengers</a>
     </div>
   {% endif %}
 </section>
 {% endblock %}
-{% block scripts %}<script defer src="{% static 'js/conductor-dashboard.js' %}?v=20261125a"></script>{% endblock %}
+{% block scripts %}<script defer src="{% static 'js/conductor-dashboard.js' %}?v=20261125b"></script>{% endblock %}

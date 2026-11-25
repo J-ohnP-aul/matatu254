@@ -14,8 +14,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap"> <!-- taste-skill-ignore: IBM Plex Mono is reserved for numeric and route data -->
-  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261125a">
-  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261125a">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261125b">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261125b">
   {% block extra_head %}{% endblock %}
 </head>
 <body{% if user.is_authenticated %} class="app-user{% if user.role == 'PASSANGER' %} narrow-shell{% endif %}{% if user.role == 'CONDUCTOR' %} app-conductor{% endif %}"{% endif %}>
@@ -51,7 +51,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
         </a>
         {% endif %}
-        <a class="header-profile" href="{% url 'accounts:profile' %}" aria-label="Open profile for {{ user.username }}">
+        <a class="header-profile" href="{% url 'accounts:profile' %}" aria-label="Open profile for {{ user.username }}"{% if request.resolver_match.namespace == 'accounts' and request.resolver_match.url_name == 'profile' %} aria-current="page"{% endif %}>
           {% if user.profile_image %}
             <img src="{{ user.profile_image.url }}" alt="" width="40" height="40">
           {% else %}

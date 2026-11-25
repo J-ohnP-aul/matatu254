@@ -4,7 +4,6 @@
 
   const list = document.getElementById('passenger-management-list');
   const status = document.getElementById('passenger-refresh-status');
-  const total = document.getElementById('passenger-total-count');
   let controller = null;
 
   async function refreshPassengers() {
@@ -28,10 +27,9 @@
       list.querySelectorAll('[data-passenger-stage]').forEach((stage) => {
         stage.open = previousOpenStages.has(stage.dataset.passengerStage);
       });
-      const refreshedTotal = list.querySelector('.passenger-list-panel > .section-heading .badge');
-      if (refreshedTotal) {
-        total.textContent = refreshedTotal.textContent.trim().split(' ')[0];
-      }
+      const refreshedGroups = list.querySelector('[data-passenger-total]');
+      const total = document.getElementById('passenger-total-count');
+      if (refreshedGroups && total) total.textContent = refreshedGroups.dataset.passengerTotal;
       status.textContent = 'Live passenger list · updated just now';
     } catch (error) {
       if (error.name === 'AbortError') return;

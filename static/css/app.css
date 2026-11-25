@@ -2778,6 +2778,316 @@ html.has-page-transition-fallback[data-nav-direction="back"] .main {
 .stage-board .board-card + .board-card {
   border-top: var(--border-width) solid var(--border);
 }
+
+/* Field workflow refinement: fast scanning, stable numbers, and thumb-sized controls. */
+.profile-page {
+  width: min(100%, 48rem);
+}
+.profile-row > strong {
+  color: var(--ink);
+}
+.profile-row > span {
+  color: var(--ink);
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.profile-photo-form .btn {
+  justify-self: start;
+  min-width: 9rem;
+}
+.profile-image-input {
+  width: 100%;
+  padding: var(--space-1);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.profile-image-input::file-selector-button {
+  min-height: var(--touch-target);
+  margin-right: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--neutral-100);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.header-profile[aria-current="page"] {
+  outline: var(--focus-outline-width) solid var(--accent);
+  outline-offset: 2px;
+}
+.app-conductor .top-nav a,
+.conductor-bottom-tabs a,
+.passenger-stage-group summary,
+.crew-stage-row {
+  min-height: max(var(--touch-target), 2.75rem);
+}
+.conductor-bottom-tabs a {
+  padding-block: var(--space-1);
+}
+.crew-dashboard > .page-heading h1,
+.crew-passengers-page > .page-heading h1 {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: var(--title-tracking);
+}
+.crew-shift-summary {
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-color: var(--neutral-300);
+  border-radius: var(--radius-md);
+}
+.crew-shift-summary-main {
+  align-items: center;
+}
+.crew-shift-summary-main > div {
+  min-width: 0;
+}
+.crew-shift-summary h2 {
+  font-size: var(--text-lg);
+  line-height: var(--line-tight);
+  overflow-wrap: anywhere;
+}
+.crew-shift-summary-main p {
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+.crew-shift-summary .badge,
+.passenger-stage-person .badge {
+  min-height: 1.75rem;
+  padding-inline: var(--space-3);
+  white-space: nowrap;
+}
+.crew-location-state {
+  min-height: var(--touch-target);
+  margin: 0;
+  padding-block: var(--space-2);
+  border-top: var(--border-width) solid var(--border);
+  border-bottom: var(--border-width) solid var(--border);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.crew-location-state.is-waiting {
+  color: var(--ink-muted);
+}
+.crew-location-state.is-live {
+  color: var(--success);
+}
+.crew-location-state.is-stale {
+  color: var(--warning);
+}
+.crew-location-dot {
+  width: .625rem;
+  height: .625rem;
+}
+.crew-shift-summary > .btn {
+  width: fit-content;
+  min-height: 3rem;
+}
+.crew-stats {
+  margin: 0 0 var(--space-5);
+  border-color: var(--neutral-300);
+  background: var(--surface);
+}
+.crew-stat {
+  min-height: 4.5rem;
+  align-content: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+}
+.crew-stat strong,
+.crew-stage-count strong,
+#passenger-total-count,
+.passenger-stage-person time {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.crew-stat strong {
+  font-size: var(--text-lg);
+  line-height: 1;
+}
+.crew-stat span {
+  font-size: var(--text-xs);
+  line-height: var(--line-normal);
+}
+.crew-refresh-status {
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+.crew-dashboard-stages .section-heading {
+  margin-top: 0;
+  margin-bottom: var(--space-3);
+}
+.crew-dashboard-stages .section-heading h2,
+.passenger-list-panel > .section-heading h2 {
+  font-size: var(--text-md);
+  font-weight: 700;
+}
+.crew-stage-list {
+  border-top: 1px solid var(--neutral-300);
+  border-bottom: 1px solid var(--neutral-300);
+}
+.crew-stage-row {
+  min-height: 3.5rem;
+  gap: var(--space-3);
+  padding-inline: var(--space-3);
+}
+.crew-stage-row:active {
+  background: var(--accent-soft);
+}
+.crew-stage-copy strong {
+  line-height: var(--line-normal);
+}
+.crew-stage-copy small,
+.crew-stage-count span {
+  color: var(--ink-muted);
+}
+.crew-stage-count strong {
+  min-width: 2.5ch;
+  font-size: var(--text-lg);
+}
+.crew-stage-chevron {
+  width: 1.375rem;
+  height: 1.375rem;
+}
+.crew-count-note {
+  margin-top: var(--space-3);
+  line-height: var(--line-normal);
+}
+.passenger-trip-context {
+  min-height: 5rem;
+  border-color: var(--neutral-300);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+.passenger-trip-context h2 {
+  line-height: var(--line-tight);
+  overflow-wrap: anywhere;
+}
+.passenger-refresh-status {
+  min-height: var(--touch-target);
+  display: flex;
+  align-items: center;
+  font-variant-numeric: tabular-nums;
+}
+.passenger-list-panel > .section-heading {
+  margin-top: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.passenger-stage-groups {
+  border-top-color: var(--neutral-300);
+  border-bottom: 1px solid var(--neutral-300);
+}
+.passenger-stage-group summary {
+  min-height: 3.5rem;
+  padding: var(--space-2) var(--space-3);
+}
+.passenger-stage-group summary:active {
+  background: var(--accent-soft);
+}
+.passenger-stage-title strong {
+  font-size: var(--text-sm);
+}
+.passenger-stage-title small {
+  color: var(--ink-muted);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+.passenger-stage-chevron {
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: transform var(--dur-fast) var(--ease-standard);
+}
+.passenger-stage-list {
+  padding: 0 var(--space-2) var(--space-2);
+}
+.passenger-stage-person {
+  min-height: 3.25rem;
+  gap: var(--space-2) var(--space-3);
+  border-top-color: var(--border);
+}
+.passenger-stage-person-name {
+  line-height: var(--line-normal);
+}
+.passenger-stage-person time {
+  min-width: 3.5ch;
+  text-align: right;
+}
+.passenger-stage-person .badge {
+  justify-content: center;
+  font-size: var(--text-xs);
+}
+.passenger-stage-empty,
+.passenger-groups-empty {
+  margin: 0;
+  padding: var(--space-4) var(--space-3);
+  color: var(--ink);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 48rem) {
+  .profile-page {
+    width: 100%;
+  }
+  .profile-card {
+    gap: var(--space-3);
+  }
+  .profile-photo-form {
+    gap: var(--space-3);
+  }
+  .profile-photo-form .btn {
+    width: 100%;
+  }
+  .profile-row > span {
+    text-align: left;
+  }
+  .crew-shift-summary {
+    padding: var(--space-3);
+  }
+  .crew-shift-summary .btn {
+    width: 100%;
+  }
+  .crew-stats {
+    margin-bottom: var(--space-4);
+  }
+  .crew-stat {
+    min-height: 4.25rem;
+    padding: var(--space-2);
+  }
+  .crew-stat span {
+    max-width: 12ch;
+  }
+  .crew-stage-row {
+    min-height: 3.75rem;
+    padding-inline: var(--space-2);
+  }
+  .passenger-trip-context {
+    padding: var(--space-3);
+  }
+  .passenger-stage-group summary {
+    min-height: 3.75rem;
+  }
+  .passenger-stage-person {
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 4rem;
+    padding-inline: var(--space-2);
+  }
+  .passenger-stage-person time {
+    grid-column: 1;
+    grid-row: 2;
+    text-align: left;
+  }
+  .passenger-stage-person .badge {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+}
 .stage-board .board-card:hover {
   border-left-color: var(--accent);
 }

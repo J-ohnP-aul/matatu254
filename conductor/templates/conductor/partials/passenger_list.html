@@ -1,12 +1,29 @@
-<section class="passenger-list-panel" aria-labelledby="onboard-heading">
-  <div class="section-heading"><h2 id="onboard-heading">Passengers onboard</h2><span class="badge">{{ journeys.count }}</span></div>
-  {% if journeys %}
-    <div class="table-wrap">
-      <table><thead><tr><th>Passenger</th><th>Destination</th><th>Status</th><th>Started</th></tr></thead>
-        <tbody>{% for journey in journeys %}
-          <tr><td>{{ journey.passenger.username }}</td><td>{{ journey.destination_stage.name }}</td><td><span class="badge{% if journey.status == 'approaching' %} badge-warning{% elif journey.status == 'arrived' %} badge-success{% endif %}">{{ journey.get_status_display }}</span></td><td>{{ journey.start_time|date:'H:i' }}</td></tr>
-        {% endfor %}</tbody>
-      </table>
+<section class="passenger-list-panel" id="passenger-groups" aria-labelledby="onboard-heading">
+  <div class="section-heading"><h2 id="onboard-heading">Passengers by destination</h2><span class="badge">{{ total_passengers }} onboard</span></div>
+  {% if total_passengers == 0 %}<p class="passenger-groups-empty">No passengers are currently onboard.</p>{% endif %}
+  {% if stage_groups %}
+    <div class="passenger-stage-groups">
+      {% for group in stage_groups %}
+        <details class="passenger-stage-group" id="stage-{{ group.stage.pk }}" data-passenger-stage="{{ group.stage.pk }}"{% if group.is_open %} open{% endif %}>
+          <summary>
+            <span class="passenger-stage-title"><strong>{{ group.stage.name }}</strong><small>Stage {{ group.stage.sequence_order }} · {{ group.count }} passenger{{ group.count|pluralize }}</small></span>
+            <svg class="passenger-stage-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </summary>
+          {% if group.journeys %}
+            <ul class="passenger-stage-list">
+              {% for journey in group.journeys %}
+                <li class="passenger-stage-person">
+                  <span class="passenger-stage-person-name">{{ journey.passenger.get_full_name|default:journey.passenger.username }}</span>
+                  <span class="badge{% if journey.status == 'approaching' %} badge-warning{% elif journey.status == 'arrived' %} badge-success{% endif %}">{{ journey.get_status_display }}</span>
+                  <time datetime="{{ journey.start_time|date:'c' }}">{{ journey.start_time|date:'H:i' }}</time>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="passenger-stage-empty">No active passengers for this stage.</p>
+          {% endif %}
+        </details>
+      {% endfor %}
     </div>
-  {% else %}<div class="empty-state"><p>No passengers are currently onboard.</p></div>{% endif %}
+  {% endif %}
 </section>

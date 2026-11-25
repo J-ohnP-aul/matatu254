@@ -15,6 +15,7 @@ class User(AbstractUser):
     (ADMIN, 'Admin')
   ]
   phone_number = models.CharField(max_length=15, unique=True, blank=True, null=True)
+  profile_image = models.ImageField(upload_to='profile_images/%Y/%m/', blank=True)
   role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=PASSANGER)
   matatu = models.ForeignKey(
     'fleet.Matatu',

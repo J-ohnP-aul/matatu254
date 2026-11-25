@@ -12,6 +12,13 @@ from r_outes.routes_services import is_near_stage, remaining_road_distance, get_
 from core.geo import haversine_distance_m
 from tracking.models import TripLocationLog
 
+ACTIVE_JOURNEY_STATUSES = (
+    JourneySession.Status.DESTINATION_SELECTED,
+    JourneySession.Status.IN_TRANSIT,
+    JourneySession.Status.APPROACHING,
+    JourneySession.Status.ARRIVED,
+)
+
 
 def _get_assigned_matatu(user):
     if not user or not getattr(user, 'is_authenticated', False):
@@ -49,23 +56,18 @@ def dashboard(request):
     active_trip = None
     stage_counts = []
     total_passengers = 0
+    arrived_passengers = 0
     if matatu:
         active_trip = ActiveTrip.objects.filter(
             matatu=matatu,
             status=ActiveTrip.Status.ACTIVE
-        ).first()
+        ).select_related('route').first()
 
     if active_trip:
-        active_statuses = [
-            JourneySession.Status.DESTINATION_SELECTED,
-            JourneySession.Status.IN_TRANSIT,
-            JourneySession.Status.APPROACHING,
-            JourneySession.Status.ARRIVED,
-        ]
         grouped_counts = {
             row['destination_stage_id']: row['count']
             for row in JourneySession.objects.filter(
-                trip=active_trip, status__in=active_statuses
+                trip=active_trip, status__in=ACTIVE_JOURNEY_STATUSES
             ).values('destination_stage_id').annotate(count=Count('id'))
         }
         stage_counts = [
@@ -73,14 +75,85 @@ def dashboard(request):
             for stage in active_trip.route.stages.order_by('sequence_order')
         ]
         total_passengers = sum(row['count'] for row in stage_counts)
+        arrived_passengers = JourneySession.objects.filter(
+            trip=active_trip,
+            status=JourneySession.Status.ARRIVED,
+        ).count()
+
+    occupied_stage_count = sum(1 for row in stage_counts if row['count'])
     
     context = {
         "matatu": matatu,
         "active_trip": active_trip,
         "stage_counts": stage_counts,
         "total_passengers": total_passengers,
+        "arrived_passengers": arrived_passengers,
+        "occupied_stage_count": occupied_stage_count,
     }
     return render(request, "conductor/dashboard.html", context)
+
+
+def _stage_groups_for_trip(trip, selected_stage_id=None):
+    stages = list(trip.route.stages.order_by('sequence_order'))
+    journeys = JourneySession.objects.filter(
+        trip=trip,
+        status__in=ACTIVE_JOURNEY_STATUSES,
+    ).select_related('passenger', 'destination_stage').order_by(
+        'destination_stage__sequence_order', 'start_time'
+    )
+    journeys_by_stage = {stage.pk: [] for stage in stages}
+    for journey in journeys:
+        journeys_by_stage.setdefault(journey.destination_stage_id, []).append(journey)
+
+    selected_stage_id = str(selected_stage_id or '')
+    selected_stage_exists = any(str(stage.pk) == selected_stage_id for stage in stages)
+    first_populated_stage_id = next(
+        (stage.pk for stage in stages if journeys_by_stage.get(stage.pk)),
+        None,
+    )
+    groups = []
+    for stage in stages:
+        stage_journeys = journeys_by_stage.get(stage.pk, [])
+        groups.append({
+            'stage': stage,
+            'journeys': stage_journeys,
+            'count': len(stage_journeys),
+            'is_open': (
+                str(stage.pk) == selected_stage_id
+                if selected_stage_exists
+                else stage.pk == first_populated_stage_id
+            ),
+        })
+    return groups, journeys.count()
+
+
+@login_required
+def passengers(request):
+    """Show the assigned trip's active passengers grouped by destination stage."""
+    if request.user.role != 'CONDUCTOR':
+        return render(request, "conductor/not_conductor.html")
+
+    matatu = _get_assigned_matatu(request.user)
+    active_trip = None
+    stage_groups = []
+    total_passengers = 0
+    if matatu:
+        active_trip = ActiveTrip.objects.filter(
+            matatu=matatu,
+            status=ActiveTrip.Status.ACTIVE,
+        ).select_related('route').first()
+        if active_trip:
+            stage_groups, total_passengers = _stage_groups_for_trip(
+                active_trip,
+                request.GET.get('stage'),
+            )
+
+    return render(request, 'conductor/passengers.html', {
+        'matatu': matatu,
+        'active_trip': active_trip,
+        'stage_groups': stage_groups,
+        'total_passengers': total_passengers,
+    })
 
 
 @login_required
@@ -96,22 +169,11 @@ def trip_detail(request, trip_id):
         return render(request, "conductor/not_authorized.html")
     
     # Get all journey sessions for this trip
-    active_statuses = [
-        JourneySession.Status.DESTINATION_SELECTED,
-        JourneySession.Status.IN_TRANSIT,
-        JourneySession.Status.APPROACHING,
-        JourneySession.Status.ARRIVED,
-    ]
     journeys = JourneySession.objects.filter(
         trip=trip,
-        status__in=[
-            JourneySession.Status.DESTINATION_SELECTED,
-            JourneySession.Status.IN_TRANSIT,
-            JourneySession.Status.APPROACHING,
-            JourneySession.Status.ARRIVED,
-        ],
+        status__in=ACTIVE_JOURNEY_STATUSES,
     ).select_related('passenger', 'destination_stage').order_by('destination_stage__sequence_order')
-    onboard_journeys = journeys.filter(status__in=active_statuses)
+    onboard_journeys = journeys
     
     # Aggregate passenger counts per destination stage
     stage_counts = onboard_journeys.values(
@@ -187,23 +249,17 @@ def trip_tracking_data(request, trip_id):
         "speed_kmh": tracking["speed_kmh"],
         "total_passengers": JourneySession.objects.filter(
             trip=trip,
-            status__in=[
-                JourneySession.Status.DESTINATION_SELECTED,
-                JourneySession.Status.IN_TRANSIT,
-                JourneySession.Status.APPROACHING,
-                JourneySession.Status.ARRIVED,
-            ],
+            status__in=ACTIVE_JOURNEY_STATUSES,
+        ).count(),
+        "arrived_passengers": JourneySession.objects.filter(
+            trip=trip,
+            status=JourneySession.Status.ARRIVED,
         ).count(),
         "alighting_counts": {
             str(row["destination_stage__sequence_order"]): row["count"]
             for row in JourneySession.objects.filter(
                 trip=trip,
-                status__in=[
-                    JourneySession.Status.DESTINATION_SELECTED,
-                    JourneySession.Status.IN_TRANSIT,
-                    JourneySession.Status.APPROACHING,
-                    JourneySession.Status.ARRIVED,
-                ],
+                status__in=ACTIVE_JOURNEY_STATUSES,
             ).values("destination_stage__sequence_order").annotate(count=Count("id"))
         },
         "distance_m": remaining.distance_m if remaining else None,
@@ -311,12 +367,11 @@ def trip_passengers(request, trip_id):
     if not _is_authorized_conductor(request.user, trip.matatu):
         return render(request, "conductor/not_authorized.html")
 
-    journeys = JourneySession.objects.filter(trip=trip).select_related(
-        'passenger', 'destination_stage'
-    ).order_by('destination_stage__sequence_order')
-    
+    stage_groups, total_passengers = _stage_groups_for_trip(trip)
+
     return render(request, "conductor/partials/passenger_list.html", {
-        "journeys": journeys,
+        'stage_groups': stage_groups,
+        'total_passengers': total_passengers,
     })
 
 

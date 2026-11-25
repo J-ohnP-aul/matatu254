@@ -18,16 +18,23 @@
         total.classList.remove('is-changed');
         requestAnimationFrame(() => total.classList.add('is-changed'));
       }
-      document.querySelectorAll('[data-stage-order]').forEach((row) => {
+      const stageRows = Array.from(root.querySelectorAll('[data-stage-order]'));
+      let occupiedStages = 0;
+      stageRows.forEach((row) => {
         const order = row.dataset.stageOrder;
         const count = row.querySelector('[data-stage-count]');
         const nextCount = String(data.alighting_counts[order] || 0);
+        if (Number(nextCount) > 0) occupiedStages += 1;
         if (count.textContent !== nextCount) {
           count.textContent = nextCount;
           count.classList.remove('is-changed');
           requestAnimationFrame(() => count.classList.add('is-changed'));
         }
       });
+      const occupied = document.getElementById('crew-occupied-stage-count');
+      if (occupied) occupied.textContent = String(occupiedStages);
+      const arrived = document.getElementById('crew-arrived-count');
+      if (arrived) arrived.textContent = String(data.arrived_passengers || 0);
       status.textContent = 'Updated just now';
     } catch (_) {
       status.textContent = 'Live counts paused. Showing the last update.';

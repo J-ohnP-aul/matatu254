@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Passengers · Matatu254{% endblock %}
+{% block app_title %}Passengers{% endblock %}
+{% block content %}
+<section class="page-shell crew-passengers-page">
+  <header class="page-heading">
+    <div><h1>Passengers</h1><p>See who is travelling to each stage.</p></div>
+    {% if active_trip %}<a class="btn btn-secondary" href="{% url 'conductor:trip-detail' active_trip.pk %}">Open live trip</a>{% endif %}
+  </header>
+  {% if not matatu %}
+    <div class="surface empty-state"><h2>No matatu assigned</h2><p>Ask an administrator to assign a vehicle to your crew account before viewing passengers.</p></div>
+  {% elif not active_trip %}
+    <div class="surface empty-state"><h2>{{ matatu.registration_number }} is standing by</h2><p>There is no active trip right now. Passenger lists appear here when an administrator starts a trip.</p><a class="btn btn-secondary" href="{% url 'conductor:notifications' %}">View alerts</a></div>
+  {% else %}
+    <div id="passenger-management-data" data-passengers-url="{% url 'conductor:trip-passengers' active_trip.pk %}">
+      <section class="surface surface-pad passenger-trip-context">
+        <div><h2>{{ active_trip.route.name }}</h2><p>{{ matatu.registration_number }} <span aria-hidden="true">·</span> Trip active</p></div>
+        <strong><span id="passenger-total-count">{{ total_passengers }}</span><span> onboard</span></strong>
+      </section>
+      <p class="passenger-refresh-status" id="passenger-refresh-status" role="status" aria-live="polite">Live passenger list · updated just now</p>
+      <div id="passenger-management-list">
+        {% include 'conductor/partials/passenger_list.html' %}
+      </div>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}
+{% block scripts %}<script defer src="{% static 'js/conductor-passengers.js' %}?v=20261125a"></script>{% endblock %}

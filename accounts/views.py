@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 
 
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ProfileImageForm
 from .models import User
 
 # Create your views here.
@@ -29,4 +29,15 @@ def log_out(request):
 
 @login_required
 def profile(request):
-  return render(request, "accounts/profile.html")
+  old_image = request.user.profile_image
+  if request.method == 'POST':
+    form = ProfileImageForm(request.POST, request.FILES, instance=request.user)
+    if form.is_valid():
+      user = form.save()
+      if old_image and old_image.name != user.profile_image.name:
+        old_image.delete(save=False)
+      messages.success(request, 'Your profile photo was updated.')
+      return redirect('accounts:profile')
+  else:
+    form = ProfileImageForm(instance=request.user)
+  return render(request, "accounts/profile.html", {'form': form})

@@ -50,6 +50,104 @@ class ConductorAuthorizationTests(TestCase):
         self.assertContains(response, "Live trip")
         self.assertContains(response, "Alighting per stage")
 
+
+class ConductorWorkspaceTests(TestCase):
+    def setUp(self):
+        self.matatu = Matatu.objects.create(
+            registration_number="KCB 254A",
+            operator="City Shuttle",
+        )
+        self.conductor = User.objects.create_user(
+            username="workspace-conductor",
+            password="Secure-Travel-92!",
+            role=User.CONDUCTOR,
+            matatu=self.matatu,
+        )
+        self.route = Route.objects.create(name="Nairobi Central Route")
+        self.first_stage = Stage.objects.create(
+            route=self.route,
+            name="Central Station",
+            sequence_order=1,
+            latitude=-1.2833,
+            longitude=36.8167,
+        )
+        self.last_stage = Stage.objects.create(
+            route=self.route,
+            name="Westlands",
+            sequence_order=2,
+            latitude=-1.2676,
+            longitude=36.8108,
+        )
+        self.trip = ActiveTrip.objects.create(
+            matatu=self.matatu,
+            route=self.route,
+            status=ActiveTrip.Status.ACTIVE,
+        )
+
+    def test_generic_post_login_dashboard_redirects_conductor_to_shift_overview(self):
+        self.client.force_login(self.conductor)
+
+        response = self.client.get(reverse("core:dashboard"))
+
+        self.assertRedirects(response, reverse("conductor:dashboard"))
+
+    def test_shift_overview_shows_trip_summary_and_destination_stage_totals(self):
+        passenger = User.objects.create_user(
+            username="central-bound",
+            password="Secure-Travel-92!",
+            role=User.PASSANGER,
+        )
+        JourneySession.objects.create(
+            passenger=passenger,
+            trip=self.trip,
+            destination_stage=self.last_stage,
+            status=JourneySession.Status.IN_TRANSIT,
+        )
+        self.client.force_login(self.conductor)
+
+        response = self.client.get(reverse("conductor:dashboard"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Your shift")
+        self.assertContains(response, "Nairobi Central Route")
+        self.assertContains(response, "Passengers by destination")
+        self.assertContains(response, "Manage passengers")
+        self.assertContains(response, "Central Station")
+        self.assertContains(response, "Westlands")
+
+    def test_passenger_page_groups_active_journeys_and_excludes_ended_ones(self):
+        active_passenger = User.objects.create_user(
+            username="active-rider",
+            password="Secure-Travel-92!",
+            role=User.PASSANGER,
+        )
+        ended_passenger = User.objects.create_user(
+            username="finished-rider",
+            password="Secure-Travel-92!",
+            role=User.PASSANGER,
+        )
+        JourneySession.objects.create(
+            passenger=active_passenger,
+            trip=self.trip,
+            destination_stage=self.last_stage,
+            status=JourneySession.Status.APPROACHING,
+        )
+        JourneySession.objects.create(
+            passenger=ended_passenger,
+            trip=self.trip,
+            destination_stage=self.first_stage,
+            status=JourneySession.Status.ENDED,
+        )
+        self.client.force_login(self.conductor)
+
+        response = self.client.get(reverse("conductor:passengers"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Passengers by destination")
+        self.assertContains(response, "Westlands")
+        self.assertContains(response, "active-rider")
+        self.assertNotContains(response, "finished-rider")
+
     @patch("conductor.views.remaining_road_distance")
     def test_tracking_endpoint_recalculates_distance_from_latest_position(self, remaining_distance_mock):
         matatu = Matatu.objects.create(

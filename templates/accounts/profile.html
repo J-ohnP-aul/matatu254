@@ -3,14 +3,32 @@
 {% block app_title %}Your account{% endblock %}
 {% block content %}
 <section class="page-shell">
-  <header class="page-heading"><div><h1>Your account</h1><p>Manage your Matatu254 session and app access.</p></div></header>
+  <header class="page-heading"><div><h1>Your profile</h1><p>Manage your account details and profile photo.</p></div></header>
   <div class="surface surface-pad profile-card">
+    <form class="profile-photo-form" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="profile-photo-preview">
+        {% if user.profile_image %}
+          <img class="profile-avatar profile-avatar-large" src="{{ user.profile_image.url }}" alt="Profile photo for {{ user.username }}" width="88" height="88">
+        {% else %}
+          <span class="profile-avatar profile-avatar-large profile-avatar-fallback" aria-hidden="true">{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
+        {% endif %}
+        <div><h2>Profile photo</h2><p>Choose an image to personalize your account.</p></div>
+      </div>
+      <div class="profile-image-field">
+        <label for="{{ form.profile_image.id_for_label }}">Add or change photo</label>
+        {{ form.profile_image }}
+        {% if form.profile_image.errors %}<ul class="field-errors" role="alert">{% for error in form.profile_image.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+        <p class="field-help">JPG, PNG, or WebP · maximum 5 MB. Use the remove option to clear your current photo.</p>
+      </div>
+      <button class="btn btn-primary" type="submit">Save photo</button>
+    </form>
     <div class="profile-row"><strong>Username</strong><span>{{ user.username }}</span></div>
     <div class="profile-row"><strong>Email</strong><span>{{ user.email|default:'No email added' }}</span></div>
     <div class="profile-row"><strong>Account type</strong><span>{{ user.get_role_display|default:user.role|title }}</span></div>
     <div class="profile-row"><strong>Last sign in</strong><span>{% if user.last_login %}{{ user.last_login|date:'M j, Y · H:i' }}{% else %}This is your first sign in{% endif %}</span></div>
     <div class="btn-row">
-      <a class="btn btn-secondary" href="{% url 'journeys:history' %}">Trip history</a>
+      {% if user.role == 'PASSANGER' %}<a class="btn btn-secondary" href="{% url 'journeys:history' %}">Trip history</a>{% endif %}
       <button type="button" class="btn btn-secondary" data-install-app hidden>Install Matatu254</button>
       <a class="btn btn-danger" href="{% url 'accounts:logout' %}">Sign out</a>
     </div>

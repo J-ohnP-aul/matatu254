@@ -3,7 +3,25 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from django.forms.widgets import ClearableFileInput
 from .models import User
+
+class ProfileImageForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('profile_image',)
+        widgets = {
+            'profile_image': ClearableFileInput(attrs={
+                'accept': 'image/jpeg,image/png,image/webp',
+                'class': 'profile-image-input',
+            }),
+        }
+
+    def clean_profile_image(self):
+        image = self.cleaned_data.get('profile_image')
+        if image and getattr(image, 'size', 0) > 5 * 1024 * 1024:
+            raise ValidationError('Choose an image smaller than 5 MB.')
+        return image
 
 class CustomUserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label="Password", strip=False, widget=forms.PasswordInput)

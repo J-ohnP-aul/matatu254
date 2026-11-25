@@ -14,11 +14,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap"> <!-- taste-skill-ignore: IBM Plex Mono is reserved for numeric and route data -->
-  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261122e">
-  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261122e">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261125a">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261125a">
   {% block extra_head %}{% endblock %}
 </head>
-<body{% if user.is_authenticated %} class="app-user{% if user.role != 'ADMIN' %} narrow-shell{% endif %}"{% endif %}>
+<body{% if user.is_authenticated %} class="app-user{% if user.role == 'PASSANGER' %} narrow-shell{% endif %}{% if user.role == 'CONDUCTOR' %} app-conductor{% endif %}"{% endif %}>
   <a class="skip-link" href="#main-content">Skip to content</a>
   <header class="site-header">
     <div class="site-header-inner">
@@ -41,7 +41,9 @@
         </nav>
         {% elif user.role == 'CONDUCTOR' %}
         <nav class="top-nav" aria-label="Crew">
-          <a href="{% url 'conductor:dashboard' %}"{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name != 'notifications' %} aria-current="page"{% endif %}>Trip</a>
+          <a href="{% url 'conductor:dashboard' %}"{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name == 'dashboard' %} aria-current="page"{% endif %}>Overview</a>
+          <a href="{% url 'conductor:passengers' %}"{% if request.resolver_match.namespace == 'conductor' and request.resolver_match.url_name == 'passengers' %} aria-current="page"{% endif %}>Passengers</a>
+          <a href="{% if trip %}{% url 'conductor:trip-detail' trip.pk %}{% elif active_trip %}{% url 'conductor:trip-detail' active_trip.pk %}{% else %}{% url 'conductor:dashboard' %}{% endif %}"{% if request.resolver_match.url_name == 'trip-detail' %} aria-current="page"{% endif %}>Active trip</a>
           <a href="{% url 'conductor:notifications' %}"{% if request.resolver_match.url_name == 'notifications' %} aria-current="page"{% endif %}>Alerts</a>
         </nav>
         {% else %}
@@ -49,11 +51,13 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
         </a>
         {% endif %}
-        {% if user.role == 'PASSANGER' %}
-          <a class="header-action" href="{% url 'accounts:profile' %}">Profile</a>
-        {% else %}
-          <a class="header-action" href="{% url 'accounts:logout' %}">Sign out</a>
-        {% endif %}
+        <a class="header-profile" href="{% url 'accounts:profile' %}" aria-label="Open profile for {{ user.username }}">
+          {% if user.profile_image %}
+            <img src="{{ user.profile_image.url }}" alt="" width="40" height="40">
+          {% else %}
+            <span aria-hidden="true">{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
+          {% endif %}
+        </a>
       {% else %}
         <a class="header-action" href="{% url 'accounts:login' %}">Sign in</a>
       {% endif %}
@@ -90,6 +94,27 @@
     <a href="{% url 'accounts:profile' %}"{% if request.resolver_match.namespace == 'accounts' %} aria-current="page"{% endif %}>
       <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/></svg></span>
       <span>Profile</span>
+    </a>
+  </nav>
+  {% endif %}
+
+  {% if user.is_authenticated and user.role == 'CONDUCTOR' %}
+  <nav class="bottom-tabs conductor-bottom-tabs is-visible" aria-label="Crew navigation">
+    <a href="{% url 'conductor:dashboard' %}"{% if request.resolver_match.url_name == 'dashboard' %} aria-current="page"{% endif %}>
+      <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9M9 21v-7h6v7"/></svg></span>
+      <span>Home</span>
+    </a>
+    <a href="{% url 'conductor:passengers' %}"{% if request.resolver_match.url_name == 'passengers' %} aria-current="page"{% endif %}>
+      <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5.5a3 3 0 0 1 0 5.8M18 14a5 5 0 0 1 3 4.5V20"/></svg></span>
+      <span>Passengers</span>
+    </a>
+    <a href="{% if trip %}{% url 'conductor:trip-detail' trip.pk %}{% elif active_trip %}{% url 'conductor:trip-detail' active_trip.pk %}{% else %}{% url 'conductor:dashboard' %}{% endif %}"{% if request.resolver_match.url_name == 'trip-detail' %} aria-current="page"{% endif %}>
+      <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14l-1-8H6l-1 8Z"/><path d="M7 9l1-4h8l1 4M7 17v2m10-2v2M8 13h.01M16 13h.01"/></svg></span>
+      <span>Trip</span>
+    </a>
+    <a href="{% url 'conductor:notifications' %}"{% if request.resolver_match.url_name == 'notifications' %} aria-current="page"{% endif %}>
+      <span class="tab-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M10 21h4"/></svg></span>
+      <span>Alerts</span>
     </a>
   </nav>
   {% endif %}

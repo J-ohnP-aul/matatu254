@@ -50,8 +50,8 @@
         <a class="btn btn-primary" href="{% url 'conductor:trip-detail' active_trip.pk %}">Open live trip</a>
       </section>
       <section class="crew-stats" aria-label="Current passenger summary">
-        <div class="crew-stat"><strong id="crew-total-count" class="live-count">{{ total_passengers }}</strong><span>Onboard journeys</span></div>
-        <div class="crew-stat"><strong id="crew-occupied-stage-count">{{ occupied_stage_count }}</strong><span>Stages with passengers</span></div>
+        <div class="crew-stat"><strong id="crew-total-count" class="live-count">{{ total_passengers }}</strong><span>Active journeys</span></div>
+        <div class="crew-stat"><strong id="crew-occupied-stage-count">{{ occupied_stage_count }}</strong><span>Stages with active journeys</span></div>
         <div class="crew-stat"><strong id="crew-arrived-count">{{ arrived_passengers }}</strong><span>Arrived, not yet ended</span></div>
       </section>
       <p class="crew-refresh-status" id="crew-refresh-status" role="status" aria-live="polite">Live trip data · refreshing every 10 seconds</p>

@@ -63,10 +63,10 @@
     role="status"
     class="destination-alert conductor-alert"
   >
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
     <span id="next-stop-alert-text"
-      >Next stop: {{ next_stage.name|default:'Waiting for GPS' }} - {{
-      alighting_count }} alighting</span
+      >Next stop: {{ next_stage.name|default:'Waiting for GPS' }} -
+      {{ alighting_count }} alighting</span
     >
   </div>
 
@@ -117,12 +117,12 @@
         ><strong class="metric-value" id="next-stage-eta">Not available</strong>
       </div>
       <div class="metric-card">
-        <span class="metric-label">Onboard</span
+        <span class="metric-label">Active journeys</span
         ><strong class="metric-value"
           ><span id="onboard-count" class="live-count"
             >{{ total_passengers }}</span
           >
-          passengers</strong
+          journeys</strong
         >
       </div>
       <div class="metric-card">

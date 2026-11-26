@@ -115,6 +115,39 @@ class ConductorWorkspaceTests(TestCase):
         self.assertContains(response, "Central Station")
         self.assertContains(response, "Westlands")
 
+    def test_active_journey_counts_are_not_described_as_onboard(self):
+        passenger = User.objects.create_user(
+            username="arrived-rider",
+            password="Secure-Travel-92!",
+            role=User.PASSANGER,
+        )
+        JourneySession.objects.create(
+            passenger=passenger,
+            trip=self.trip,
+            destination_stage=self.last_stage,
+            status=JourneySession.Status.ARRIVED,
+        )
+        self.client.force_login(self.conductor)
+
+        for url in (
+            reverse("conductor:dashboard"),
+            reverse("conductor:passengers"),
+            reverse("conductor:trip-detail", args=[self.trip.pk]),
+        ):
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertContains(response, "Active journeys")
+            self.assertNotContains(response, "Onboard")
+
+    def test_trip_detail_alert_renders_count_and_icon_cleanly(self):
+        self.client.force_login(self.conductor)
+
+        response = self.client.get(reverse("conductor:trip-detail", args=[self.trip.pk]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "alighting_count")
+        self.assertNotContains(response, "</svg>>")
+
     def test_passenger_page_groups_active_journeys_and_excludes_ended_ones(self):
         active_passenger = User.objects.create_user(
             username="active-rider",

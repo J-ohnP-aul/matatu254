@@ -1,6 +1,6 @@
 <section class="passenger-list-panel" id="passenger-groups" data-passenger-total="{{ total_passengers }}" aria-labelledby="onboard-heading">
   <div class="section-heading"><h2 id="onboard-heading">Active passenger list</h2></div>
-  {% if total_passengers == 0 %}<p class="passenger-groups-empty">No passengers are currently onboard.</p>{% endif %}
+  {% if total_passengers == 0 %}<p class="passenger-groups-empty">No active journeys are currently listed.</p>{% endif %}
   {% if stage_groups %}
     <div class="passenger-stage-groups">
       {% for group in stage_groups %}

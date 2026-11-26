@@ -108,6 +108,24 @@ journey{% endblock %} {% block extra_head %}
         >We will alert you when {{ destination.name }} is close.</span
       >
     </div>
+    <section
+      class="surface surface-pad"
+      data-push-controls
+      data-compact="true"
+      data-subscription-url="{% url 'notifications:push-subscription' %}"
+      data-public-key="{{ webpush_public_key }}"
+      hidden
+    >
+      <div>
+        <h2 class="route-title">Phone arrival pop-up</h2>
+        <p class="muted" data-push-status>Turn on phone notifications to get a pop-up alert when you arrive at {{ destination.name }}.</p>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn btn-primary btn-sm" data-push-enable>Enable phone alert</button>
+        <button type="button" class="btn btn-outline btn-sm" data-push-disable hidden>Turn off</button>
+      </div>
+      <form hidden>{% csrf_token %}</form>
+    </section>
     <section class="route-stages" aria-labelledby="route-stages-heading">
       <h2 class="route-title" id="route-stages-heading">
         Route stages to your stop
@@ -161,4 +179,5 @@ journey{% endblock %} {% block extra_head %}
   type="module"
   src="{% static 'js/journey-live.js' %}?v=20261121f"
 ></script>
+<script defer src="{% static 'js/push-notifications.js' %}?v=20261126"></script>
 {% endblock %}

@@ -1,4 +1,4 @@
-const CACHE_NAME = "matatu254-pwa-v28";
+const CACHE_NAME = "matatu254-pwa-v29";
 const OFFLINE_URL = "/offline/";
 
 async function findShellAssets() {
@@ -126,12 +126,15 @@ self.addEventListener("push", (event) => {
   } catch (_) {
     data = { body: event.data ? event.data.text() : "" };
   }
+  const urgent = Boolean(data.urgent);
   event.waitUntil(
     self.registration.showNotification(data.title || "Matatu254", {
       body: data.body || "You have a new journey update.",
       icon: "/static/images/pwa-icon-192.png",
-      badge: "/static/images/pwa-icon-192.png",
       tag: data.tag || "matatu254-update",
+      renotify: true,
+      vibrate: urgent ? [250, 100, 250, 100, 250] : [180, 80, 180],
+      requireInteraction: urgent,
       data: { url: data.url || "/notifications/" },
     }),
   );
@@ -146,13 +149,15 @@ self.addEventListener("notificationclick", (event) => {
   event.waitUntil(
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
-      .then((clients) => {
+      .then(async (clients) => {
         for (const client of clients) {
           if (
             client.url.startsWith(self.location.origin) &&
             "focus" in client
           ) {
-            client.navigate(target);
+            if ("navigate" in client) {
+              await client.navigate(target).catch(() => null);
+            }
             return client.focus();
           }
         }

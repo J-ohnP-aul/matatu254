@@ -5,6 +5,24 @@
 {% block content %}
 <section class="page-shell crew-dashboard">
   <header class="page-heading"><div><h1>Your shift</h1><p>Trip status and passenger destinations in one place.</p></div></header>
+  <section
+    class="surface surface-pad"
+    data-push-controls
+    data-compact="true"
+    data-subscription-url="{% url 'notifications:push-subscription' %}"
+    data-public-key="{{ webpush_public_key }}"
+    hidden
+  >
+    <div>
+      <h2>Phone alerts</h2>
+      <p class="muted" data-push-status>Enable notifications to receive pop-ups when passengers arrive or a trip ends.</p>
+    </div>
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary btn-sm" data-push-enable>Enable phone alerts</button>
+      <button type="button" class="btn btn-secondary btn-sm" data-push-disable hidden>Turn off</button>
+    </div>
+    <form hidden>{% csrf_token %}</form>
+  </section>
   {% if not matatu %}
     <div class="surface empty-state"><h2>No matatu assigned</h2><p>Ask an administrator to assign a vehicle to your crew account.</p></div>
   {% elif not active_trip %}
@@ -58,4 +76,4 @@
   {% endif %}
 </section>
 {% endblock %}
-{% block scripts %}<script defer src="{% static 'js/conductor-dashboard.js' %}?v=20261125b"></script>{% endblock %}
+{% block scripts %}<script defer src="{% static 'js/conductor-dashboard.js' %}?v=20261125b"></script><script defer src="{% static 'js/push-notifications.js' %}?v=20261126"></script>{% endblock %}

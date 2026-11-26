@@ -89,6 +89,7 @@ def dashboard(request):
         "total_passengers": total_passengers,
         "arrived_passengers": arrived_passengers,
         "occupied_stage_count": occupied_stage_count,
+        "webpush_public_key": getattr(settings, "WEBPUSH_VAPID_PUBLIC_KEY", ""),
     }
     return render(request, "conductor/dashboard.html", context)
 

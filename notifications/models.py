@@ -32,6 +32,7 @@ class Notification(models.Model):
 		choices=Status.choices,
 		default=Status.SENT,
 	)
+	send_push = models.BooleanField(default=True)
 
 	def __str__(self):
 		return f"{self.recipient_type}: {self.message[:50]}"

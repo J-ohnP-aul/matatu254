@@ -308,15 +308,9 @@ def trip_start(request, pk):
 @user_passes_test(is_admin)
 @require_POST
 def trip_end(request, pk):
+    from trips.services import complete_trip
     trip = get_object_or_404(ActiveTrip, pk=pk)
-    if trip.status == ActiveTrip.Status.ACTIVE:
-        trip.status = ActiveTrip.Status.COMPLETED
-        trip.end_time = timezone.now()
-        trip.save()
-        # End all journey sessions
-        JourneySession.objects.filter(trip=trip).exclude(
-            status=JourneySession.Status.ENDED
-        ).update(status=JourneySession.Status.ENDED, end_time=timezone.now())
+    if complete_trip(trip, cancelled=False):
         messages.success(request, "Trip ended")
     else:
         messages.error(request, "Trip cannot be ended from current status")
@@ -327,11 +321,9 @@ def trip_end(request, pk):
 @user_passes_test(is_admin)
 @require_POST
 def trip_cancel(request, pk):
+    from trips.services import complete_trip
     trip = get_object_or_404(ActiveTrip, pk=pk)
-    if trip.status in [ActiveTrip.Status.CREATED, ActiveTrip.Status.ACTIVE]:
-        trip.status = ActiveTrip.Status.CANCELLED
-        trip.end_time = timezone.now()
-        trip.save()
+    if complete_trip(trip, cancelled=True):
         messages.success(request, "Trip cancelled")
     else:
         messages.error(request, "Trip cannot be cancelled from current status")

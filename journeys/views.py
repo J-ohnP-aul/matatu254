@@ -129,6 +129,7 @@ def journey_detail(request, journey_id):
         "gps_stale": trip.is_stale,
         "gps_age_seconds": trip.gps_age_seconds,
         "location_transport": getattr(settings, "LOCATION_TRANSPORT", "polling"),
+        "webpush_public_key": getattr(settings, "WEBPUSH_VAPID_PUBLIC_KEY", ""),
     })
 
 

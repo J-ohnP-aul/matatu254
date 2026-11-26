@@ -53,6 +53,50 @@ def record_ping(trip: ActiveTrip, latitude, longitude, recorded_at=None):
     ).select_related("passenger", "trip", "trip__matatu", "trip__route", "destination_stage")
     for journey in journeys:
       update_journey_status(journey)
+
+
+def get_matatu_conductors(matatu):
+  """Return unique conductor accounts assigned to a matatu."""
+  conductors = {user.pk: user for user in matatu.conductor.all()}
+  owner = getattr(matatu, "owner", None)
+  if owner is not None and getattr(owner, "role", None) == "CONDUCTOR":
+    conductors.setdefault(owner.pk, owner)
+  return list(conductors.values())
+
+
+@transaction.atomic
+def complete_trip(trip: ActiveTrip, *, cancelled: bool = False) -> bool:
+  """Close an active/created trip, end open journeys, and notify assigned conductors."""
+  allowed_statuses = (
+    [ActiveTrip.Status.CREATED, ActiveTrip.Status.ACTIVE]
+    if cancelled
+    else [ActiveTrip.Status.ACTIVE]
+  )
+  if trip.status not in allowed_statuses:
+    return False
+
+  now = timezone.now()
+  trip.status = ActiveTrip.Status.CANCELLED if cancelled else ActiveTrip.Status.COMPLETED
+  trip.end_time = now
+  trip.save(update_fields=["status", "end_time"])
+
+  from journeys.models import JourneySession
+  from notifications.models import Notification
+
+  JourneySession.objects.filter(trip=trip).exclude(
+    status=JourneySession.Status.ENDED,
+  ).update(status=JourneySession.Status.ENDED, end_time=now)
+
+  verb = "cancelled" if cancelled else "ended"
+  message = f"Trip {verb}: {trip.route.name} ({trip.matatu.registration_number})"
+  for conductor in get_matatu_conductors(trip.matatu):
+    Notification.objects.create(
+      recipient_type=Notification.RecipientType.CONDUCTOR,
+      recipient_id=conductor.pk,
+      message=message,
+      send_push=True,
+    )
+  return True
 #     trip = ActiveTrip.objects.get(pk=trip_id)
 
 # if trip.is_stale:

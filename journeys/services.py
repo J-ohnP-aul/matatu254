@@ -180,6 +180,7 @@ def _send_stage_reached_notification(journey: JourneySession, stage):
             recipient_id=journey.passenger_id,
             journey=journey,
             message=message,
+            send_push=False,
         )
 
 
@@ -191,15 +192,18 @@ def _send_approaching_notification(journey: JourneySession):
         recipient_id=journey.passenger_id,
         journey=journey,
         message=passenger_message,
+        send_push=False,
     )
 
+    from trips.services import get_matatu_conductors
     matatu = journey.trip.matatu
-    for conductor in matatu.conductor.all():
+    for conductor in get_matatu_conductors(matatu):
         Notification.objects.create(
             recipient_type=Notification.RecipientType.CONDUCTOR,
             recipient_id=conductor.pk,
             journey=journey,
             message=f"{matatu.registration_number} is approaching {journey.destination_stage.name}",
+            send_push=False,
         )
 
 
@@ -217,10 +221,12 @@ def _send_arrived_notification(journey: JourneySession):
             recipient_id=journey.passenger_id,
             journey=journey,
             message=passenger_message,
+            send_push=True,
         )
 
+    from trips.services import get_matatu_conductors
     matatu = journey.trip.matatu
-    for conductor in matatu.conductor.all():
+    for conductor in get_matatu_conductors(matatu):
         conductor_message = f"Passenger has arrived at {journey.destination_stage.name}"
         if not Notification.objects.filter(
             recipient_type=Notification.RecipientType.CONDUCTOR,
@@ -233,6 +239,7 @@ def _send_arrived_notification(journey: JourneySession):
                 recipient_id=conductor.pk,
                 journey=journey,
                 message=conductor_message,
+                send_push=True,
             )
 
 

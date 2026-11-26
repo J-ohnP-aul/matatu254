@@ -22,6 +22,12 @@ except ImportError:  # pragma: no cover - optional dependency in local dev setup
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / '.env')
+except ImportError:  # pragma: no cover - optional dependency in minimal setups
+    pass
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -102,8 +108,12 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'accounts.User'
 
 WEBPUSH_VAPID_PUBLIC_KEY = os.environ.get('WEBPUSH_VAPID_PUBLIC_KEY', '').strip()
-WEBPUSH_VAPID_PRIVATE_KEY = os.environ.get('WEBPUSH_VAPID_PRIVATE_KEY', '').strip()
+_raw_vapid_private = os.environ.get('WEBPUSH_VAPID_PRIVATE_KEY', '').strip()
+if 'BEGIN' in _raw_vapid_private and '\\n' in _raw_vapid_private:
+    _raw_vapid_private = _raw_vapid_private.replace('\\n', '\n')
+WEBPUSH_VAPID_PRIVATE_KEY = _raw_vapid_private
 WEBPUSH_VAPID_SUBJECT = os.environ.get('WEBPUSH_VAPID_SUBJECT', 'mailto:admin@example.com').strip()
+WEBPUSH_ASYNC = os.environ.get('WEBPUSH_ASYNC', 'True').lower() == 'true'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

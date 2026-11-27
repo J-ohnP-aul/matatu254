@@ -19,19 +19,17 @@
     </section>
 
     {% if notifications %}
-      <div class="surface surface-pad">
+      <div class="surface surface-pad notification-feed">
         {% for n in notifications %}
-          <article class="notification-row">
-              <div>
-                <p class="notification-message">{{ n.message }}</p>
-                <small class="muted">{{ n.timestamp|date:"M d, H:i:s" }}</small>
-              </div>
-              <span class="badge badge-info badge-soft">
-                {{ n.get_status_display }}
-              </span>
-            {% if n.journey %}
-              <p class="muted">Journey: {{ n.journey.passenger.username }} · {{ n.journey.destination_stage.name }}</p>
-            {% endif %}
+          <article class="notification-row{% if n.status == 'sent' %} is-unread{% endif %}">
+            <span class="notification-dot" aria-hidden="true"></span>
+            <div class="notification-body">
+              <p class="notification-message">{{ n.message }}</p>
+              {% if n.journey %}
+                <p class="notification-context">{{ n.journey.passenger.username }} · to {{ n.journey.destination_stage.name }}</p>
+              {% endif %}
+            </div>
+            <time datetime="{{ n.timestamp|date:'c' }}">{{ n.timestamp|date:"M d · H:i" }}</time>
           </article>
         {% endfor %}
       </div>
@@ -43,4 +41,4 @@
     {% endif %}
   </div>
 {% endblock %}
-{% block scripts %}<script defer src="{% static 'js/push-notifications.js' %}?v=20261126"></script>{% endblock %}
+{% block scripts %}<script defer src="{% static 'js/push-notifications.js' %}?v=20261127"></script>{% endblock %}

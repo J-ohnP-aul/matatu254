@@ -5,37 +5,25 @@
 {% block content %}
 <section class="page-shell crew-dashboard">
   <header class="page-heading"><div><h1>Your shift</h1><p>Trip status and passenger destinations in one place.</p></div></header>
-  <section
-    class="surface surface-pad"
-    data-push-controls
-    data-compact="true"
-    data-subscription-url="{% url 'notifications:push-subscription' %}"
-    data-public-key="{{ webpush_public_key }}"
-    hidden
-  >
-    <div>
-      <h2>Phone alerts</h2>
-      <p class="muted" data-push-status>Enable notifications to receive pop-ups when passengers arrive or a trip ends.</p>
-    </div>
-    <div class="btn-row">
-      <button type="button" class="btn btn-primary btn-sm" data-push-enable>Enable phone alerts</button>
-      <button type="button" class="btn btn-secondary btn-sm" data-push-disable hidden>Turn off</button>
-    </div>
-    <form hidden>{% csrf_token %}</form>
-  </section>
   {% if not matatu %}
-    <div class="surface empty-state"><h2>No matatu assigned</h2><p>Ask an administrator to assign a vehicle to your crew account.</p></div>
+    <div class="surface empty-state crew-empty">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17h14l-1-8H6l-1 8Z"/><path d="M7 9l1-4h8l1 4M7 17v2m10-2v2M8 13h.01M16 13h.01"/></svg>
+      <h2>No matatu assigned</h2><p>Ask an administrator to assign a vehicle to your crew account.</p>
+    </div>
   {% elif not active_trip %}
-    <div class="surface empty-state crew-standing-by"><h2>{{ matatu.registration_number }} is standing by</h2><p>There’s no active trip for this vehicle right now. An administrator starts trips; your passenger workspace will appear here when one begins.</p><a class="btn btn-secondary" href="{% url 'conductor:notifications' %}">View alerts</a></div>
+    <div class="surface empty-state crew-empty crew-standing-by">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      <h2>{{ matatu.registration_number }} is standing by</h2><p>No active trip right now. Your passenger workspace appears here the moment a trip begins.</p><a class="btn btn-secondary" href="{% url 'conductor:notifications' %}">View alerts</a>
+    </div>
   {% else %}
     <div id="crew-dashboard-data" data-tracking-url="{% url 'conductor:trip-tracking-data' active_trip.pk %}">
-      <section class="surface surface-pad crew-shift-summary" aria-labelledby="crew-shift-route">
-        <div class="crew-shift-summary-main">
-          <div>
+      <section class="crew-console" aria-labelledby="crew-shift-route">
+        <div class="crew-console-top">
+          <div class="crew-console-id">
             <h2 id="crew-shift-route">{{ active_trip.route.name }}</h2>
-            <p>{{ matatu.registration_number }} <span aria-hidden="true">·</span> Assigned vehicle</p>
+            <p class="crew-console-plate">{{ matatu.registration_number }}</p>
           </div>
-          <span class="badge badge-success">Trip active</span>
+          <span class="crew-console-pill">Trip active</span>
         </div>
         <p id="crew-gps-status" class="crew-location-state{% if active_trip.gps_age_seconds == None %} is-waiting{% elif active_trip.is_stale %} is-stale{% else %} is-live{% endif %}" role="status" aria-live="polite">
           <span class="crew-location-dot" aria-hidden="true"></span>
@@ -47,20 +35,44 @@
             Vehicle location live · updated {{ active_trip.last_ping_at|timesince }} ago
           {% endif %}</span>
         </p>
-        <a class="btn btn-primary" href="{% url 'conductor:trip-detail' active_trip.pk %}">Open live trip</a>
+        <a class="crew-console-cta" href="{% url 'conductor:trip-detail' active_trip.pk %}">
+          Open live trip
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </a>
       </section>
+      <p class="crew-refresh-status" id="crew-refresh-status" role="status" aria-live="polite">Live trip data · updated just now</p>
       <section class="crew-stats" aria-label="Current passenger summary">
-        <div class="crew-stat"><strong id="crew-total-count" class="live-count">{{ total_passengers }}</strong><span>Active journeys</span></div>
-        <div class="crew-stat"><strong id="crew-occupied-stage-count">{{ occupied_stage_count }}</strong><span>Stages with active journeys</span></div>
-        <div class="crew-stat"><strong id="crew-arrived-count">{{ arrived_passengers }}</strong><span>Arrived, not yet ended</span></div>
+        <div class="crew-stat crew-stat-primary">
+          <strong id="crew-total-count" class="live-count">{{ total_passengers }}</strong>
+          <span>Onboard now</span>
+        </div>
+        <div class="crew-stats-secondary">
+          <div class="crew-stat crew-stat-compact"><strong id="crew-occupied-stage-count">{{ occupied_stage_count }}</strong><span>Stops with passengers</span></div>
+          <div class="crew-stat crew-stat-compact"><strong id="crew-arrived-count">{{ arrived_passengers }}</strong><span>Arrived</span></div>
+        </div>
       </section>
-      <p class="crew-refresh-status" id="crew-refresh-status" role="status" aria-live="polite">Live trip data · refreshing every 10 seconds</p>
+      <section
+        class="push-strip"
+        data-push-controls
+        data-compact="true"
+        data-subscription-url="{% url 'notifications:push-subscription' %}"
+        data-public-key="{{ webpush_public_key }}"
+        hidden
+      >
+        <svg class="push-strip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <p data-push-status>Enable phone alerts for passenger arrivals and trip ends.</p>
+        <div class="push-strip-actions">
+          <button type="button" class="btn btn-secondary btn-sm" data-push-enable>Enable</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-push-disable hidden>Turn off</button>
+        </div>
+        <form hidden>{% csrf_token %}</form>
+      </section>
       {% if stage_counts %}
         <section class="crew-counts crew-dashboard-stages" aria-labelledby="crew-count-heading">
           <div class="section-heading"><div><h2 id="crew-count-heading">Passengers by destination</h2><p>Stage totals update while your trip is active.</p></div></div>
           <div class="crew-stage-list">
             {% for row in stage_counts %}
-              <a class="crew-stage-row" href="{% url 'conductor:passengers' %}?stage={{ row.stage.pk }}" data-stage-order="{{ row.stage.sequence_order }}">
+              <a class="crew-stage-row{% if row.count == 0 %} is-empty{% endif %}" href="{% url 'conductor:passengers' %}?stage={{ row.stage.pk }}" data-stage-order="{{ row.stage.sequence_order }}">
                 <span class="crew-stage-copy"><strong>{{ row.stage.name }}</strong><small>Stage {{ row.stage.sequence_order }}</small></span>
                 <span class="crew-stage-count"><strong class="live-count" data-stage-count>{{ row.count }}</strong><span data-stage-unit>passenger{{ row.count|pluralize }}</span></span>
                 <svg class="crew-stage-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
@@ -76,4 +88,4 @@
   {% endif %}
 </section>
 {% endblock %}
-{% block scripts %}<script defer src="{% static 'js/conductor-dashboard.js' %}?v=20261125b"></script><script defer src="{% static 'js/push-notifications.js' %}?v=20261126"></script>{% endblock %}
+{% block scripts %}<script defer src="{% static 'js/conductor-dashboard.js' %}?v=20261127"></script><script defer src="{% static 'js/push-notifications.js' %}?v=20261127"></script>{% endblock %}

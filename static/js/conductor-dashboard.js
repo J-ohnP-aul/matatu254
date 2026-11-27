@@ -33,6 +33,7 @@
         const nextCount = String(numericCount);
         const unit = row.querySelector('[data-stage-unit]');
         if (numericCount > 0) occupiedStages += 1;
+        row.classList.toggle('is-empty', numericCount === 0);
         if (unit) unit.textContent = numericCount === 1 ? 'passenger' : 'passengers';
         if (count.textContent !== nextCount) {
           count.textContent = nextCount;

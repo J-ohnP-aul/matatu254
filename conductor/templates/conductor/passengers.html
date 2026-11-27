@@ -16,7 +16,7 @@
     <div id="passenger-management-data" data-passengers-url="{% url 'conductor:trip-passengers' active_trip.pk %}">
       <section class="surface surface-pad passenger-trip-context">
         <div><h2>{{ active_trip.route.name }}</h2><p>{{ matatu.registration_number }} <span aria-hidden="true">·</span> Trip active</p></div>
-        <strong>Active journeys: <span id="passenger-total-count">{{ total_passengers }}</span></strong>
+        <span class="passenger-total"><strong id="passenger-total-count">{{ total_passengers }}</strong> onboard</span>
       </section>
       <p class="passenger-refresh-status" id="passenger-refresh-status" role="status" aria-live="polite">Live passenger list · updated just now</p>
       <div id="passenger-management-list">

@@ -14,8 +14,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap"> <!-- taste-skill-ignore: IBM Plex Mono is reserved for numeric and route data -->
-  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261125b">
-  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261125b">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}?v=20261127c">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}?v=20261127c">
   {% block extra_head %}{% endblock %}
 </head>
 <body{% if user.is_authenticated %} class="app-user{% if user.role == 'PASSANGER' %} narrow-shell{% endif %}{% if user.role == 'CONDUCTOR' %} app-conductor{% endif %}"{% endif %}>

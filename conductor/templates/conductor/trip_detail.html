@@ -58,17 +58,29 @@
     </p>
   </section>
 
-  <div
+  <section
     id="next-stop-alert"
+    class="next-stop-hero{% if not next_stage %} is-idle{% endif %}"
     role="status"
-    class="destination-alert conductor-alert"
+    aria-live="polite"
   >
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-    <span id="next-stop-alert-text"
-      >Next stop: {{ next_stage.name|default:'Waiting for GPS' }} -
-      {{ alighting_count }} alighting</span
-    >
-  </div>
+    <div class="next-stop-hero-main">
+      <svg class="next-stop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+      <div class="next-stop-name">
+        <span id="next-stop-state">Next stop</span>
+        <strong id="next-stage">{{ next_stage.name|default:'Waiting for GPS' }}</strong>
+      </div>
+      <div class="next-stop-alight">
+        <strong id="next-stop-alighting">{{ alighting_count }}</strong>
+        <span>alighting</span>
+      </div>
+    </div>
+    <p class="next-stop-hero-meta">
+      <span><strong id="next-stage-distance">Waiting for GPS</strong> away</span>
+      <span aria-hidden="true">·</span>
+      <span><strong id="next-stage-eta">Not available</strong> to stop</span>
+    </p>
+  </section>
 
   <section
     class="surface surface-pad live-card"
@@ -76,80 +88,87 @@
   >
     <div class="live-card-heading">
       <h2 id="live-trip-heading">Live trip</h2>
-      <span class="badge" id="trip-status">{{ trip.get_status_display }}</span>
+      <span class="badge badge-success" id="trip-status">{{ trip.get_status_display }}</span>
     </div>
     <div class="progress-header">
-      <span class="progress-label">Trip progress</span
+      <span class="progress-label">Route progress</span
       ><strong id="progress-percent">{{ progress_percent }}%</strong>
     </div>
     <div
       id="trip-progress"
       class="progress-track"
       role="progressbar"
-      aria-label="Trip progress"
+      aria-label="Route progress"
       aria-valuemin="0"
       aria-valuemax="100"
       aria-valuenow="{{ progress_percent }}"
     >
       <span id="trip-progress-fill" class="progress-fill"></span>
     </div>
-    <div class="metrics-grid trip-metrics">
-      <div class="metric-card">
-        <span class="metric-label">Current stage</span
-        ><strong class="metric-value" id="current-stage"
-          >{{ current_stage.name|default:'Waiting for GPS' }}</strong
-        >
+    <div class="trip-stage-line">
+      <span class="trip-stage-chip">
+        <span class="trip-stage-label">At</span>
+        <strong id="current-stage">{{ current_stage.name|default:'Waiting for GPS' }}</strong>
+      </span>
+      <svg class="trip-stage-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      <span class="trip-stage-chip is-coming">
+        <span class="trip-stage-label">Next</span>
+        <strong id="next-stage-chip">{{ next_stage.name|default:'Destination reached' }}</strong>
+      </span>
+    </div>
+    <div class="trip-vitals">
+      <div class="trip-vital">
+        <span class="metric-label">Speed</span>
+        <strong class="metric-value" id="vehicle-speed">Not available</strong>
       </div>
-      <div class="metric-card">
-        <span class="metric-label">Next stage</span
-        ><strong class="metric-value" id="next-stage"
-          >{{ next_stage.name|default:'Destination reached' }}</strong
-        >
-      </div>
-      <div class="metric-card">
-        <span class="metric-label">To next stage</span
-        ><strong class="metric-value" id="next-stage-distance"
-          >Waiting for GPS</strong
-        >
-      </div>
-      <div class="metric-card">
-        <span class="metric-label">ETA</span
-        ><strong class="metric-value" id="next-stage-eta">Not available</strong>
-      </div>
-      <div class="metric-card">
-        <span class="metric-label">Active journeys</span
-        ><strong class="metric-value"
+      <div class="trip-vital">
+        <span class="metric-label">Onboard</span>
+        <strong class="metric-value"
           ><span id="onboard-count" class="live-count"
             >{{ total_passengers }}</span
-          >
-          journeys</strong
+          ></strong
         >
-      </div>
-      <div class="metric-card">
-        <span class="metric-label">Speed</span
-        ><strong class="metric-value" id="vehicle-speed">Not available</strong>
       </div>
     </div>
     <p class="trip-remaining-summary" id="trip-remaining-summary">
       Waiting for a GPS position
     </p>
+    <p class="crew-refresh-status" id="crew-refresh-status" role="status" aria-live="polite">Updated just now</p>
+  </section>
+
+  <section class="surface surface-pad gps-card" aria-labelledby="gps-heading">
+    <div class="gps-card-copy">
+      <h2 id="gps-heading">Share vehicle location</h2>
+      <p>Passengers follow this trip from your phone&rsquo;s live location.</p>
+    </div>
+    <button id="start-tracking-btn" class="btn gps-toggle gps-toggle-idle" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      Start location sharing</button
+    ><button
+      id="stop-tracking-btn"
+      class="btn gps-toggle gps-toggle-live"
+      type="button"
+      hidden
+    >
+      <span class="gps-live-dot" aria-hidden="true"></span>
+      Stop location sharing</button
+    ><span
+      id="tracking-status"
+      class="gps-status"
+      role="status"
+      aria-live="polite"
+      >Not tracking</span
+    >
   </section>
 
   <section class="crew-counts" aria-labelledby="alighting-heading">
     <div class="section-heading">
       <h2 id="alighting-heading">Alighting per stage</h2>
-      <span
-        id="crew-refresh-status"
-        class="muted"
-        role="status"
-        aria-live="polite"
-        >Live counts</span
-      >
     </div>
     <div class="crew-counts-mobile">
       {% for stop in upcoming_stops %}
       <article
-        class="surface crew-count-card stop-row"
+        class="surface crew-count-card stop-row{% if stop.is_next %} is-next{% endif %}{% if stop.alighting_count == 0 %} is-empty{% endif %}"
         data-stage-order="{{ stop.stage.sequence_order }}"
         data-stage-lat="{{ stop.stage.latitude }}"
         data-stage-lon="{{ stop.stage.longitude }}"
@@ -191,29 +210,6 @@
     </div>
   </section>
 
-  <section class="surface surface-pad gps-card" aria-labelledby="gps-heading">
-    <h2 id="gps-heading">Share vehicle location</h2>
-    <p>Start location sharing so passengers can follow this trip.</p>
-    <div class="gps-actions">
-      <button id="start-tracking-btn" class="btn btn-primary" type="button">
-        Start tracking</button
-      ><button
-        id="stop-tracking-btn"
-        class="btn btn-secondary"
-        type="button"
-        hidden
-      >
-        Stop tracking</button
-      ><span
-        id="tracking-status"
-        class="gps-status"
-        role="status"
-        aria-live="polite"
-        >Not tracking</span
-      >
-    </div>
-  </section>
-
   <section class="surface surface-pad passenger-card" id="passenger-list">
     {% include "conductor/partials/passenger_list.html" with journeys=journeys
     %}
@@ -228,6 +224,6 @@
 <script src="https://unpkg.com/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.js"></script>
 <script
   type="module"
-  src="{% static 'js/conductor-trip.js' %}?v=20261121f"
+  src="{% static 'js/conductor-trip.js' %}?v=20261127"
 ></script>
 {% endblock %}

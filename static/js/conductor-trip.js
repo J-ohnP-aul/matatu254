@@ -148,6 +148,7 @@ import { createLiveTrackingMap } from './map/index.js?v=20261124';
         }
       });
       const order = Number(row.dataset.stageOrder);
+      row.classList.toggle('is-empty', value === '0');
       row.classList.toggle('is-complete', data.current_stage_order !== null && order <= data.current_stage_order);
       row.classList.toggle('is-next', data.next_stage_order !== null && order === data.next_stage_order);
       row.querySelector('.next-stop-badge')?.toggleAttribute('hidden', order !== data.next_stage_order);
@@ -161,8 +162,7 @@ import { createLiveTrackingMap } from './map/index.js?v=20261124';
       const data = await response.json();
       setText('current-stage', data.current_stage || 'Waiting for GPS');
       setText('next-stage', data.next_stage || 'Destination reached');
-      setText('vehicle-latitude', data.vehicle_latitude === null ? '—' : data.vehicle_latitude.toFixed(5));
-      setText('vehicle-longitude', data.vehicle_longitude === null ? '—' : data.vehicle_longitude.toFixed(5));
+      setText('next-stage-chip', data.next_stage || 'Destination reached');
       setText('vehicle-speed', data.speed_kmh === null ? '—' : `${Math.round(data.speed_kmh)} km/h`);
       const progress = Math.min(100, Math.max(0, Math.round(data.progress_percent || 0)));
       setText('progress-percent', `${progress}%`);
@@ -171,7 +171,7 @@ import { createLiveTrackingMap } from './map/index.js?v=20261124';
       const fill = document.getElementById('trip-progress-fill');
       if (fill) fill.style.transform = `scaleX(${progress / 100})`;
       const nextDistance = data.next_stage_distance_m;
-      setText('next-stage-distance', nextDistance === null ? 'Waiting for GPS' : distanceText(nextDistance));
+      setText('next-stage-distance', nextDistance === null ? '—' : distanceText(nextDistance));
       setText('next-stage-eta', data.next_stage_duration_minutes === null ? '—' : durationText(data.next_stage_duration_minutes));
       setText('trip-remaining-summary', data.distance_m === null
         ? (data.at_destination ? 'Trip destination reached' : 'Waiting for a GPS position')
@@ -190,12 +190,14 @@ import { createLiveTrackingMap } from './map/index.js?v=20261124';
       updateCounts(data);
 
       const alert = document.getElementById('next-stop-alert');
+      const approaching = data.next_stage_distance_m !== null && data.next_stage_distance_m <= 1200;
       if (alert) {
         alert.hidden = !data.next_stage;
-        alert.classList.toggle('is-calm', data.next_stage_distance_m === null || data.next_stage_distance_m > 1200);
+        alert.classList.toggle('is-calm', !approaching);
       }
       const alighting = data.alighting_counts[String(data.next_stage_order)] || 0;
-      setText('next-stop-alert-text', `${data.next_stage_distance_m !== null && data.next_stage_distance_m <= 1200 ? 'Approaching' : 'Next stop:'} ${data.next_stage} · ${alighting} alighting${data.next_stage_distance_m !== null ? ` · ${distanceText(data.next_stage_distance_m)}` : ''}`);
+      setText('next-stop-alighting', String(alighting));
+      setText('next-stop-state', approaching ? 'Approaching' : 'Next stop');
       const freshness = document.getElementById('gps-freshness');
       if (freshness) {
         freshness.classList.toggle('is-stale', data.gps_stale);

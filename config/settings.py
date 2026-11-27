@@ -32,21 +32,39 @@ except ImportError:  # pragma: no cover - optional dependency in minimal setups
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-in-production')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
-
 # Render sets RENDER_EXTERNAL_HOSTNAME in the service environment. Allow a
 # manually configured public host as a fallback for deployments where it is
 # not injected (for example, a custom domain).
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '').strip()
 PUBLIC_HOSTNAME = os.environ.get('PUBLIC_HOSTNAME', '').strip()
+on_render = bool(os.environ.get('RENDER') or RENDER_EXTERNAL_HOSTNAME)
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-key-change-in-production')
+
+# SECURITY WARNING: don't run with debug turned on in production!
+# Local dev defaults to DEBUG on; a production deployment (Render or any
+# environment that looks like one) must opt back in explicitly, so a deploy
+# that forgot to set DEBUG never boots into debug mode.
+DEBUG = os.environ.get('DEBUG', 'False' if on_render else 'True').lower() == 'true'
+
+if not DEBUG and SECRET_KEY == 'django-insecure-dev-key-change-in-production' and 'test' not in sys.argv:
+    raise RuntimeError(
+        "SECRET_KEY is unset: refusing to boot a non-debug deployment with the "
+        "insecure development fallback. Set SECRET_KEY in the environment."
+    )
+
 if RENDER_EXTERNAL_HOSTNAME or PUBLIC_HOSTNAME:
     ALLOWED_HOSTS = list(dict.fromkeys([
         host for host in (RENDER_EXTERNAL_HOSTNAME, PUBLIC_HOSTNAME, 'localhost', '127.0.0.1') if host
     ]))
+elif not DEBUG:
+    # A non-Render production deployment must list its hosts explicitly
+    # (ALLOWED_HOSTS="host1,host2"); failing closed beats trusting every
+    # Host header.
+    ALLOWED_HOSTS = [
+        host.strip() for host in os.environ.get('ALLOWED_HOSTS', '').split(',') if host.strip()
+    ] or ['localhost', '127.0.0.1']
 else:
     ALLOWED_HOSTS = ['*']
 

@@ -234,6 +234,7 @@ def trip_tracking_data(request, trip_id):
     tracking = _get_trip_tracking_snapshot(trip, route_stages)
     remaining = tracking["remaining"]
     vehicle_pos = tracking["vehicle_pos"]
+    passenger_summary = _summarize_passengers(trip)
 
     return JsonResponse({
         "destination": tracking["destination"].name if tracking["destination"] else None,
@@ -248,21 +249,11 @@ def trip_tracking_data(request, trip_id):
         "next_stage_distance_m": tracking["next_stage_remaining"].distance_m if tracking["next_stage_remaining"] else None,
         "next_stage_duration_minutes": tracking["next_stage_remaining"].duration_minutes if tracking["next_stage_remaining"] else None,
         "speed_kmh": tracking["speed_kmh"],
-        "total_passengers": JourneySession.objects.filter(
-            trip=trip,
-            status__in=ACTIVE_JOURNEY_STATUSES,
-        ).count(),
-        "arrived_passengers": JourneySession.objects.filter(
-            trip=trip,
-            status=JourneySession.Status.ARRIVED,
-        ).count(),
-        "alighting_counts": {
-            str(row["destination_stage__sequence_order"]): row["count"]
-            for row in JourneySession.objects.filter(
-                trip=trip,
-                status__in=ACTIVE_JOURNEY_STATUSES,
-            ).values("destination_stage__sequence_order").annotate(count=Count("id"))
-        },
+        # One grouped query feeds total/arrived/alighting counts — this
+        # endpoint is polled every 5s by the conductor dashboard.
+        "total_passengers": passenger_summary["total_passengers"],
+        "arrived_passengers": passenger_summary["arrived_passengers"],
+        "alighting_counts": passenger_summary["alighting_counts"],
         "distance_m": remaining.distance_m if remaining else None,
         "distance_km": remaining.distance_km if remaining else None,
         "duration_s": remaining.duration_s if remaining else None,
@@ -271,6 +262,31 @@ def trip_tracking_data(request, trip_id):
         "gps_age_seconds": trip.gps_age_seconds,
         "last_ping_at": trip.last_ping_at.isoformat() if trip.last_ping_at else None,
     })
+
+
+def _summarize_passengers(trip):
+    """Aggregate journey counts for the conductor tracking poll in one query."""
+    rows = (
+        JourneySession.objects
+        .filter(trip=trip)
+        .values("status", "destination_stage__sequence_order")
+        .annotate(count=Count("id"))
+    )
+    total_passengers = 0
+    arrived_passengers = 0
+    alighting_counts = {}
+    for row in rows:
+        if row["status"] in ACTIVE_JOURNEY_STATUSES:
+            total_passengers += row["count"]
+            key = str(row["destination_stage__sequence_order"])
+            alighting_counts[key] = alighting_counts.get(key, 0) + row["count"]
+        elif row["status"] == JourneySession.Status.ARRIVED:
+            arrived_passengers += row["count"]
+    return {
+        "total_passengers": total_passengers,
+        "arrived_passengers": arrived_passengers,
+        "alighting_counts": alighting_counts,
+    }
 
 
 def _get_trip_tracking_snapshot(trip, route_stages):
@@ -282,18 +298,18 @@ def _get_trip_tracking_snapshot(trip, route_stages):
     destination = route_stages[-1] if route_stages else None
     # Along-track completion: the last stage whose cumulative distance the
     # vehicle has passed is the current stage (no radius flicker between
-    # checkpoints).
+    # checkpoints). Distances are computed from the already-ordered stage
+    # list — stage.next_stage would issue one query per stage per poll.
     current_stage = None
     if vehicle_pos:
         from r_outes.routes_services import along_track_position
-        from core.geo import haversine_distance_m
         _along, _total, _perp = along_track_position(vehicle_pos[0], vehicle_pos[1], route_stages)
         cumulative = 0.0
-        for stage in route_stages:
+        for index, stage in enumerate(route_stages):
             if cumulative <= _along + 25:
                 current_stage = stage
-            nxt = stage.next_stage
-            if nxt is not None:
+            if index + 1 < len(route_stages):
+                nxt = route_stages[index + 1]
                 cumulative += haversine_distance_m(
                     float(stage.latitude), float(stage.longitude),
                     float(nxt.latitude), float(nxt.longitude),

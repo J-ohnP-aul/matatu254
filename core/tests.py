@@ -41,7 +41,10 @@ class HomeViewTests(TestCase):
 
 		response = self.client.get(reverse("core:dashboard"))
 
-		self.assertRedirects(
+		# The dashboard renders a resume card linking to the active journey
+		# rather than force-redirecting away from the dashboard.
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(
 			response,
 			reverse("journeys:journey-detail", args=[journey.pk]),
 		)

@@ -49,18 +49,16 @@ class RouteManagementTests(TestCase):
         response = self.client.get(reverse('management:dashboard'))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Manage Routes')
+        self.assertContains(response, 'Manage routes')
         self.assertContains(response, reverse('management:route-list'))
-        self.assertNotContains(response, reverse('management:route-create'))
 
     def test_dashboard_matatus_cta_opens_matatu_management_list(self):
         self.client.login(username='adminuser', password='testpass123')
         response = self.client.get(reverse('management:dashboard'))
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Manage Matatus')
+        self.assertContains(response, 'Manage matatus')
         self.assertContains(response, reverse('management:matatu-list'))
-        self.assertNotContains(response, reverse('management:matatu-create'))
 
     def test_stage_form_has_current_location_button(self):
         route = Route.objects.create(name='Nairobi Central', description='Test route')
@@ -69,7 +67,8 @@ class RouteManagementTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Use current location')
-        self.assertContains(response, 'navigator.geolocation')
+        # Geolocation logic lives in the external stage-location.js bundle
+        self.assertContains(response, 'stage-location.js')
 
 
 

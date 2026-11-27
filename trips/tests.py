@@ -246,118 +246,146 @@ class WebSocketLocationUpdateTests(TestCase):
     def _ws_url(self):
         return f"/ws/trips/{self.trip.id}/"
 
+    def _run_scenario(self, scenario):
+        """Run a whole websocket scenario in ONE event loop.
+
+        Each async_to_sync call creates its own loop, so splitting
+        connect/send/receive across calls cancels the consumer's app task
+        (CancelledError on the next call). Everything must share one loop.
+        """
+        async_to_sync(scenario)()
+
+    async def _connect_and_hello(self, user):
+        """Connect as user and consume the initial 'connected' event."""
+        comm = WebsocketCommunicator(self._get_application(), self._ws_url())
+        comm.scope["user"] = user
+        connected, _ = await comm.connect()
+        self.assertTrue(connected)
+        hello = await comm.receive_json_from()
+        self.assertEqual(hello["type"], "connected")
+        return comm
+
     def test_conductor_can_publish_location(self):
         """A conductor sends location.update → location.accepted is broadcast."""
-        comm = WebsocketCommunicator(self._get_application(), self._ws_url())
-        comm.scope["user"] = self.conductor
-        connected, _ = async_to_sync(comm.connect)()
-        self.assertTrue(connected)
+        conductor = self.conductor
+        trip_id = self.trip.id
 
-        # Send location update
-        async_to_sync(comm.send_json_to)({
-            "type": "location.update",
-            "trip_id": self.trip.id,
-            "latitude": -1.28,
-            "longitude": 36.82,
-        })
-        _, response = async_to_sync(comm.receive_from)()
-        self.assertEqual(response["type"], "location.accepted")
-        self.assertAlmostEqual(response["latitude"], -1.28, places=2)
+        async def scenario():
+            comm = await self._connect_and_hello(conductor)
+
+            # Send location update
+            await comm.send_json_to({
+                "type": "location.update",
+                "trip_id": trip_id,
+                "latitude": -1.28,
+                "longitude": 36.82,
+            })
+            response = await comm.receive_json_from()
+            self.assertEqual(response["type"], "location.accepted")
+            self.assertAlmostEqual(response["latitude"], -1.28, places=2)
+            await comm.disconnect(code=1000)
+
+        self._run_scenario(scenario)
 
         # Verify TripLocationLog was created
         self.assertEqual(TripLocationLog.objects.filter(trip=self.trip).count(), 1)
-        async_to_sync(comm.disconnect)(code=1000)
 
     def test_invalid_coordinates_rejected_over_websocket(self):
         """Invalid coords return location.rejected, not broadcast."""
-        comm = WebsocketCommunicator(self._get_application(), self._ws_url())
-        comm.scope["user"] = self.conductor
-        connected, _ = async_to_sync(comm.connect)()
-        self.assertTrue(connected)
+        conductor = self.conductor
 
-        async_to_sync(comm.send_json_to)({
-            "type": "location.update",
-            "trip_id": self.trip.id,
-            "latitude": 999,
-            "longitude": 36.82,
-        })
-        _, response = async_to_sync(comm.receive_from)()
-        self.assertEqual(response["type"], "location.rejected")
+        async def scenario():
+            comm = await self._connect_and_hello(conductor)
+
+            await comm.send_json_to({
+                "type": "location.update",
+                "trip_id": self.trip.id,
+                "latitude": 999,
+                "longitude": 36.82,
+            })
+            response = await comm.receive_json_from()
+            self.assertEqual(response["type"], "location.rejected")
+            await comm.disconnect(code=1000)
+
+        self._run_scenario(scenario)
         self.assertEqual(TripLocationLog.objects.filter(trip=self.trip).count(), 0)
-        async_to_sync(comm.disconnect)(code=1000)
 
     def test_unauthorized_cannot_publish(self):
         """A passenger cannot send location.update."""
-        comm = WebsocketCommunicator(self._get_application(), self._ws_url())
-        comm.scope["user"] = self.passenger
-        connected, _ = async_to_sync(comm.connect)()
-        self.assertTrue(connected)
+        passenger = self.passenger
 
-        async_to_sync(comm.send_json_to)({
-            "type": "location.update",
-            "trip_id": self.trip.id,
-            "latitude": -1.28,
-            "longitude": 36.82,
-        })
-        _, response = async_to_sync(comm.receive_from)()
-        self.assertEqual(response["type"], "location.rejected")
-        async_to_sync(comm.disconnect)(code=1000)
+        async def scenario():
+            comm = await self._connect_and_hello(passenger)
+
+            await comm.send_json_to({
+                "type": "location.update",
+                "trip_id": self.trip.id,
+                "latitude": -1.28,
+                "longitude": 36.82,
+            })
+            response = await comm.receive_json_from()
+            self.assertEqual(response["type"], "location.rejected")
+            await comm.disconnect(code=1000)
+
+        self._run_scenario(scenario)
 
     def test_accepted_broadcast_to_group(self):
         """When conductor publishes, a passenger subscriber receives the update."""
-        # Conductor publishes
-        comm1 = WebsocketCommunicator(self._get_application(), self._ws_url())
-        comm1.scope["user"] = self.conductor
-        connected, _ = async_to_sync(comm1.connect)()
-        self.assertTrue(connected)
+        conductor = self.conductor
+        passenger = self.passenger
 
-        # Passenger subscribes
-        comm2 = WebsocketCommunicator(self._get_application(), self._ws_url())
-        comm2.scope["user"] = self.passenger
-        connected, _ = async_to_sync(comm2.connect)()
-        self.assertTrue(connected)
+        async def scenario():
+            # Conductor publishes
+            comm1 = await self._connect_and_hello(conductor)
 
-        # Conductor sends update
-        async_to_sync(comm1.send_json_to)({
-            "type": "location.update",
-            "trip_id": self.trip.id,
-            "latitude": -1.28,
-            "longitude": 36.82,
-        })
+            # Passenger subscribes
+            comm2 = await self._connect_and_hello(passenger)
 
-        # Conductor receives ack
-        _, ack = async_to_sync(comm1.receive_from)()
-        self.assertEqual(ack["type"], "location.accepted")
+            # Conductor sends update
+            await comm1.send_json_to({
+                "type": "location.update",
+                "trip_id": self.trip.id,
+                "latitude": -1.28,
+                "longitude": 36.82,
+            })
 
-        # Passenger receives broadcast
-        _, broadcast = async_to_sync(comm2.receive_from)()
-        self.assertEqual(broadcast["type"], "location.accepted")
-        self.assertAlmostEqual(broadcast["latitude"], -1.28, places=2)
+            # Conductor receives ack
+            ack = await comm1.receive_json_from()
+            self.assertEqual(ack["type"], "location.accepted")
 
-        async_to_sync(comm1.disconnect)(code=1000)
-        async_to_sync(comm2.disconnect)(code=1000)
+            # Passenger receives broadcast
+            broadcast = await comm2.receive_json_from()
+            self.assertEqual(broadcast["type"], "location.accepted")
+            self.assertAlmostEqual(broadcast["latitude"], -1.28, places=2)
+
+            await comm1.disconnect(code=1000)
+            await comm2.disconnect(code=1000)
+
+        self._run_scenario(scenario)
 
     def test_stale_status_preserved(self):
         """Stale GPS status is correct over WebSocket."""
-        comm = WebsocketCommunicator(self._get_application(), self._ws_url())
-        comm.scope["user"] = self.conductor
-        connected, _ = async_to_sync(comm.connect)()
-        self.assertTrue(connected)
+        conductor = self.conductor
 
-        # Send a ping with an old timestamp
-        old = timezone.now() - timedelta(seconds=120)
-        async_to_sync(comm.send_json_to)({
-            "type": "location.update",
-            "trip_id": self.trip.id,
-            "latitude": -1.28,
-            "longitude": 36.82,
-            "recorded_at": old.isoformat(),
-        })
-        _, response = async_to_sync(comm.receive_from)()
-        self.assertEqual(response["type"], "location.accepted")
-        # The position is stale because the timestamp is old
-        self.assertTrue(response["is_stale"])
-        async_to_sync(comm.disconnect)(code=1000)
+        async def scenario():
+            comm = await self._connect_and_hello(conductor)
+
+            # Send a ping with an old timestamp
+            old = timezone.now() - timedelta(seconds=120)
+            await comm.send_json_to({
+                "type": "location.update",
+                "trip_id": self.trip.id,
+                "latitude": -1.28,
+                "longitude": 36.82,
+                "recorded_at": old.isoformat(),
+            })
+            response = await comm.receive_json_from()
+            self.assertEqual(response["type"], "location.accepted")
+            # The position is stale because the timestamp is old
+            self.assertTrue(response["is_stale"])
+            await comm.disconnect(code=1000)
+
+        self._run_scenario(scenario)
 
 
 # ------------------------------------------------------------------ #

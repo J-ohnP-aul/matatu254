@@ -102,15 +102,19 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 # Application definition
 
 INSTALLED_APPS = [
+    # 'daphne' must come before staticfiles: it replaces runserver with an
+    # ASGI-capable server so dev actually serves /ws/ websocket routes.
+    'daphne',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'channels',
-    
+
     'accounts',
     'core',
     'fleet',

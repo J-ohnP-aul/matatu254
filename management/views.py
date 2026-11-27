@@ -1,6 +1,9 @@
+from decimal import Decimal, InvalidOperation
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from django.db import IntegrityError, transaction
 from django.db.models import Count
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -188,29 +191,60 @@ def route_stages(request, pk):
     return render(request, "management/route_stages.html", {'route': route, 'stages': stages})
 
 
+def _parse_stage_fields(request):
+    """Validate stage form POST data.
+
+    Returns (fields, error): fields is a dict of cleaned values, error a
+    user-facing message (or None). Raw int()/DecimalField writes used to
+    raise unhandled ValueError/IntegrityError 500s on typos.
+    """
+    name = request.POST.get('name', '').strip()
+    raw_order = request.POST.get('sequence_order', '').strip()
+    raw_lat = request.POST.get('latitude', '').strip()
+    raw_long = request.POST.get('longitude', '').strip()
+    if not all([name, raw_order, raw_lat, raw_long]):
+        return None, "All fields are required"
+    try:
+        sequence_order = int(raw_order)
+        latitude = Decimal(raw_lat)
+        longitude = Decimal(raw_long)
+    except (InvalidOperation, ValueError):
+        return None, "Sequence order, latitude and longitude must be valid numbers"
+    if sequence_order < 1:
+        return None, "Sequence order must be 1 or greater"
+    if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+        return None, "Latitude must be between -90 and 90 and longitude between -180 and 180"
+    return {
+        'name': name,
+        'sequence_order': sequence_order,
+        'latitude': latitude,
+        'longitude': longitude,
+    }, None
+
+
 @login_required
 @user_passes_test(is_admin)
 def stage_create(request, pk):
     route = get_object_or_404(Route, pk=pk)
     if request.method == 'POST':
-        name = request.POST.get('name', '').strip()
-        sequence_order = request.POST.get('sequence_order')
-        latitude = request.POST.get('latitude')
-        longitude = request.POST.get('longitude')
-        
-        if not all([name, sequence_order, latitude, longitude]):
-            messages.error(request, "All fields are required")
+        fields, error = _parse_stage_fields(request)
+        if error:
+            messages.error(request, error)
         else:
-            Stage.objects.create(
-                route=route,
-                name=name,
-                sequence_order=int(sequence_order),
-                latitude=latitude,
-                longitude=longitude,
-            )
-            messages.success(request, f"Stage '{name}' added")
-            return redirect('management:route-stages', pk=route.pk)
-    
+            try:
+                # Nested atomic: a savepoint so the failed insert rolls back
+                # cleanly and the form can re-render inside this request.
+                with transaction.atomic():
+                    Stage.objects.create(route=route, **fields)
+            except IntegrityError:
+                messages.error(
+                    request,
+                    f"A stage with sequence order {fields['sequence_order']} already exists on this route",
+                )
+            else:
+                messages.success(request, f"Stage '{fields['name']}' added")
+                return redirect('management:route-stages', pk=route.pk)
+
     # Suggest next sequence order
     next_order = (route.stages.aggregate(max_order=models.Max('sequence_order'))['max_order'] or 0) + 1
     return render(request, "management/stage_form.html", {
@@ -225,13 +259,25 @@ def stage_create(request, pk):
 def stage_edit(request, pk):
     stage = get_object_or_404(Stage, pk=pk)
     if request.method == 'POST':
-        stage.name = request.POST.get('name', '').strip()
-        stage.sequence_order = int(request.POST.get('sequence_order'))
-        stage.latitude = request.POST.get('latitude')
-        stage.longitude = request.POST.get('longitude')
-        stage.save()
-        messages.success(request, "Stage updated")
-        return redirect('management:route-stages', pk=stage.route.pk)
+        fields, error = _parse_stage_fields(request)
+        if error:
+            messages.error(request, error)
+        else:
+            try:
+                with transaction.atomic():
+                    stage.name = fields['name']
+                    stage.sequence_order = fields['sequence_order']
+                    stage.latitude = fields['latitude']
+                    stage.longitude = fields['longitude']
+                    stage.save()
+            except IntegrityError:
+                messages.error(
+                    request,
+                    f"A stage with sequence order {fields['sequence_order']} already exists on this route",
+                )
+            else:
+                messages.success(request, "Stage updated")
+                return redirect('management:route-stages', pk=stage.route.pk)
     return render(request, "management/stage_form.html", {
         'stage': stage,
         'route': stage.route,

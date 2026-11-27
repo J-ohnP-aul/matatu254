@@ -30,7 +30,10 @@
     <div class="btn-row">
       {% if user.role == 'PASSANGER' %}<a class="btn btn-secondary" href="{% url 'journeys:history' %}">Trip history</a>{% endif %}
       <button type="button" class="btn btn-secondary" data-install-app hidden>Install Matatu254</button>
-      <a class="btn btn-danger" href="{% url 'accounts:logout' %}">Sign out</a>
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sign out</button>
+      </form>
     </div>
   </div>
 </section>

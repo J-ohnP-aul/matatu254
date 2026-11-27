@@ -47,7 +47,11 @@ class RegistrationTests(TestCase):
 		)
 		self.client.force_login(user)
 
-		response = self.client.get(reverse("accounts:logout"), follow=True)
+		# GET must not log the user out (logout CSRF)
+		get_response = self.client.get(reverse("accounts:logout"))
+		self.assertEqual(get_response.status_code, 405)
+
+		response = self.client.post(reverse("accounts:logout"), follow=True)
 
 		self.assertRedirects(response, reverse("core:home"))
 		self.assertFalse(response.context["user"].is_authenticated)

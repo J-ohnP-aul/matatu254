@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
 
 from .forms import CustomUserCreationForm, ProfileImageForm
@@ -22,7 +23,9 @@ def register(request):
     form = CustomUserCreationForm()
   return render(request, "accounts/register.html", {'form':form})
 
+@require_POST
 def log_out(request):
+  # POST-only: a GET endpoint would let any page log a user out via <img src=...>
   logout(request)
   return redirect("core:home")
 

@@ -70,6 +70,44 @@ class RouteManagementTests(TestCase):
         # Geolocation logic lives in the external stage-location.js bundle
         self.assertContains(response, 'stage-location.js')
 
+    def test_stage_create_rejects_non_numeric_input_with_message(self):
+        route = Route.objects.create(name='Nairobi Central', description='Test route')
+        self.client.login(username='adminuser', password='testpass123')
+
+        response = self.client.post(
+            reverse('management:stage-create', args=[route.pk]),
+            data={'name': 'Broken', 'sequence_order': 'one', 'latitude': '-1.28', 'longitude': '36.82'},
+        )
+
+        # A typo must surface as a friendly message, not an unhandled 500
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Stage.objects.filter(route=route).count(), 0)
+
+    def test_stage_create_rejects_duplicate_sequence_order_with_message(self):
+        route = Route.objects.create(name='Nairobi Central', description='Test route')
+        Stage.objects.create(route=route, name='Taken', sequence_order=1, latitude='-1.28', longitude='36.82')
+        self.client.login(username='adminuser', password='testpass123')
+
+        response = self.client.post(
+            reverse('management:stage-create', args=[route.pk]),
+            data={'name': 'Dupe', 'sequence_order': '1', 'latitude': '-1.29', 'longitude': '36.83'},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Stage.objects.filter(route=route).count(), 1)
+
+    def test_stage_create_rejects_out_of_range_coordinates(self):
+        route = Route.objects.create(name='Nairobi Central', description='Test route')
+        self.client.login(username='adminuser', password='testpass123')
+
+        response = self.client.post(
+            reverse('management:stage-create', args=[route.pk]),
+            data={'name': 'TooFar', 'sequence_order': '1', 'latitude': '999', 'longitude': '36.82'},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Stage.objects.filter(route=route).count(), 0)
+
 
 
 class LiveMapExploreTests(TestCase):

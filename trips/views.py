@@ -1,8 +1,6 @@
-from django.shortcuts import render
-from django.db.models import Q
-
 import json
-from django.http import JsonResponse, StreamingHttpResponse
+
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_GET
 from django.contrib.auth.decorators import login_required
@@ -48,43 +46,6 @@ def ping(request, trip_id):
   except ValueError as exc:
     return JsonResponse({"error": str(exc)}, status=400)
   return JsonResponse({"ok": True})
-
-
-@require_GET
-def location_stream(request, trip_id):
-    """Server-Sent Events stream for real-time location updates."""
-    trip = get_object_or_404(ActiveTrip, pk=trip_id, status=ActiveTrip.Status.ACTIVE)
-    
-    # Check authorization (same as ping)
-    user_matatu = getattr(request.user, 'matatu', None)
-    is_assigned = (
-        user_matatu == trip.matatu
-        or trip.matatu.owner == request.user
-        or trip.matatu.conductor.filter(pk=request.user.pk).exists()
-    )
-    if not is_assigned:
-        return JsonResponse({"error": "Not authorized for this trip"}, status=403)
-    
-    def event_stream():
-        import time
-        last_ping_time = None
-        while True:
-            trip.refresh_from_db()
-            if trip.last_ping_at and trip.last_ping_at != last_ping_time:
-                last_ping_time = trip.last_ping_at
-                data = {
-                    "type": "ping",
-                    "latitude": float(trip.current_latitude) if trip.current_latitude else None,
-                    "longitude": float(trip.current_longitude) if trip.current_longitude else None,
-                    "timestamp": trip.last_ping_at.isoformat(),
-                }
-                yield f"data: {json.dumps(data)}\n\n"
-            time.sleep(1)
-    
-    response = StreamingHttpResponse(event_stream(), content_type='text/event-stream')
-    response['Cache-Control'] = 'no-cache'
-    response['X-Accel-Buffering'] = 'no'
-    return response
 
 
 @require_GET

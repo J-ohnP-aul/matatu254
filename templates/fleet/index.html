@@ -18,7 +18,7 @@
         <table class="table">
           <thead>
             <tr>
-              <th>Registration</th><th>Operator</th><th>QR Value</th><th>Status</th><th>Actions</th>
+              <th>Registration</th><th>Operator</th><th>QR Status</th><th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -28,18 +28,11 @@
                 <td>{{ matatu.operator }}</td>
                 <td>
                   {% if matatu.qr_code %}
-                    {{ matatu.qr_code.code_value }}
-                  {% else %}
-                    <span class="badge badge-ghost">No QR</span>
-                  {% endif %}
-                </td>
-                <td>
-                  {% if matatu.qr_code %}
                     <span class="badge {% if matatu.qr_code.status == 'active' %}badge-success{% else %}badge-error{% endif %} badge-soft">
                       {{ matatu.qr_code.get_status_display }}
                     </span>
                   {% else %}
-                    <span class="muted">No QR</span>
+                    <span class="badge badge-ghost">No QR</span>
                   {% endif %}
                 </td>
                 <td>

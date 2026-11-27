@@ -77,6 +77,51 @@ class HTTPPingTests(TestCase):
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(TripLocationLog.objects.filter(trip=self.trip).count(), 0)
 
+    def test_naive_timestamp_rejected(self):
+        """A recorded_at without a timezone offset returns 400, not a 500."""
+        resp = self.client.post(
+            self.url,
+            data=json.dumps({
+                "latitude": -1.28,
+                "longitude": 36.82,
+                "recorded_at": "2026-11-27T10:00:00",  # no offset
+            }),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(TripLocationLog.objects.filter(trip=self.trip).count(), 0)
+
+    def test_future_timestamp_rejected(self):
+        """A recorded_at far in the future returns 400 instead of faking liveness."""
+        future = timezone.now() + timedelta(hours=2)
+        resp = self.client.post(
+            self.url,
+            data=json.dumps({
+                "latitude": -1.28,
+                "longitude": 36.82,
+                "recorded_at": future.isoformat(),
+            }),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(TripLocationLog.objects.filter(trip=self.trip).count(), 0)
+
+    def test_small_clock_skew_is_clamped(self):
+        """A ping a few seconds ahead of server time is clamped to now, not rejected."""
+        slightly_ahead = timezone.now() + timedelta(seconds=5)
+        resp = self.client.post(
+            self.url,
+            data=json.dumps({
+                "latitude": -1.28,
+                "longitude": 36.82,
+                "recorded_at": slightly_ahead.isoformat(),
+            }),
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.trip.refresh_from_db()
+        self.assertLessEqual(self.trip.last_ping_at, timezone.now())
+
     def test_out_of_order_timestamp_does_not_rewind(self):
         """An older timestamp should not rewind the cached position."""
         now = timezone.now()

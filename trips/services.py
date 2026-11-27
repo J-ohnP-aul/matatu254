@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.db import transaction
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
@@ -21,6 +23,19 @@ def record_ping(trip: ActiveTrip, latitude, longitude, recorded_at=None):
   if isinstance(recorded_at, str):
     recorded_at = parse_datetime(recorded_at)
   recorded_at = recorded_at or timezone.now()
+  if timezone.is_naive(recorded_at):
+    raise ValueError("recorded_at must be an ISO 8601 timestamp with a timezone offset")
+  now = timezone.now()
+  if recorded_at > now + timedelta(seconds=60):
+    raise ValueError("recorded_at cannot be more than a minute in the future")
+  # Tolerate a small device-clock skew (<=60s ahead) by clamping to now so a
+  # fast clock can never defeat the staleness logic.
+  recorded_at = min(recorded_at, now)
+
+  # Two conductors/devices can ping the same trip concurrently; each holds a
+  # stale last_ping_at and the older ping could commit last, rewinding the
+  # cached position. Re-fetch under a row lock before the read-modify-write.
+  trip = ActiveTrip.objects.select_for_update().get(pk=trip.pk)
 
   TripLocationLog.objects.create(
     trip=trip,
@@ -97,10 +112,3 @@ def complete_trip(trip: ActiveTrip, *, cancelled: bool = False) -> bool:
       send_push=True,
     )
   return True
-#     trip = ActiveTrip.objects.get(pk=trip_id)
-
-# if trip.is_stale:
-#   # Signal lost. Show "last known position, Ns ago" — don't pretend it's live.
-#   position = None
-# else:
-#   position = (trip.current_latitude, trip.current_longitude)

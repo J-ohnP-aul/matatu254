@@ -111,6 +111,7 @@ def advance_journey_progress(journey: JourneySession, route_stages, vehicle_pos)
     return current_stage, next_stage
 
 
+@transaction.atomic
 def update_journey_status(journey: JourneySession) -> JourneySession:
     """
     Determine and update journey status based on vehicle position.
@@ -119,6 +120,19 @@ def update_journey_status(journey: JourneySession) -> JourneySession:
     stay completed while the vehicle is in transit between checkpoints.
     """
     from r_outes.routes_services import is_near_stage
+
+    # The GPS ping pipeline and every passenger's 5s tracking poll both run
+    # this read-modify-write; without a row lock a stale writer can overwrite
+    # newer progress or re-trigger a status transition (double notifications).
+    journey = (
+        JourneySession.objects
+        .select_for_update()
+        .select_related("trip", "trip__route", "trip__matatu", "destination_stage")
+        .get(pk=journey.pk)
+    )
+    original_status = journey.status
+    original_completed_ids = list(journey.completed_stage_ids or [])
+    original_stage_index = journey.current_stage_index
 
     trip = journey.trip
     route_stages = list(trip.route.stages.order_by("sequence_order"))
@@ -161,7 +175,15 @@ def update_journey_status(journey: JourneySession) -> JourneySession:
         elif new_status == JourneySession.Status.ARRIVED:
             _send_arrived_notification(journey)
 
-    journey.save(update_fields=["status", "completed_stage_ids", "current_stage_index"])
+    # The tracking page polls every 5s; skip the write when the poll found
+    # nothing new so idle journeys don't generate constant write traffic.
+    changed = (
+        journey.status != original_status
+        or journey.current_stage_index != original_stage_index
+        or list(journey.completed_stage_ids or []) != original_completed_ids
+    )
+    if changed:
+        journey.save(update_fields=["status", "completed_stage_ids", "current_stage_index"])
     return journey
 
 
@@ -185,8 +207,21 @@ def _send_stage_reached_notification(journey: JourneySession, stage):
 
 
 def _send_approaching_notification(journey: JourneySession):
-    """Send approaching notification to passenger and assigned conductor."""
+    """Send approaching notification to passenger and assigned conductor.
+
+    A status transition to APPROACHING can race with the ping pipeline and
+    the tracking poll (both run update_journey_status); dedup so a transient
+    read doesn't notify the passenger twice.
+    """
     passenger_message = f"Approaching {journey.destination_stage.name} — prepare to alight"
+    if Notification.objects.filter(
+        recipient_type=Notification.RecipientType.PASSENGER,
+        recipient_id=journey.passenger_id,
+        journey=journey,
+        message=passenger_message,
+    ).exists():
+        return
+
     Notification.objects.create(
         recipient_type=Notification.RecipientType.PASSENGER,
         recipient_id=journey.passenger_id,
@@ -198,11 +233,19 @@ def _send_approaching_notification(journey: JourneySession):
     from trips.services import get_matatu_conductors
     matatu = journey.trip.matatu
     for conductor in get_matatu_conductors(matatu):
+        conductor_message = f"{matatu.registration_number} is approaching {journey.destination_stage.name}"
+        if Notification.objects.filter(
+            recipient_type=Notification.RecipientType.CONDUCTOR,
+            recipient_id=conductor.pk,
+            journey=journey,
+            message=conductor_message,
+        ).exists():
+            continue
         Notification.objects.create(
             recipient_type=Notification.RecipientType.CONDUCTOR,
             recipient_id=conductor.pk,
             journey=journey,
-            message=f"{matatu.registration_number} is approaching {journey.destination_stage.name}",
+            message=conductor_message,
             send_push=False,
         )
 
